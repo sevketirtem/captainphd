@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Undervisningsspill: fersk laks fra Hitra til Rotterdam – lastebil eller skip?">
+<title>Laksekapteinen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: night nautical chart on the left, bridge console on the right; stacks on phones. Single deliberate dark look. */
+:root {
+  --ink: #0A141C;        /* page */
+  --sea: #0B1B27;        /* chart water */
+  --land: #25404F;       /* chart land */
+  --panel: #13222E;      /* console */
+  --line: #2A4252;
+  --fg: #E7EEF2;
+  --muted: #93A7B4;
+  --salmon: #F4876B;     /* accent: the cargo */
+  --teal: #47BFB4;       /* sea route */
+  --amber: #E9B44C;      /* warning */
+  --red: #E86A5E;
+  --good: #6CCB8C;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { background: var(--ink); color: var(--fg); margin: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { font-family: var(--body); font-size: 15px; line-height: 1.5; padding-inline: 16px; padding-block: 20px 32px; }
+.wrap { max-width: 1180px; margin-inline: auto; display: grid; gap: 20px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 24px; }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(30px, 5vw, 46px); line-height: 1; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+h1 span { color: var(--salmon); }
+.lede { margin: 6px 0 0; color: var(--muted); max-width: 62ch; }
+.weekbadge { font-family: var(--mono); font-size: 13px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.weekbadge b { color: var(--fg); font-size: 22px; letter-spacing: 0; }
+.grid { display: grid; gap: 20px; grid-template-columns: 1fr; }
+@media (min-width: 920px) { .grid { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); } }
+.chart { background: var(--sea); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; position: relative; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; }
+.chart .legend { position: absolute; left: 12px; bottom: 10px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.chart .tag { position: absolute; right: 12px; top: 10px; font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.console { display: grid; gap: 14px; min-width: 0; align-content: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+.event { border-color: var(--amber); }
+.event .lab { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--amber); }
+.event h2 { font-family: var(--display); font-weight: 600; font-size: 21px; margin: 4px 0 4px; line-height: 1.2; text-wrap: balance; }
+.event p { margin: 0; color: var(--fg); }
+.ctrl { display: grid; gap: 16px; }
+.ctrl label, .ctrl .q { font-weight: 600; display: flex; justify-content: space-between; gap: 12px; }
+.ctrl output { font-family: var(--mono); color: var(--salmon); }
+.hint { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+input[type=range] { width: 100%; accent-color: var(--salmon); height: 28px; }
+.seg { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 6px; }
+.seg button { font: 600 15px var(--mono); padding: 9px 0; border-radius: 9px; border: 1px solid var(--line); background: var(--sea); color: var(--fg); cursor: pointer; }
+.seg button[aria-pressed=true] { background: var(--teal); color: #06221F; border-color: var(--teal); }
+.seg button:disabled { opacity: .35; cursor: not-allowed; }
+.go { font: 700 17px var(--display); padding: 13px 18px; border: 0; border-radius: 12px; background: var(--salmon); color: #2A0F07; cursor: pointer; width: 100%; }
+.go:disabled { opacity: .5; cursor: wait; }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 560px) { .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.kpi { background: var(--sea); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.kpi .k { font-size: 12px; color: var(--muted); }
+.kpi .v { font-family: var(--mono); font-size: 18px; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.kpi .bar { height: 5px; border-radius: 3px; background: var(--line); margin-top: 6px; overflow: hidden; }
+.kpi .bar span { display: block; height: 100%; width: 0; background: var(--good); transition: width .6s ease; }
+.result { font-size: 14px; color: var(--fg); min-height: 1.5em; }
+.result.warn { color: var(--amber); }
+.result.bad { color: var(--red); }
+.route { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.pill { font: 600 12px var(--mono); padding: 3px 9px; border-radius: 99px; border: 1px solid currentColor; }
+.pill.ok { color: var(--good); } .pill.risk { color: var(--amber); } .pill.dead { color: var(--red); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+td.ev { color: var(--muted); max-width: 18ch; overflow: hidden; text-overflow: ellipsis; }
+h3 { font-family: var(--display); font-weight: 600; font-size: 18px; margin: 0 0 8px; }
+.final { border-color: var(--salmon); }
+.final .big { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 8px 0 14px; }
+.final .big div { background: var(--sea); border-radius: 12px; padding: 10px 12px; }
+.final .big b { display: block; font-family: var(--mono); font-size: 22px; }
+.final .big small { color: var(--muted); }
+.final ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+.again { margin-top: 14px; font: 600 14px var(--body); background: none; color: var(--fg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; cursor: pointer; }
+footer { font-size: 12px; color: var(--muted); max-width: 80ch; }
+footer a { color: inherit; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Lakse<span>kapteinen</span></h1>
+      <p class="lede">Du er logistikksjef på et lakseslakteri på Hitra. Hver uke skal 50 trailere med fersk laks til Rotterdam. Lastebil eller skip? Du har 10 uker.</p>
+    </div>
+    <div class="weekbadge">Uke <b id="weekNo">1</b> / 10</div>
+  </header>
+
+  <div class="grid">
+    <div class="chart" id="chart">
+      <div class="tag">Skjematisk kart</div>
+      <svg id="map" viewBox="0 0 470 640" role="img" aria-label="Skjematisk kart med veirute og sjørute fra Hitra til Rotterdam"></svg>
+      <div class="legend"><span><i style="background:var(--salmon)"></i>Vei ca. 2 000 km</span><span><i style="background:var(--teal)"></i>Sjø ca. 780 nm</span></div>
+    </div>
+
+    <div class="console">
+      <div class="card event" id="eventCard" aria-live="polite">
+        <div class="lab" id="evLab">Hendelse uke 1</div>
+        <h2 id="evTitle"></h2>
+        <p id="evText"></p>
+      </div>
+
+      <div class="card ctrl" id="controls">
+        <div>
+          <label for="share">Andel laks på skip <output id="shareOut">40 %</output></label>
+          <input id="share" type="range" min="0" max="100" step="10" value="40">
+          <p class="hint" id="shareHint">20 trailere på skip, 30 på lastebil.</p>
+        </div>
+        <div>
+          <div class="q" id="depLab">Avganger med skip per uke <output id="depOut">2</output></div>
+          <div class="seg" role="group" aria-labelledby="depLab" id="deps"></div>
+          <p class="hint">Hver avgang tar 60 trailere. Du garanterer rederiet minst 20 trailere per avgang. Tomme plasser betaler du for.</p>
+        </div>
+        <button class="go" id="go">Send laksen</button>
+        <div class="result" id="result" aria-live="polite"></div>
+      </div>
+
+      <div class="kpis" id="kpis">
+        <div class="kpi"><div class="k">Kostnad denne uka</div><div class="v" id="kCost">–</div></div>
+        <div class="kpi"><div class="k">CO₂ denne uka</div><div class="v" id="kCo2">–</div></div>
+        <div class="kpi"><div class="k">Snitt leveringstid</div><div class="v" id="kDays">–</div></div>
+        <div class="kpi"><div class="k">Fornøyd kunde</div><div class="v" id="kSat">–</div><div class="bar"><span id="kSatBar"></span></div></div>
+      </div>
+
+      <div class="card">
+        <div class="route"><span>Sjøruten:</span><span class="pill ok" id="routePill">I drift</span><span id="routeText">Andre eksportører på skipet: 0 trailere</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card final" id="final" hidden></div>
+
+  <div class="card">
+    <h3>Loggbok</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Uke</th><th>Hendelse</th><th>Skip</th><th>Avg.</th><th>Kostnad</th><th>CO₂</th><th>Dager</th><th>Kunde</th></tr></thead>
+        <tbody id="log"><tr><td colspan="8" style="text-align:left;color:var(--muted)">Ingen uker spilt ennå. Velg andel og avganger, og trykk «Send laksen».</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>Alle tall i spillet er forenklede spilltall for undervisning, ikke ekte priser. Ideen bygger på erfaringer fra sjøruter for laks fra Midt-Norge til Rotterdam (2020–21). Laget av Sevket Irtem for bachelor i skipsfart og logistikk, 2026.<br>Siter som: Irtem, S. S. (2026). <i>Laksekapteinen</i> (v1.0) [undervisningsspill]. Zenodo. <a href="https://doi.org/10.5281/zenodo.23494284">https://doi.org/10.5281/zenodo.23494284</a> · Lisens: <a href="https://creativecommons.org/licenses/by/4.0/deed.no" rel="license">CC BY 4.0</a></footer>
+</div>
+
+<script>
+(() => {
+  // ───────── Game values (simplified, for teaching)
+  const OWN = 50, WEEKS = 10, CAP = 60, GUARANTEE = 20;
+  const TRUCK_PRICE = 28000, SEA_PRICE = 20000, FEEDER = 3000, EMPTY_SLOT = 10000;
+  const CO2_TRUCK = 1.6, CO2_SEA = 0.7; // tonn per trailer, door to door
+  const EVENTS = [
+    { t: 'Første uke', x: 'Kunden i Rotterdam vil ha laksen så fersk som mulig. Lastebil tar ca. 2 døgn. Skipet tar ca. 2 døgn, pluss ventetid til neste avgang.' },
+    { t: 'Rolig uke', x: 'Ingen spesielle hendelser. Tenk: Hvordan får du flere eksportører med på skipet?' },
+    { t: 'Storm i Nordsjøen', x: 'Skipet blir 1 døgn forsinket denne uka.', seaDelay: 1 },
+    { t: 'Kunden vil ha laks hver dag', x: 'Kunden i Frankrike klager. Med færre enn 3 avganger blir kunden mindre fornøyd med sjølasten.', daily: true },
+    { t: 'Grensen er stengt', x: 'Kontroll på Svinesund. Lastebilene står i kø: +2 døgn og 20 % høyere pris denne uka.', truckDelay: 2, truckCost: 1.2 },
+    { t: 'Statsbudsjettet', x: 'Diesel: +0,27 kr per liter for lastebilen (ca. +160 kr per tur). Skipet betaler EU ETS: +4 % på sjøprisen. Gjelder resten av spillet.', perm: { truckAdd: 160, seaMult: 1.04 } },
+    { t: 'Mangel på sjåfører', x: 'Transportfirmaene finner ikke nok sjåfører. Lastebilprisen går opp 15 % resten av spillet.', perm: { truckMult: 1.15 } },
+    { t: 'Grønn kunde', x: 'En stor matkjede gir 50 000 kr i bonus hvis du er under 1,0 tonn CO₂ per trailer denne uka.', green: true },
+    { t: 'Nytt hybridskip', x: 'Rederiet setter inn et skip med batteri og LNG. 30 % mindre CO₂ på sjøen resten av spillet.', perm: { seaCo2: 0.7 } },
+    { t: 'Siste uke', x: 'Siste sjanse. Hvordan vil du avslutte?' },
+  ];
+
+  const fresh = () => ({ week: 1, share: 40, deps: 2, others: 0, low: 0, alive: true,
+    truckMult: 1, truckAdd: 0, seaMult: 1, seaCo2: 1, log: [], busy: false });
+  let S = fresh();
+
+  const $ = id => document.getElementById(id);
+  const nok = v => Math.abs(v) >= 1e6 ? (v / 1e6).toLocaleString('nb-NO', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' mill. kr' : Math.round(v / 1000).toLocaleString('nb-NO') + ' 000 kr';
+  const r1 = v => v.toLocaleString('nb-NO', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+
+  // ───────── Map
+  const LON0 = -2.5, LON1 = 18.5, LAT0 = 50.4, LAT1 = 65.6, W = 470, H = 640;
+  const P = ([lon, lat]) => [((lon - LON0) / (LON1 - LON0)) * W, ((LAT1 - lat) / (LAT1 - LAT0)) * H];
+  const pts = a => a.map(P).map(p => p.map(n => n.toFixed(1)).join(',')).join(' ');
+  const LAND = [
+    [[7.05,57.98],[5.6,58.9],[5.0,60.4],[4.95,61.5],[5.1,62.2],[6.3,62.6],[7.7,63.1],[8.3,63.4],[9.6,63.9],[10.6,64.5],[12.0,65.6],[18.5,65.6],[18.5,62.0],[17.4,61.0],[18.1,59.4],[16.6,57.2],[15.9,56.1],[14.3,55.4],[12.9,55.4],[12.6,56.2],[11.9,57.6],[11.2,58.4],[11.0,59.1],[10.7,59.9],[10.2,59.1],[9.5,58.9],[8.6,58.3]],
+    [[8.1,55.5],[8.1,56.6],[8.6,57.1],[10.6,57.75],[10.5,57.2],[10.3,56.5],[10.9,56.4],[10.0,55.6],[10.9,55.3],[12.6,56.05],[12.65,55.6],[12.1,54.95],[11.3,54.65],[10.0,54.8],[8.6,54.9]],
+    [[1.8,50.95],[3.4,51.4],[4.0,51.9],[4.6,52.4],[4.75,52.95],[5.2,53.4],[6.9,53.45],[8.1,53.55],[8.6,53.9],[9.0,54.0],[8.6,54.9],[9.9,54.8],[10.9,54.1],[12.3,54.3],[14.0,54.0],[16.0,54.4],[18.5,54.5],[18.5,50.4],[1.6,50.4]],
+    [[-2.5,50.6],[1.4,51.2],[1.4,51.4],[0.9,51.8],[1.75,52.5],[1.6,52.9],[0.3,52.95],[0.15,53.5],[-0.1,54.1],[-0.6,54.5],[-1.5,55.3],[-1.6,55.9],[-2.2,56.5],[-1.8,57.5],[-2.5,57.7]],
+    [[8.55,63.62],[8.95,63.66],[9.2,63.52],[8.8,63.45],[8.45,63.5]],
+  ];
+  const ROAD = [[8.8,63.55],[10.4,63.43],[10.2,62.0],[10.75,59.91],[11.27,59.1],[11.97,57.7],[13.0,55.6],[12.57,55.68],[11.35,54.65],[11.2,54.45],[10.7,53.87],[9.99,53.55],[8.8,53.08],[6.6,52.2],[4.48,51.92]];
+  const SEA = [[8.8,63.55],[7.6,63.35],[5.9,62.75],[4.6,62.15],[4.2,60.6],[4.3,58.6],[3.9,56.0],[3.5,53.6],[4.48,51.92]];
+  const CITIES = [['Hitra',[8.8,63.55],-48,-10],['Trondheim',[10.4,63.43],8,4],['Oslo',[10.75,59.91],8,4],['Göteborg',[11.97,57.7],8,4],['København',[12.57,55.68],10,4],['Hamburg',[9.99,53.55],8,-6],['Rotterdam',[4.48,51.92],-14,18]];
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); (parent || svg).appendChild(e); return e; };
+  const svg = $('map');
+  function LAND_FIRST() { LAND.forEach(poly => el('polygon', { points: pts(poly), fill: 'var(--land)', stroke: '#33536A', 'stroke-width': 1, 'stroke-linejoin': 'round' })); }
+  LAND_FIRST();
+  // graticule
+  for (let lat = 52; lat <= 64; lat += 2) { const [x0, y] = P([LON0, lat]); el('line', { x1: 0, y1: y, x2: W, y2: y, stroke: 'var(--line)', 'stroke-width': .6, 'stroke-dasharray': '2 5', opacity: .7 }); el('text', { x: 4, y: y - 3, fill: 'var(--muted)', 'font-size': 9, 'font-family': 'var(--mono)', opacity: .7 }).textContent = lat + '°N'; }
+  for (let lon = 0; lon <= 18; lon += 4) { const [x] = P([lon, LAT0]); el('line', { x1: x, y1: 0, x2: x, y2: H, stroke: 'var(--line)', 'stroke-width': .6, 'stroke-dasharray': '2 5', opacity: .7 }); }
+  const roadPath = el('polyline', { points: pts(ROAD), fill: 'none', stroke: 'var(--salmon)', 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round', opacity: .9 });
+  const seaPath = el('polyline', { points: pts(SEA), fill: 'none', stroke: 'var(--teal)', 'stroke-width': 3, 'stroke-dasharray': '7 6', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+  CITIES.forEach(([n, c, dx, dy]) => { const [x, y] = P(c); const end = n === 'Hitra' || n === 'Rotterdam';
+    el('circle', { cx: x, cy: y, r: end ? 5.5 : 3.5, fill: end ? 'var(--fg)' : 'var(--salmon)', stroke: 'var(--sea)', 'stroke-width': 1.5 });
+    const t = el('text', { x: x + dx, y: y + dy, fill: end ? 'var(--fg)' : 'var(--muted)', 'font-size': end ? 14 : 11, 'font-weight': end ? 600 : 400, 'font-family': 'var(--body)' }); t.textContent = n; });
+  const movers = el('g', {});
+
+  // ───────── Controls
+  const depWrap = $('deps');
+  [0, 1, 2, 3, 4, 5].forEach(n => { const b = document.createElement('button'); b.type = 'button'; b.textContent = n === 5 ? '5' : String(n); b.dataset.n = n; b.setAttribute('aria-label', n + ' avganger'); b.addEventListener('click', () => { S.deps = n; render(); }); depWrap.appendChild(b); });
+  $('share').addEventListener('input', e => { S.share = +e.target.value; render(); });
+  $('go').addEventListener('click', play);
+
+  function render() {
+    const ev = EVENTS[S.week - 1] || EVENTS[WEEKS - 1];
+    $('weekNo').textContent = Math.min(S.week, WEEKS);
+    $('evLab').textContent = 'Hendelse uke ' + Math.min(S.week, WEEKS);
+    $('evTitle').textContent = ev.t; $('evText').textContent = ev.x;
+    const share = S.alive ? S.share : 0;
+    $('share').value = share; $('share').disabled = !S.alive || S.busy;
+    $('shareOut').textContent = share + ' %';
+    const sea = Math.round(OWN * share / 100);
+    $('shareHint').textContent = S.alive ? `${sea} trailere på skip, ${OWN - sea} på lastebil.` : 'Sjøruten er lagt ned. All laks må kjøre lastebil.';
+    [...depWrap.children].forEach(b => { const n = +b.dataset.n; b.setAttribute('aria-pressed', String(n === S.deps)); b.disabled = !S.alive || S.busy; });
+    $('depOut').textContent = S.alive ? S.deps : 0;
+    $('go').disabled = S.busy || S.week > WEEKS;
+    $('go').textContent = S.week > WEEKS ? 'Spillet er ferdig' : `Send laksen – uke ${S.week}`;
+    const pill = $('routePill');
+    if (!S.alive) { pill.className = 'pill dead'; pill.textContent = 'Lagt ned'; }
+    else if (S.low >= 1) { pill.className = 'pill risk'; pill.textContent = `I fare (${S.low}/3)`; }
+    else { pill.className = 'pill ok'; pill.textContent = 'I drift'; }
+    $('routeText').textContent = S.alive ? `Andre eksportører vil sende ${S.others} trailere på skipet.` : 'For lite last i 3 uker. Rederiet tjente ikke penger.';
+  }
+
+  function simulate(st, week, share, deps) {
+    const ev = EVENTS[week - 1];
+    // permanent effects start in the event week
+    const p = ev.perm || {};
+    const truckMult = st.truckMult * (p.truckMult || 1), truckAdd = st.truckAdd + (p.truckAdd || 0);
+    const seaMult = st.seaMult * (p.seaMult || 1), seaCo2 = st.seaCo2 * (p.seaCo2 || 1);
+    if (!st.alive) { share = 0; deps = 0; }
+    if (deps === 0) share = 0;
+    const truckPrice = TRUCK_PRICE * truckMult * (ev.truckCost || 1) + truckAdd;
+    const truckDays = 2 + (ev.truckDelay || 0);
+    const seaPrice = SEA_PRICE * seaMult + FEEDER;
+    const wanted = Math.round(OWN * share / 100);
+    const cap = deps * CAP;
+    const mySea = Math.min(wanted, cap);
+    const overflow = wanted - mySea;
+    const othersOn = Math.min(st.others, Math.max(0, cap - mySea));
+    const shortfall = Math.max(0, deps * GUARANTEE - (mySea + othersOn));
+    const trucks = OWN - mySea;
+    let cost = (OWN - wanted) * truckPrice + overflow * truckPrice * 1.2 + mySea * seaPrice + shortfall * EMPTY_SLOT;
+    const co2 = trucks * CO2_TRUCK + mySea * CO2_SEA * seaCo2;
+    const wait = deps > 0 ? 3.5 / deps : 0;
+    const seaDays = 2 + wait + (ev.seaDelay || 0);
+    const days = (trucks * truckDays + mySea * seaDays) / OWN;
+    let sat = 100 - Math.max(0, days - 2) * 18;
+    if (ev.daily && mySea > 0 && deps < 3) sat -= 15;
+    sat = Math.max(0, Math.min(100, Math.round(sat)));
+    let bonus = 0;
+    if (ev.green && co2 / OWN < 1.0) { bonus = 50000; cost -= bonus; }
+    const load = cap > 0 ? (mySea + othersOn) / cap : 0;
+    return { ev, share, deps, wanted, mySea, overflow, othersOn, shortfall, trucks, cost, co2, days, sat, bonus, load, seaDays,
+      next: { truckMult, truckAdd, seaMult, seaCo2 } };
+  }
+
+  function play() {
+    if (S.busy || S.week > WEEKS) return;
+    const R = simulate(S, S.week, S.alive ? S.share : 0, S.alive ? S.deps : 0);
+    S.busy = true; render();
+    animate(R).then(() => {
+      // apply
+      Object.assign(S, R.next);
+      if (S.alive) {
+        if (R.deps === 0 || R.load < 0.4) S.low++; else S.low = 0;
+        if (R.deps >= 2 && R.seaDays <= 4) S.others = Math.min(120, S.others + 20);
+        else S.others = Math.max(0, S.others - 10);
+      }
+      let msg = '', cls = '';
+      if (S.alive && S.low >= 3) { S.alive = false; S.others = 0; msg = 'Rederiet legger ned sjøruten: for lite last tre uker på rad. Det samme skjedde i virkeligheten i 2021.'; cls = 'bad'; }
+      else if (R.overflow > 0) { msg = `${R.overflow} trailere fikk ikke plass på skipet og måtte kjøre lastebil til ekstra pris.`; cls = 'warn'; }
+      else if (R.shortfall > 0) { msg = `Skipet hadde tomme plasser. Du betalte for ${R.shortfall} trailere du ikke sendte.`; cls = 'warn'; }
+      else if (R.bonus) { msg = 'Bonus! Kunden betalte 50 000 kr for grønn transport.'; }
+      else if (R.mySea > 0) { msg = `Skipet var ${Math.round(R.load * 100)} % fullt. ${R.othersOn ? `${R.othersOn} trailere kom fra andre eksportører.` : 'Ingen andre eksportører var med ennå.'}`; }
+      else { msg = 'All laks kjørte lastebil denne uka.'; }
+      if (S.alive && S.low > 0 && S.low < 3 && !cls) { msg += ` Rederiet er bekymret: lite last (${S.low}/3).`; cls = 'warn'; }
+      $('result').textContent = msg; $('result').className = 'result ' + cls;
+      S.log.push({ week: S.week, t: R.ev.t, share: R.share, deps: R.deps, cost: R.cost, co2: R.co2, days: R.days, sat: R.sat });
+      showKpis(R); drawLog();
+      S.week++; S.busy = false;
+      if (S.week > WEEKS) showFinal();
+      render();
+    });
+  }
+
+  function showKpis(R) {
+    $('kCost').textContent = nok(R.cost);
+    $('kCo2').textContent = r1(R.co2) + ' t';
+    $('kDays').textContent = r1(R.days) + ' d';
+    $('kSat').textContent = R.sat + ' %';
+    const bar = $('kSatBar'); bar.style.width = R.sat + '%';
+    bar.style.background = R.sat >= 75 ? 'var(--good)' : R.sat >= 50 ? 'var(--amber)' : 'var(--red)';
+  }
+
+  function drawLog() {
+    $('log').innerHTML = S.log.map(l => `<tr><td>${l.week}</td><td class="ev" title="${l.t}">${l.t}</td><td>${l.share} %</td><td>${l.deps}</td><td>${nok(l.cost)}</td><td>${r1(l.co2)} t</td><td>${r1(l.days)}</td><td>${l.sat} %</td></tr>`).join('');
+  }
+
+  function truckOnly() {
+    // same scenario, all truck: baseline for comparison
+    let st = fresh(), cost = 0, co2 = 0;
+    for (let w = 1; w <= WEEKS; w++) { const R = simulate(st, w, 0, 0); Object.assign(st, R.next); cost += R.cost; co2 += R.co2; }
+    return { cost, co2 };
+  }
+
+  function showFinal() {
+    const tot = S.log.reduce((a, l) => ({ cost: a.cost + l.cost, co2: a.co2 + l.co2, sat: a.sat + l.sat }), { cost: 0, co2: 0, sat: 0 });
+    const base = truckOnly();
+    const dCost = tot.cost - base.cost, dCo2 = base.co2 - tot.co2;
+    const f = $('final');
+    f.innerHTML = `<h3>Resultat etter 10 uker</h3>
+      <div class="big">
+        <div><b>${nok(tot.cost)}</b><small>Total kostnad (${Math.abs(dCost) < 1000 ? 'samme som' : dCost < 0 ? nok(-dCost) + ' billigere enn' : nok(dCost) + ' dyrere enn'} bare lastebil)</small></div>
+        <div><b>${r1(tot.co2)} t</b><small>CO₂ (${r1(Math.max(0, dCo2))} t spart mot bare lastebil)</small></div>
+        <div><b>${Math.round(tot.sat / S.log.length)} %</b><small>Fornøyd kunde i snitt</small></div>
+        <div><b>${S.alive ? 'Lever' : 'Lagt ned'}</b><small>Sjøruten</small></div>
+      </div>
+      <p style="margin:0 0 6px;font-weight:600">Diskuter i gruppa:</p>
+      <ol>
+        <li>Hva var viktigst for resultatet: pris, frekvens eller samarbeid med andre eksportører?</li>
+        <li>Hvorfor var det vanskelig å få mange avganger i starten?</li>
+        <li>Hvilken hendelse endret mest? Hva kan staten gjøre for å hjelpe sjøveien?</li>
+      </ol>
+      <button class="again" id="again" type="button">Spill igjen</button>`;
+    f.hidden = false;
+    $('again').addEventListener('click', () => { S = fresh(); $('final').hidden = true; $('result').textContent = ''; $('log').innerHTML = '<tr><td colspan="8" style="text-align:left;color:var(--muted)">Ingen uker spilt ennå.</td></tr>'; ['kCost','kCo2','kDays','kSat'].forEach(id => $(id).textContent = '–'); $('kSatBar').style.width = 0; render(); });
+    f.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'nearest' });
+  }
+
+  function animate(R) {
+    movers.innerHTML = '';
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
+    const nT = Math.min(6, Math.ceil(R.trucks / 10)), nS = Math.min(3, R.mySea > 0 ? R.deps : 0);
+    const roadLen = roadPath.getTotalLength(), seaLen = seaPath.getTotalLength();
+    const dur = 2600;
+    const tSpeed = 1 / (2 + (R.ev.truckDelay || 0)), sSpeed = 1 / (2 + (R.ev.seaDelay || 0));
+    const truckDots = [...Array(nT)].map(() => el('rect', { width: 11, height: 7, rx: 2, fill: 'var(--salmon)', stroke: 'var(--sea)', 'stroke-width': 1 }, movers));
+    const ships = [...Array(nS)].map(() => { const g = el('g', {}, movers); el('path', { d: 'M-9,-3 L9,-3 L6,4 L-6,4 Z', fill: 'var(--teal)' }, g); el('rect', { x: -3, y: -8, width: 6, height: 5, fill: 'var(--fg)' }, g); return g; });
+    return new Promise(res => {
+      const t0 = performance.now();
+      const step = now => {
+        const k = Math.min(1, (now - t0) / dur);
+        truckDots.forEach((d, i) => { const f = Math.max(0, Math.min(1, (k - i * 0.06) * 2 * tSpeed * 1.15)); const pnt = roadPath.getPointAtLength(f * roadLen); d.setAttribute('x', pnt.x - 5.5); d.setAttribute('y', pnt.y - 3.5); });
+        ships.forEach((g, i) => { const f = Math.max(0, Math.min(1, (k - i * 0.12) * 2 * sSpeed * 1.15)); const pnt = seaPath.getPointAtLength(f * seaLen); g.setAttribute('transform', `translate(${pnt.x},${pnt.y})`); });
+        if (k < 1) requestAnimationFrame(step); else setTimeout(res, 250);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  render();
+})();
+</script>
+
+</body>
+</html>

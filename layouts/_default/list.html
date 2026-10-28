@@ -1,0 +1,7 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+<div class="grid">
+  {{- range .Pages.ByWeight }}{{ partial "spill-kort.html" . }}{{ end }}
+</div>
+{{ end }}

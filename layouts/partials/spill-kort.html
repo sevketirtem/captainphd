@@ -1,0 +1,15 @@
+{{- /* Oyun kartı. Ön bilgiler: title, description, lenke (oyunun adresi), status ("kommer" ise henüz yok), kilde, lisens, lisensLenke, doi */ -}}
+<article class="card{{ if eq .Params.status "kommer" }} soon{{ end }}">
+  <h3>{{ if and .Params.lenke (ne .Params.status "kommer") }}<a href="{{ .Params.lenke | relURL }}">{{ .Title }}</a>{{ else }}{{ .Title }}{{ end }}</h3>
+  <p>{{ .Description }}</p>
+  {{- if eq .Params.status "kommer" }}
+  <p class="tag">{{ i18n "kommer" }}</p>
+  {{- else }}
+  <p><a class="btn" href="{{ .Params.lenke | relURL }}">{{ i18n "spillNa" }} →</a></p>
+  {{- end }}
+  <p class="meta">
+    {{- with .Params.kilde }}{{ i18n "kilde" }}: {{ . }}<br>{{ end }}
+    {{- with .Params.lisens }}{{ i18n "lisens" }}: {{ with $.Params.lisensLenke }}<a href="{{ . }}" rel="license noopener">{{ $.Params.lisens }}</a>{{ else }}{{ . }}{{ end }}{{ end }}
+    {{- with .Params.doi }} · DOI <a href="https://doi.org/{{ . }}" rel="noopener">{{ . }}</a>{{ end }}
+  </p>
+</article>

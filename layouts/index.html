@@ -1,0 +1,15 @@
+{{ define "main" }}
+<section class="hero">
+  <p class="eyebrow">{{ site.Params.slogan }}</p>
+  {{ .Content }}
+</section>
+{{- $seksjon := cond (eq site.Language.Lang "nb") "/spill" "/games" }}
+{{- with site.GetPage $seksjon }}
+<section>
+  <h2>{{ .Title }}</h2>
+  <div class="grid">
+    {{- range .Pages.ByWeight }}{{ partial "spill-kort.html" . }}{{ end }}
+  </div>
+</section>
+{{- end }}
+{{ end }}

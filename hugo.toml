@@ -1,0 +1,56 @@
+baseURL = "https://captainphd.com/"
+title = "Captain PhD"
+defaultContentLanguage = "nb"
+defaultContentLanguageInSubdir = false
+timeZone = "Europe/Oslo"
+enableRobotsTXT = true
+disableKinds = ["taxonomy", "term"]
+
+[params]
+  # Ziyaretçi sayacı (GoatCounter, çerezsiz). Hesap açılınca kodu yaz: ör. "captainphd". Boşsa sayaç kapalı.
+  goatcounter = ""
+  author = "Sevket Suleyman Irtem"
+  orcid = "https://orcid.org/0000-0001-8101-951X"
+  github = "https://github.com/sevketirtem/captainphd"
+
+[languages]
+  [languages.nb]
+    languageName = "Norsk"
+    languageCode = "nb-NO"
+    contentDir = "content/nb"
+    weight = 1
+    [languages.nb.params]
+      description = "Læringsspill for sjøfolk og maritime studenter: sjøveisregler, navigasjon, stabilitet og mer. Laget av en tidligere dekksoffiser med doktorgrad."
+      slogan = "Maritime læringsspill"
+    [[languages.nb.menus.main]]
+      name = "Spill"
+      pageRef = "/spill"
+      weight = 1
+    [[languages.nb.menus.main]]
+      name = "Om"
+      pageRef = "/om"
+      weight = 2
+    [[languages.nb.menus.footer]]
+      name = "Personvern"
+      pageRef = "/personvern"
+      weight = 1
+  [languages.en]
+    languageName = "English"
+    languageCode = "en"
+    contentDir = "content/en"
+    weight = 2
+    [languages.en.params]
+      description = "Learning games for seafarers and maritime students: collision regulations, navigation, stability and more. Made by a former deck officer with a PhD."
+      slogan = "Maritime learning games"
+    [[languages.en.menus.main]]
+      name = "Games"
+      pageRef = "/games"
+      weight = 1
+    [[languages.en.menus.main]]
+      name = "About"
+      pageRef = "/about"
+      weight = 2
+    [[languages.en.menus.footer]]
+      name = "Privacy"
+      pageRef = "/privacy"
+      weight = 1

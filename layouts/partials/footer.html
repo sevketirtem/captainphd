@@ -1,0 +1,6 @@
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="disclaimer">{{ i18n "ansvar" }}</p>
+    <p class="fineprint">© {{ now.Year }} {{ site.Params.author }} · <a href="{{ site.Params.orcid }}" rel="noopener">ORCID</a>{{ range site.Menus.footer }} · <a href="{{ .URL }}">{{ .Name }}</a>{{ end }} · <a href="{{ site.Params.github }}" rel="noopener">{{ i18n "kode" }}</a></p>
+  </div>
+</footer>
