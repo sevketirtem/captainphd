@@ -281,7 +281,7 @@ const T = {
     perfect: 'Alt riktig. Godt sjømannskap!',
     sceneLabel: 'Tegning av et fartøy',
     disclaimer: 'Spillet er laget for læring og erstatter ikke offisiell eksamen eller opplæring.',
-    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Tegningene er laget for dette spillet.',
+    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Tegningene er laget for dette spillet. Bakgrunnen (hav og himmel) er en KI-illustrasjon (Google Nano Banana Pro) og er ikke en kilde for lanterner.',
     licence: 'Spørsmål, tekster og tegninger i spillet deles under <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.no" rel="license">CC BY-SA 3.0</a>. Fant du en feil? Gi beskjed via <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
     modeName: { natt: 'natt', dag: 'dag', blandet: 'blandet' },
     langBtn: 'English'
@@ -304,7 +304,7 @@ const T = {
     perfect: 'All correct. Good seamanship!',
     sceneLabel: 'Drawing of a vessel',
     disclaimer: 'This game is made for learning and does not replace official examinations or training.',
-    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. Drawings made for this game.',
+    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. Drawings made for this game. The sea and sky background is an AI illustration (Google Nano Banana Pro), not a reference for navigation lights.',
     licence: 'Questions, texts and drawings in this game are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>. Found an error? Report it on <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
     modeName: { natt: 'night', dag: 'day', blandet: 'mixed' },
     langBtn: 'Norsk'
@@ -553,7 +553,8 @@ function sceneSVG(sc, view, label) {
     (night ? `<stop offset="0" stop-color="#02060b"/><stop offset="1" stop-color="#0b1a28"/>` : `<stop offset="0" stop-color="#9cc7e4"/><stop offset="1" stop-color="#dcecf5"/>`) +
     `</linearGradient><filter id="glow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="3.2"/></filter></defs>`;
   s += `<rect width="${W}" height="250" fill="url(#sky${night ? 'N' : 'D'})"/>`;
-  s += `<rect y="${HZ}" width="${W}" height="${250 - HZ}" fill="${night ? '#050d14' : '#4f7f99'}"/>`;
+  s += `<image href="../img/bg-${night ? 'natt' : 'dag'}.webp" width="${W}" height="250" preserveAspectRatio="xMidYMid slice" opacity="${night ? '.5' : '.6'}"/>`;
+  s += `<rect y="${HZ}" width="${W}" height="${250 - HZ}" fill="${night ? '#050d14' : '#4f7f99'}" fill-opacity="${night ? '.72' : '.55'}"/>`;
   if (night) {
     // Ingen skrog om natten: bare lanterner (slik det ser ut i virkeligheten)
     sc.el.filter(e => visible(e, view)).forEach(e => {

@@ -1,6 +1,12 @@
 {{ define "main" }}
 <article class="prose">
   <h1>{{ .Title }}</h1>
+  {{- with .Params.band }}
+  <figure class="band">
+    <img src="{{ . | relURL }}" width="1600" height="500" alt="{{ $.Params.bandAlt }}" loading="lazy" decoding="async">
+    <figcaption>{{ i18n "kiBilde" }}</figcaption>
+  </figure>
+  {{- end }}
   {{ .Content }}
 </article>
 {{ end }}

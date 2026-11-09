@@ -1,6 +1,8 @@
 ---
 title: "For schools and shipping companies"
 description: "The games are free and ad-free. Schools, academies and shipping companies can arrange customisation and sponsorship."
+band: "img/bandet-skole.webp"
+bandAlt: "A cargo ship on the horizon over a calm sea in golden evening light"
 translationKey: "skoler"
 ---
 The games on Captain PhD are free to play, with no login and no ads. They are meant to stay that way.

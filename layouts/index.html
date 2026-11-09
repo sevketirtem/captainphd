@@ -23,4 +23,8 @@
   </div>
 </section>
 {{- end }}
+<figure class="band">
+  <img src="{{ "img/bandet-forside.webp" | relURL }}" width="1600" height="500" alt="{{ cond (eq site.Language.Lang "nb") "Utsikt fra baugen på et skip over et rolig hav i morgengry" "A view from a ship's bow over a calm sea at dawn" }}" loading="lazy" decoding="async">
+  <figcaption>{{ i18n "kiBilde" }}</figcaption>
+</figure>
 {{ end }}

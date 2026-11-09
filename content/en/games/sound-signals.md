@@ -3,6 +3,7 @@ title: "Sound signals"
 description: "Listen to the whistle signals of the collision regulations and work out what they mean: manoeuvring and warning signals, fog signals and equipment. Rules 32–37, with a timer and score."
 translationKey: "lydsignaler"
 weight: 2
+gorsel: "img/kort-lydsignaler.webp"
 lenke: "lydsignaler/?lang=en"
 lisens: "CC BY-SA 3.0"
 lisensLenke: "https://creativecommons.org/licenses/by-sa/3.0/"
