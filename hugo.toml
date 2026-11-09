@@ -27,9 +27,13 @@ disableKinds = ["taxonomy", "term"]
       pageRef = "/spill"
       weight = 1
     [[languages.nb.menus.main]]
+      name = "For skoler og rederier"
+      pageRef = "/skoler-og-rederier"
+      weight = 2
+    [[languages.nb.menus.main]]
       name = "Om"
       pageRef = "/om"
-      weight = 2
+      weight = 3
     [[languages.nb.menus.footer]]
       name = "Personvern"
       pageRef = "/personvern"
@@ -47,9 +51,13 @@ disableKinds = ["taxonomy", "term"]
       pageRef = "/games"
       weight = 1
     [[languages.en.menus.main]]
+      name = "For schools and shipping"
+      pageRef = "/for-schools-and-shipping"
+      weight = 2
+    [[languages.en.menus.main]]
       name = "About"
       pageRef = "/about"
-      weight = 2
+      weight = 3
     [[languages.en.menus.footer]]
       name = "Privacy"
       pageRef = "/privacy"
