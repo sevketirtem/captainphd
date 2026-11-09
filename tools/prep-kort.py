@@ -5,7 +5,7 @@ import sys, os, glob
 from PIL import Image
 src = sys.argv[1]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "static", "img")
-YOFF = {"kort-lanterner": 0.5, "kort-hvem-viker": 0.45, "kort-lydsignaler": 0.5}
+YOFF = {"kort-definisjoner": 0.43, "kort-lanterner": 0.5, "kort-hvem-viker": 0.45, "kort-lydsignaler": 0.5}
 def crop(im, ratio, y_off):
     w, h = im.size
     if w / h > ratio:
