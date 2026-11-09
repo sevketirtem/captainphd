@@ -220,7 +220,7 @@ JS = r"""<script id="ui-js">
 </script>
 """
 
-STYLE_BLOCK = re.compile(r'\n<style id="ui-css">.*?</style>\n', re.S)
+STYLE_BLOCK = re.compile(r'\n?<style id="ui-css">.*?</style>\n?', re.S)
 SCRIPT_BLOCK = re.compile(r'<script id="ui-js">.*?</script>\n', re.S)
 
 for slug, (knb, ken) in GAMES.items():
