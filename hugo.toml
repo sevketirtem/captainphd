@@ -31,13 +31,17 @@ disableKinds = ["taxonomy", "term"]
       pageRef = "/skoler-og-rederier"
       weight = 2
     [[languages.nb.menus.main]]
+      name = "Bøker"
+      pageRef = "/boker"
+      weight = 3
+    [[languages.nb.menus.main]]
       name = "Forskning"
       pageRef = "/forskning"
-      weight = 3
+      weight = 4
     [[languages.nb.menus.main]]
       name = "Om"
       pageRef = "/om"
-      weight = 4
+      weight = 5
     [[languages.nb.menus.footer]]
       name = "Personvern"
       pageRef = "/personvern"
@@ -59,13 +63,17 @@ disableKinds = ["taxonomy", "term"]
       pageRef = "/for-schools-and-shipping"
       weight = 2
     [[languages.en.menus.main]]
+      name = "Books"
+      pageRef = "/books"
+      weight = 3
+    [[languages.en.menus.main]]
       name = "Research"
       pageRef = "/research"
-      weight = 3
+      weight = 4
     [[languages.en.menus.main]]
       name = "About"
       pageRef = "/about"
-      weight = 4
+      weight = 5
     [[languages.en.menus.footer]]
       name = "Privacy"
       pageRef = "/privacy"
