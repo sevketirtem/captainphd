@@ -95,6 +95,14 @@ art = waves(430) + '''<g transform="translate(0,60)"><g stroke="#cfd8dc" stroke-
 <path d="M1100 450 L620 450" stroke="#fff" stroke-width="5"/></g>'''
 cards['utkikk-fart'] = frame('Utkikk, fart', 'og farvann · Regel 5–10', art, '#8e2d86')
 
+# 7 Definisjoner: bokside med fartøy
+art = waves(430) + ship(850, 400, 1.1) + '''
+<g transform="translate(560,170)" fill="none" stroke="#cfd8dc" stroke-width="6">
+<rect x="0" y="0" width="190" height="130" rx="10" fill="#ffffff" fill-opacity="0.12"/>
+<line x1="28" y1="38" x2="162" y2="38"/><line x1="28" y1="66" x2="162" y2="66"/><line x1="28" y1="94" x2="120" y2="94"/></g>
+<g transform="translate(1010,250)" stroke="#fff" stroke-width="5" fill="none"><path d="M0 0 L120 0 M0 -10 L0 10 M120 -10 L120 10"/><path d="M60 -30 L60 -8" stroke-dasharray="6 6"/></g>'''
+cards['definisjoner'] = frame('Definisjoner', 'og ansvar · Regel 1–4, 38', art, '#00796b')
+
 for k, svg in cards.items():
     p = os.path.join(OUT, f'kart-{k}')
     open(p + '.svg', 'w').write(svg)

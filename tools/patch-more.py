@@ -14,6 +14,7 @@ GAMES = [
  ('lydsignaler', 'Lydsignaler',              'Sound signals',                'Regel 32–37', 'Rules 32–37'),
  ('nodsignaler', 'Nødsignaler',              'Distress signals',             'Regel 37, vedlegg IV', 'Rule 37, Annex IV'),
  ('utkikk-fart', 'Utkikk, fart og farvann',  'Lookout, speed and channels',  'Regel 5–7, 9–10', 'Rules 5–7, 9–10'),
+ ('definisjoner', 'Definisjoner',            'Definitions',                  'Regel 1–4, 38', 'Rules 1–4, 38'),
 ]
 CSS = """/* MORE-BEGIN */
 .more { margin: 18px 0 4px; }

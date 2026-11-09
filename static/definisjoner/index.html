@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Definisjoner · Captain PhD</title>
+<meta name="description" content="Regel 1–4 og 38 i sjøveisreglene: anvendelse, ansvar, definisjoner (underveis, i sikte, nedsatt sikt, fartøy som fisker) og fritak. Gratis læringsspill med tegninger, tidtaker og poeng.">
+<link rel="canonical" href="https://captainphd.com/definisjoner/">
+<link rel="alternate" hreflang="nb" href="https://captainphd.com/definisjoner/">
+<link rel="alternate" hreflang="en" href="https://captainphd.com/definisjoner/?lang=en">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Captain PhD">
+<meta property="og:title" content="Definisjoner · Captain PhD">
+<meta property="og:description" content="Regel 1–4 og 38 i sjøveisreglene: anvendelse, ansvar, definisjoner (underveis, i sikte, nedsatt sikt, fartøy som fisker) og fritak. Gratis læringsspill med tegninger, tidtaker og poeng.">
+<meta property="og:url" content="https://captainphd.com/definisjoner/">
+<meta property="og:image" content="https://captainphd.com/img/kart-definisjoner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Definisjoner – Captain PhD">
+<meta property="og:locale" content="nb_NO">
+<meta property="og:locale:alternate" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Definisjoner · Captain PhD">
+<meta name="twitter:description" content="Regel 1–4 og 38 i sjøveisreglene: anvendelse, ansvar, definisjoner (underveis, i sikte, nedsatt sikt, fartøy som fisker) og fritak. Gratis læringsspill med tegninger, tidtaker og poeng.">
+<meta name="twitter:image" content="https://captainphd.com/img/kart-definisjoner.png">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+:root {
+  --bg: #f6f3ec; --surface: #fff; --fg: #0b2233; --muted: #4d6170; --line: #d9d3c4;
+  --signal: #d6402f; --sea: #1d5c7a; --ok: #1f7a4d; --bad: #b3261e; --amber: #b9730b; --water: #e6eef1;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0a1822; --surface: #10222f; --fg: #e8eef2; --muted: #9fb2bf; --line: #22394a;
+    --signal: #ef5a48; --sea: #6fb3d2; --ok: #4cc38a; --bad: #ff7a70; --amber: #f0b44c; --water: #0c1d29; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--font); }
+a { color: var(--sea); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+.home { color: var(--fg); text-decoration: none; font-weight: 800; }
+.lang { font: 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; background: none; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+h1 { font-size: clamp(26px, 6vw, 36px); line-height: 1.15; margin: 6px 0 8px; }
+.lede { color: var(--muted); margin: 0 0 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 14px; }
+.modes button, .opts button, .primary, .undo {
+  font: inherit; cursor: pointer; border-radius: 8px; padding: 12px; text-align: left;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.modes button[aria-pressed="true"] { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.modes b { display: block; }
+.modes span { font-size: 13px; color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
+.primary { background: var(--signal); border-color: var(--signal); color: #fff; font-weight: 700; text-align: center; width: 100%; }
+button:focus-visible, .lang:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.bar { display: flex; justify-content: space-between; font: 14px var(--mono); color: var(--muted); margin-bottom: 10px; }
+.scene { display: block; width: 100%; height: auto; max-height: 300px; background: var(--water); border-radius: 8px; }
+.cap { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+.q { font-weight: 700; margin: 14px 0 10px; }
+.opts { display: grid; gap: 8px; margin-top: 10px; }
+.opts button { display: flex; gap: 10px; align-items: baseline; position: relative; }
+.opts kbd { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+.opts button.right { border-color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
+.opts button.wrong { border-color: var(--bad); box-shadow: inset 0 0 0 2px var(--bad); }
+.opts button.picked { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.opts .ord { margin-left: auto; font: 700 14px var(--mono); color: var(--sea); min-width: 1.5em; text-align: right; }
+.opts button:disabled { cursor: default; opacity: .8; }
+.undo { margin-top: 10px; text-align: center; width: 100%; }
+.explain { margin-top: 12px; padding: 12px; border-left: 4px solid var(--sea); background: var(--bg); border-radius: 0 8px 8px 0; }
+.explain b.ok { color: var(--ok); } .explain b.bad { color: var(--bad); }
+.next { margin-top: 12px; }
+.result h2 { margin: 0 0 6px; }
+.review { padding-left: 18px; }
+.review li { margin-bottom: 8px; }
+footer { font-size: 13px; color: var(--muted); padding: 24px 0 36px; }
+footer p { margin: 0 0 6px; }
+@media (max-width: 460px) { .modes { grid-template-columns: repeat(2, 1fr); } }
+[hidden] { display: none !important; }
+.share { margin: 16px 0 4px; }
+.share h3 { font-size: 15px; margin: 0 0 8px; }
+.share .row { display: flex; flex-wrap: wrap; gap: 8px; }
+.share a, .share button { font: inherit; font-size: 14px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); text-decoration: none; cursor: pointer; }
+.share .main { background: var(--sea); border-color: var(--sea); color: #fff; }
+.share a:hover, .share button:hover { border-color: var(--sea); }
+/* MORE-BEGIN */
+.more { margin: 18px 0 4px; }
+.more h3 { font-size: 15px; margin: 0 0 8px; }
+.more .cards { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.more a.card { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); text-decoration: none; }
+.more a.card:hover { border-color: var(--sea); }
+.more a.card.next { border-color: var(--sea); }
+.more .card b { display: block; font-size: 14px; }
+.more .card span { font-size: 12px; color: var(--muted); }
+.more .home { display: inline-block; margin-top: 10px; font-size: 14px; color: var(--sea); }
+/* MORE-END */
+</style><style id="ui-css">
+/* UI-BEGIN */
+:root {
+  color-scheme: light dark;
+  --r: 14px; --r-sm: 10px;
+  --shadow: 0 1px 2px rgba(11,34,51,.06), 0 10px 28px rgba(11,34,51,.09);
+  --halo: #dbe9f0; --tint: #e7f0f5; --ring: #1d5c7a;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --shadow: 0 1px 2px rgba(0,0,0,.45), 0 12px 32px rgba(0,0,0,.38); --halo: #12384f; --tint: #14303f; --ring: #8cc8e4; }
+}
+html { -webkit-text-size-adjust: 100%; }
+body { font-size: 17px; line-height: 1.55; min-height: 100vh;
+  background: radial-gradient(900px 420px at 50% -80px, var(--halo), transparent 72%) no-repeat, var(--bg); }
+.wrap { max-width: 780px; padding: 0 16px; }
+header { padding: 14px 0 8px; }
+.home { display: inline-flex; align-items: center; gap: 8px; letter-spacing: .01em; }
+.home::before { content: ""; width: 22px; height: 22px; background: currentColor; opacity: .9;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='5' r='2.5'/%3E%3Cpath d='M12 7.5V21M7 11h10M4 15a8 8 0 0 0 16 0'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='5' r='2.5'/%3E%3Cpath d='M12 7.5V21M7 11h10M4 15a8 8 0 0 0 16 0'/%3E%3C/svg%3E") center/contain no-repeat; }
+.lang { min-height: 36px; padding: 4px 12px; border-radius: 999px; background: var(--surface); }
+.lang:hover { border-color: var(--sea); }
+.kicker { display: inline-block; font: 600 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--sea); background: var(--tint); border-radius: 999px; padding: 6px 11px; margin: 10px 0 0; }
+h1 { font-weight: 800; letter-spacing: -.015em; margin: 12px 0 8px; }
+.lede { font-size: 17px; max-width: 62ch; }
+.panel { border-radius: 16px; padding: 20px; box-shadow: var(--shadow); }
+button { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.modes { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0 16px; }
+.modes button { display: flex; flex-direction: column; gap: 2px; min-height: 92px; padding: 12px 14px; border-radius: var(--r);
+  background: var(--surface); transition: transform .15s ease, border-color .15s ease, background-color .15s ease; }
+.modes button:hover { border-color: var(--sea); }
+.modes button .ic { width: 26px; height: 26px; margin-bottom: 4px; color: var(--sea); flex: none; }
+.modes button b { font-size: 16px; }
+.modes button span { font-size: 13px; line-height: 1.35; }
+.modes button[aria-pressed="true"] { background: var(--tint); border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.primary { min-height: 54px; border-radius: 12px; font-size: 17px; letter-spacing: .01em;
+  box-shadow: 0 2px 0 rgba(0,0,0,.18), 0 8px 18px rgba(214,64,47,.22); transition: transform .12s ease, filter .15s ease; }
+.primary:hover { filter: brightness(1.06); }
+.primary:active { transform: translateY(1px) scale(.995); }
+#best:not(:empty) { display: inline-flex; align-items: center; gap: 8px; margin: 14px 0 0 !important; padding: 7px 13px;
+  font-size: 14px; color: var(--fg); background: var(--tint); border-radius: 999px; }
+#best:not(:empty)::before { content: ""; width: 18px; height: 18px; flex: none; background: var(--sea);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3'/%3E%3C/svg%3E") center/contain no-repeat; }
+.bar { align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+.bar > span { background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; }
+#clock { font-variant-numeric: tabular-nums; }
+.pbar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; margin: 0 0 14px; }
+.pbar i { display: block; height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--sea), var(--ok)); transition: width .4s ease; }
+.scene { border-radius: var(--r-sm); }
+.q { font-size: 18px; line-height: 1.45; margin: 16px 0 12px; }
+.opts { gap: 10px; }
+.opts button { min-height: 54px; padding: 12px 14px; border-radius: 12px; background: var(--surface); align-items: center; line-height: 1.4;
+  overflow-wrap: anywhere; transition: border-color .15s ease, transform .12s ease, background-color .15s ease; }
+.opts button:not(:disabled):hover { border-color: var(--sea); background: var(--tint); }
+.opts button:not(:disabled):active { transform: scale(.992); }
+.opts kbd { display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0; border-radius: 7px; background: var(--bg); flex: none; }
+.opts button.right { background: color-mix(in srgb, var(--ok) 13%, var(--surface)); }
+.opts button.wrong { background: color-mix(in srgb, var(--bad) 11%, var(--surface)); }
+.opts button.right kbd { background: var(--ok); color: #fff; border-color: var(--ok); }
+.opts button.wrong kbd { background: var(--bad); color: #fff; border-color: var(--bad); }
+.explain { font-size: 16px; line-height: 1.6; padding: 14px 16px; border-radius: 0 var(--r-sm) var(--r-sm) 0; background: var(--tint); }
+.next { margin-top: 14px; }
+.result { text-align: left; }
+.result h2 { font-size: 22px; margin: 0 0 4px; }
+.scorebig { display: flex; align-items: baseline; gap: 10px; margin: 2px 0 6px; }
+.scorebig b { font: 800 clamp(44px, 12vw, 64px)/1 var(--font); letter-spacing: -.03em; color: var(--sea); font-variant-numeric: tabular-nums; }
+.scorebig span { font-size: 16px; color: var(--muted); }
+.review { padding-left: 20px; }
+.review li { margin-bottom: 10px; }
+.share .row a, .share .row button { min-height: 44px; border-radius: 999px; }
+.more a.card { border-radius: 12px; min-height: 56px; transition: border-color .15s ease, transform .12s ease; }
+.more a.card:hover { transform: translateY(-1px); }
+footer { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 18px; line-height: 1.5; }
+section:not([hidden]) { animation: ui-in .28s ease-out both; }
+@keyframes ui-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes ui-pop { 0% { transform: scale(1); } 45% { transform: scale(1.018); } 100% { transform: scale(1); } }
+@keyframes ui-shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 80% { transform: translateX(-3px); } }
+.opts button.right { animation: ui-pop .32s ease-out; }
+.opts button.wrong { animation: ui-shake .32s ease-out; }
+@media (max-width: 460px) {
+  body { font-size: 16.5px; }
+  .wrap { padding: 0 12px; }
+  .panel { padding: 14px; border-radius: 14px; }
+  .modes { grid-template-columns: 1fr; gap: 8px; }
+  .modes button { display: grid; grid-template-columns: 34px 1fr; column-gap: 12px; min-height: 64px; align-items: center; }
+  .modes button .ic { grid-row: 1 / span 2; margin: 0; }
+  .q { font-size: 17px; }
+  .bar { flex-wrap: wrap; }
+  .explain { font-size: 15.5px; padding: 12px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  section:not([hidden]), .opts button.right, .opts button.wrong { animation: none; }
+  .pbar i, .modes button, .opts button, .primary, .more a.card { transition: none; }
+}
+/* UI-END */
+</style>
+<style id="musikk-css">
+/* MUSIKK-BEGIN */
+.musikk { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
+.musikk button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-size: 14px; cursor: pointer; }
+.musikk button:hover { border-color: var(--sea); }
+.musikk button[aria-pressed="true"] { background: var(--tint, var(--surface)); border-color: var(--sea); box-shadow: inset 0 0 0 1px var(--sea); }
+.musikk button svg { width: 18px; height: 18px; flex: none; }
+.musikk .muz-note { font-size: 12px; color: var(--muted); }
+/* MUSIKK-END */
+</style>
+
+
+<script data-goatcounter="https://captainphd.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<meta name="theme-color" content="#f6f3ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a1822" media="(prefers-color-scheme: dark)">
+</head>
+<body data-game="definisjoner" data-kicker-nb="K52 · Regel 1–4, 38" data-kicker-en="K52 · Rules 1–4, 38">
+<div class="wrap">
+  <header>
+    <a class="home" href="../" data-href-nb="../" data-href-en="../en/">Captain PhD</a>
+    <button class="lang" id="lang" type="button">English</button>
+  </header>
+
+  <main>
+    <section id="start">
+      <h1 data-t="title"></h1>
+      <p class="lede" data-t="lede"></p>
+      <div class="panel">
+        <b data-t="chooseMode"></b>
+        <div class="modes" role="group">
+          <button type="button" data-mode="anv" aria-pressed="true"><b data-t="mAnv"></b><span data-t="mAnvSub"></span></button>
+          <button type="button" data-mode="def" aria-pressed="false"><b data-t="mDef"></b><span data-t="mDefSub"></span></button>
+          <button type="button" data-mode="sikt" aria-pressed="false"><b data-t="mSikt"></b><span data-t="mSiktSub"></span></button>
+          <button type="button" data-mode="blandet" aria-pressed="false"><b data-t="mMix"></b><span data-t="mMixSub"></span></button>
+        </div>
+        <p class="note" data-t="note"></p>
+        <button class="primary" id="go" type="button" data-t="start"></button>
+        <p id="best" class="lede" style="margin:10px 0 0"></p>
+      </div>
+    </section>
+
+    <section id="play" hidden>
+      <div class="panel">
+        <div class="bar"><span id="count"></span><span id="clock">0:00</span><span id="score"></span></div>
+        <div id="sceneBox"></div>
+        <p class="cap" id="cap" hidden></p>
+        <p class="q" id="question"></p>
+        <div class="opts" id="opts"></div>
+                <div class="explain" id="explain" hidden aria-live="polite"></div>
+        <button class="primary next" id="next" type="button" hidden></button>
+      </div>
+    </section>
+
+    <section id="result" hidden>
+      <div class="panel result">
+        <h2 id="resTitle"></h2>
+        <p id="resText"></p>
+        <div id="resReview"></div>
+        <div id="share"></div>
+        <div id="more"></div>
+        <button class="primary" id="again" type="button" data-t="again"></button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-t="disclaimer"></p>
+    <p data-t="source"></p>
+    <p data-t="licence"></p>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ==========================================================================
+   Definisjoner og ansvar — Captain PhD
+   Kilde/Source: Marfag K52 Lærebok sjøveisreglene (regel 1 s. 26–27; regel 2 s. 29; regel 3 s. 36–37;
+   regel 4 s. 41; regel 38 s. 223–224), CC BY-SA 3.0; tilpasset/adapted.
+   Faktatabell: captainphd-prosjektet, k52-tanimlar-unntak-faktatabell.md
+   Bare regelteksten brukes som fasit. Lærebokens egne forklaringer er merket «Boka» i begrunnelsen
+   og er ikke regeltekst. De norske særreglene (regel 39–41) er ikke med.
+   ========================================================================== */
+
+const T = {
+  nb: {
+    title: 'Definisjoner',
+    lede: 'Regel 1–4 og 38 i sjøveisreglene: hvor reglene gjelder, hvem som har ansvar, hva «underveis», «i sikte» og «nedsatt sikt» betyr, og hvem som kan få fritak. Tegninger ovenfra, tidtaker og poeng. 10 spørsmål.',
+    chooseMode: 'Velg modus',
+    mAnv: 'Anvendelse og ansvar', mAnvSub: 'Regel 1, 2',
+    mDef: 'Definisjoner', mDefSub: 'Regel 3',
+    mSikt: 'Siktforhold og fritak', mSiktSub: 'Regel 4, 38',
+    mMix: 'Blandet', mMixSub: 'Alt',
+    note: 'Fasit er regelteksten. Spørsmål som bygger på lærebokens egne forklaringer er merket «Boka» i begrunnelsen, og er ikke regeltekst. Bare de internasjonale reglene gjelder her, ikke de norske særreglene (regel 39–41).',
+    start: 'Start', again: 'Spill igjen', next: 'Neste', finish: 'Se resultat',
+    right: 'Riktig!', wrong: 'Feil.', answerWas: 'Riktig svar:',
+    count: (i, n) => `Spørsmål ${i}/${n}`, score: s => `${s} poeng`,
+    resTitle: (c, n) => `${c} av ${n} riktige`,
+    resText: (time, pts) => `Tid: ${time}. Poeng: ${pts}.`,
+    best: (pts, mode) => `Din beste poengsum (${mode}): ${pts}`,
+    reviewTitle: 'Dette bør du lese en gang til:',
+    perfect: 'Alt riktig. Godt sjømannskap!',
+    sceneAlt: 'Tegning ovenfra',
+    uwAlt: 'Tegning av tre fartøy, A, B og C, i ulike situasjoner',
+    fishAlt: 'Tegning av tre fartøy, A, B og C, med ulikt fiskeredskap',
+    solution: 'Grønn ramme: det riktige. Tegningen er laget for dette spillet.',
+    lbl: { anchor: ['Ligger til', 'ankers'], quay: ['Fortøyd', 'til kai'], ground: ['Står', 'på grunn'], drift: ['Driver,', 'maskin stoppet'], power: ['Går for', 'maskin'],
+           trawl: ['Tråler med', 'tråldører'], net: ['Setter', 'garn'], troll: ['Liner', 'på slep'], none: ['Uten', 'redskap'] },
+    disclaimer: 'Spillet er laget for læring og erstatter ikke offisiell eksamen eller opplæring.',
+    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Tegningene er laget for dette spillet.',
+    licence: 'Spørsmål, tekster og tegninger i spillet deles under <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.no" rel="license">CC BY-SA 3.0</a>. Fant du en feil? Gi beskjed via <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { anv: 'anvendelse og ansvar', def: 'definisjoner', sikt: 'siktforhold og fritak', blandet: 'blandet' },
+    langBtn: 'English'
+  },
+  en: {
+    title: 'Definitions',
+    lede: 'Rules 1–4 and 38 of the collision regulations: where the rules apply, who is responsible, what “underway”, “in sight” and “restricted visibility” mean, and who can be exempted. Drawings from above, a timer and score. 10 questions.',
+    chooseMode: 'Choose a mode',
+    mAnv: 'Application and responsibility', mAnvSub: 'Rules 1, 2',
+    mDef: 'Definitions', mDefSub: 'Rule 3',
+    mSikt: 'Visibility and exemptions', mSiktSub: 'Rules 4, 38',
+    mMix: 'Mixed', mMixSub: 'Everything',
+    note: 'The answer key is the text of the rules. Questions based on the textbook’s own explanations are marked “Book” in the explanation and are not rule text. Only the international rules apply here, not the Norwegian special rules (rules 39–41).',
+    start: 'Start', again: 'Play again', next: 'Next', finish: 'See result',
+    right: 'Correct!', wrong: 'Wrong.', answerWas: 'Correct answer:',
+    count: (i, n) => `Question ${i}/${n}`, score: s => `${s} points`,
+    resTitle: (c, n) => `${c} of ${n} correct`,
+    resText: (time, pts) => `Time: ${time}. Points: ${pts}.`,
+    best: (pts, mode) => `Your best score (${mode}): ${pts}`,
+    reviewTitle: 'Worth reading once more:',
+    perfect: 'All correct. Good seamanship!',
+    sceneAlt: 'Drawing from above',
+    uwAlt: 'Drawing of three vessels, A, B and C, in different situations',
+    fishAlt: 'Drawing of three vessels, A, B and C, with different fishing gear',
+    solution: 'Green frame: the correct one. The drawing was made for this game.',
+    lbl: { anchor: ['At', 'anchor'], quay: ['Made fast', 'to quay'], ground: ['Aground', ''], drift: ['Drifting,', 'engine stopped'], power: ['Under', 'power'],
+           trawl: ['Trawling', 'with otter boards'], net: ['Setting', 'a net'], troll: ['Trolling', 'lines'], none: ['No', 'gear'] },
+    disclaimer: 'This game is made for learning and does not replace official examinations or training.',
+    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. The drawings were made for this game.',
+    licence: 'Questions, texts and drawings in this game are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>. Found a mistake? Tell us on <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { anv: 'application and responsibility', def: 'definitions', sikt: 'visibility and exemptions', blandet: 'mixed' },
+    langBtn: 'Norsk'
+  }
+};
+const N = 10;
+
+/* ---------- Hjelpere ---------- */
+const rad = d => d * Math.PI / 180;
+const norm = a => ((a % 360) + 360) % 360;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function cycle(pool) { let q = []; return () => { if (!q.length) q = shuffle(pool.slice()); return q.pop(); }; }
+const L2 = (nb, en) => ({ nb, en });
+const f1 = x => x.toFixed(1);
+
+/* ---------- Tegning (SVG) ---------- */
+function hull(x, y, col, w) {
+  return `<g transform="translate(${f1(x)} ${f1(y)})"><path d="M0 -14 L6.5 -5 L6.5 11 L-6.5 11 L-6.5 -5 Z" fill="${col}" stroke="var(--fg)" stroke-width="${w || 1.4}" stroke-linejoin="round"/></g>`;
+}
+function badge(x, y, ch, col) {
+  return `<circle cx="${f1(x)}" cy="${f1(y)}" r="10" fill="var(--surface)" stroke="${col || 'var(--fg)'}" stroke-width="2"/>` +
+    `<text x="${f1(x)}" y="${f1(y + 4.5)}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--fg)">${ch}</text>`;
+}
+const STK = 'stroke="var(--fg)" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+/* Tilleggstegning rundt skroget (skrog i (x, 82)) */
+function extras(kind, x) {
+  const y = 82;
+  switch (kind) {
+    case 'anchor': // ankerline fra baugen og et anker
+      return `<path d="M${x} ${y - 14} Q${x - 10} ${y - 30} ${x - 8} ${y - 44}" ${STK} stroke-width="1.6"/>` +
+        `<g transform="translate(${x - 8} ${y - 44})"><line x1="0" y1="0" x2="0" y2="14" ${STK} stroke-width="2"/><line x1="-5" y1="4" x2="5" y2="4" ${STK} stroke-width="2"/><path d="M-8 9 Q0 20 8 9" ${STK} stroke-width="2"/></g>`;
+    case 'quay': // kai på venstre side og fortøyningsliner
+      return `<rect x="${x - 40}" y="${y - 40}" width="22" height="92" fill="var(--line)" stroke="var(--fg)" stroke-width="1.2"/>` +
+        `<line x1="${x - 6.5}" y1="${y - 6}" x2="${x - 18}" y2="${y - 14}" ${STK} stroke-width="1.6"/><line x1="${x - 6.5}" y1="${y + 6}" x2="${x - 18}" y2="${y + 14}" ${STK} stroke-width="1.6"/>`;
+    case 'ground': // grunne under skroget
+      return `<path d="M${x - 22} ${y + 14} Q${x - 24} ${y - 4} ${x - 8} ${y - 10} Q${x} ${y - 20} ${x + 10} ${y - 10} Q${x + 26} ${y - 2} ${x + 22} ${y + 14} Q${x} ${y + 24} ${x - 22} ${y + 14} Z" fill="var(--amber)" opacity=".5" stroke="var(--amber)" stroke-width="1.5"/>`;
+    case 'drift': // strømpil, ingen kjølvann
+      return `<path d="M${x + 22} ${y - 26} L${x + 22} ${y + 14}" ${STK} stroke-width="2" stroke-dasharray="5 4"/><polygon points="${x + 22},${y + 22} ${x + 17},${y + 12} ${x + 27},${y + 12}" fill="var(--fg)"/>`;
+    case 'power': // fartspil og kjølvann
+      return `<path d="M${x - 5} ${y + 14} L${x - 12} ${y + 40} M${x + 5} ${y + 14} L${x + 12} ${y + 40}" ${STK} stroke-width="1.4" opacity=".6"/><polygon points="${x},${y - 34} ${x - 5},${y - 24} ${x + 5},${y - 24}" fill="var(--fg)"/>`;
+    case 'trawl': // tråldører og trål bak skroget
+      return `<path d="M${x - 4} ${y + 11} L${x - 24} ${y + 40} M${x + 4} ${y + 11} L${x + 24} ${y + 40}" ${STK} stroke-width="1.4"/>` +
+        `<path d="M${x - 24} ${y + 40} L${x + 24} ${y + 40} L${x + 8} ${y + 78} L${x - 8} ${y + 78} Z" fill="var(--sea)" opacity=".35" stroke="var(--fg)" stroke-width="1.4"/>` +
+        `<rect x="${x - 28}" y="${y + 36}" width="6" height="9" fill="var(--fg)"/><rect x="${x + 22}" y="${y + 36}" width="6" height="9" fill="var(--fg)"/>`;
+    case 'net': // garn med flottører
+      return `<path d="M${x - 40} ${y + 24} L${x + 40} ${y + 24}" ${STK} stroke-width="1.4"/><path d="M${x - 40} ${y + 32} L${x + 40} ${y + 32}" ${STK} stroke-width="1" stroke-dasharray="2 2"/>` +
+        [-40, -20, 0, 20, 40].map(d => `<circle cx="${x + d}" cy="${y + 24}" r="3" fill="var(--amber)" stroke="var(--fg)" stroke-width="1"/>`).join('') +
+        `<path d="M${x - 6.5} ${y + 8} L${x - 20} ${y + 24}" ${STK} stroke-width="1.2"/>`;
+    case 'troll': // to tynne liner med sluk
+      return `<path d="M${x - 4} ${y + 11} L${x - 17} ${y + 58}" ${STK} stroke-width="1"/><path d="M${x + 4} ${y + 11} L${x + 17} ${y + 58}" ${STK} stroke-width="1"/>` +
+        `<circle cx="${x - 17}" cy="${y + 60}" r="3" fill="var(--amber)" stroke="var(--fg)" stroke-width="1"/><circle cx="${x + 17}" cy="${y + 60}" r="3" fill="var(--amber)" stroke="var(--fg)" stroke-width="1"/>`;
+    default: return '';
+  }
+}
+function panelsSVG(sc, tx, solved, alt) {
+  const W = 340, H = 205;
+  let g = '';
+  sc.panels.forEach(p => {
+    const good = solved && p.letter === sc.ok, l = tx.lbl[p.kind];
+    g += `<rect x="${p.x - 54}" y="6" width="108" height="${H - 12}" rx="8" fill="none" stroke="${good ? 'var(--ok)' : 'var(--line)'}" stroke-width="${good ? 3 : 1}"/>`;
+    g += extras(p.kind, p.x) + hull(p.x, 82, good ? 'var(--ok)' : 'var(--surface)', 1.8) + badge(p.x, 22, p.letter, good ? 'var(--ok)' : 'var(--fg)');
+    g += `<text x="${p.x}" y="${H - 28}" text-anchor="middle" font-size="11" fill="var(--fg)">${l[0]}</text><text x="${p.x}" y="${H - 15}" text-anchor="middle" font-size="11" fill="var(--fg)">${l[1]}</text>`;
+  });
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}" role="img" aria-label="${alt}">${g}</svg>`;
+}
+
+/* ---------- Tegningsspørsmål ---------- */
+const LETTER = ['A', 'B', 'C'];
+const o = (id, nb, en) => ({ id, nb, en });
+const vesselOpts = () => LETTER.map(l => o(l, 'Fartøy ' + l, 'Vessel ' + l));
+const XS = [57, 170, 283];
+function threePanels(okKind, badKinds) {
+  const kinds = shuffle([okKind, ...badKinds]);
+  const panels = kinds.map((k, i) => ({ x: XS[i], letter: LETTER[i], kind: k }));
+  return { panels, ok: panels.find(p => p.kind === okKind).letter, key: kinds.join('') };
+}
+function uwQuestion() {
+  const sc = threePanels(pick(['drift', 'power']), shuffle(['anchor', 'quay', 'ground']).slice(0, 2));
+  return { kind: 'mc', scene: { uw: sc, sol: true }, pool: 'uw' + sc.key,
+    stem: L2('Hvilket av fartøyene er «underveis» etter regel 3 (i)?', 'Which of the vessels is “underway” under rule 3 (i)?'),
+    opts: vesselOpts(), ok: sc.ok, ref: 'Regel 3 (i), s. 36–37',
+    x: L2('Et fartøy er underveis når det ikke ligger til ankers, ikke er fortøyd til land og ikke står på grunn (regel 3 (i)). Å gå for maskin er ikke en betingelse: et fartøy som driver med stoppet maskin, er også underveis.',
+          'A vessel is underway when she is not at anchor, or made fast to the shore, or aground (rule 3 (i)). Using the engine is not a condition: a vessel drifting with her engine stopped is also underway.') };
+}
+function fishQuestion() {
+  const sc = threePanels(pick(['trawl', 'net']), ['troll', 'none']);
+  return { kind: 'mc', scene: { fish: sc, sol: true }, pool: 'fi' + sc.key,
+    stem: L2('Hvilket av fartøyene er et «fartøy som fisker» etter regel 3 (d)?', 'Which of the vessels is a “vessel engaged in fishing” under rule 3 (d)?'),
+    opts: vesselOpts(), ok: sc.ok, ref: 'Regel 3 (d), s. 36–37',
+    x: L2('Et fartøy som fisker, bruker garn, liner, trål eller annet redskap som begrenser manøvreringsevnen. Fiske med liner på slep eller annet redskap som ikke begrenser manøvreringsevnen, regnes ikke med (regel 3 (d)).',
+          'A vessel engaged in fishing uses nets, lines, trawls or other fishing apparatus which restrict manoeuvrability. Fishing with trolling lines or other apparatus which do not restrict manoeuvrability is not included (rule 3 (d)).') };
+}
+
+/* ---------- Faktaspørsmål ---------- */
+const mk = (stem, os, x, ref, g) => ({ g, q: stem, o: os, x, ref });
+const yrs = (a, b, c, d) => [L2(a[0], a[1]), L2(b[0], b[1]), L2(c[0], c[1]), L2(d[0], d[1])];
+const Y4 = ['4 år', '4 years'], Y9 = ['9 år', '9 years'], YP = ['Varig fritak', 'A permanent exemption'], Y1 = ['1 år', '1 year'], Y2 = ['2 år', '2 years'];
+/* Faktaspørsmål. o[0] er riktig svar. g: 'a' (regel 1, 2), 'd' (regel 3), 'v' (regel 4, 38). */
+const FACTS = [
+  /* ---- Regel 1 og 2 ---- */
+  mk(L2('Hvilke fartøy gjelder reglene for (regel 1 (a))?', 'Which vessels do the rules apply to (rule 1 (a))?'),
+    [L2('Alle fartøy på åpent hav og på tilhørende farvann som kan trafikkeres av sjøgående fartøy', 'All vessels upon the high seas and in all waters connected therewith navigable by seagoing vessels'), L2('Bare fartøy over 20 meter', 'Only vessels over 20 metres'), L2('Bare maskindrevne fartøy', 'Only power-driven vessels'), L2('Bare handelsskip', 'Only merchant ships')],
+    L2('Reglene gjelder for alle fartøy på åpent hav og på alle farvann som henger sammen med det og kan trafikkeres av sjøgående fartøy (regel 1 (a)).', 'The rules apply to all vessels upon the high seas and in all waters connected therewith navigable by seagoing vessels (rule 1 (a)).'), 'Regel 1 (a), s. 26–27', 'a'),
+  mk(L2('Myndighetene gir særregler for rede, havn, elv, innsjø eller indre farvann. Hva skal de være (regel 1 (b))?', 'The authority makes special rules for a roadstead, harbour, river, lake or inland waterway. What shall they be like (rule 1 (b))?'),
+    [L2('Så nær i samsvar med sjøveisreglene som mulig', 'As closely in conformity with these Rules as possible'), L2('Helt uavhengige av sjøveisreglene', 'Completely independent of these Rules'), L2('Like strenge som sjøveisreglene, men bare på dagtid', 'As strict as these Rules, but only by day'), L2('Godkjent av alle andre stater', 'Approved by all other states')],
+    L2('Reglene hindrer ikke at myndighetene gir særlige bestemmelser for rede, havn, elv, innsjø eller indre farvann, men de skal være så nær i samsvar med disse reglene som mulig (regel 1 (b)).', 'Nothing in the rules interferes with special rules made by the appropriate authority for roadsteads, harbours, rivers, lakes or inland waterways, but such rules shall conform as closely as possible to these Rules (rule 1 (b)).'), 'Regel 1 (b), s. 26–27', 'a'),
+  mk(L2('Staten gir egne lykter eller signaler for krigsskip eller konvoier. Hva kreves (regel 1 (c))?', 'A government gives extra lights or signals for warships or ships in convoy. What is required (rule 1 (c))?'),
+    [L2('De skal så vidt mulig ikke kunne forveksles med noe lys, noen skapning eller noe signal i reglene', 'They shall, so far as possible, not be capable of being mistaken for any light, shape or signal in these Rules'), L2('De erstatter lysene i reglene', 'They replace the lights in these Rules'), L2('De må være røde', 'They must be red'), L2('De kan være like som lysene i reglene', 'They may be identical to the lights in these Rules')],
+    L2('Slike ekstra stasjons- eller signallys, skapninger eller fløytesignaler skal så vidt mulig være slik at de ikke kan forveksles med noe lys, noen skapning eller noe signal i reglene (regel 1 (c)).', 'Such additional station or signal lights, shapes or whistle signals shall, so far as possible, be such that they cannot be mistaken for any light, shape or signal authorized elsewhere under these Rules (rule 1 (c)).'), 'Regel 1 (c), s. 26–27', 'a'),
+  mk(L2('Hvem kan vedta trafikkseparasjonssystemer for bruk etter reglene (regel 1 (d))?', 'Who may adopt traffic separation schemes for the purpose of these Rules (rule 1 (d))?'),
+    [L2('Organisasjonen (i praksis IMO)', 'The Organization (in practice IMO)'), L2('Hvert enkelt rederi', 'Each individual shipping company'), L2('Hver skipsfører for seg', 'Each master individually'), L2('Klasseselskapene', 'The classification societies')],
+    L2('Trafikkseparasjonssystemer kan vedtas av Organisasjonen (regel 1 (d)). Regelteksten sier «Organisasjonen»; i praksis er det Den internasjonale sjøfartsorganisasjonen, IMO.', 'Traffic separation schemes may be adopted by the Organization (rule 1 (d)). The rule text says “the Organization”; in practice this is the International Maritime Organization, IMO.'), 'Regel 1 (d), s. 26–27', 'a'),
+  mk(L2('Hva gjelder for et fartøy av særlig konstruksjon eller formål, når det ikke kan følge reglene om lys, skapninger og lydsignaler (regel 1 (e))?', 'What applies to a vessel of special construction or purpose that cannot comply fully with the rules on lights, shapes and sound signals (rule 1 (e))?'),
+    [L2('Staten fastsetter andre bestemmelser som kommer reglene så nær som mulig', 'Her government determines other provisions that comply as closely as possible with the Rules'), L2('Fartøyet er helt fritatt fra reglene', 'The vessel is fully exempt from the Rules'), L2('Skipsføreren bestemmer selv hva som skal brukes', 'The master decides for himself what to use'), L2('Fartøyet må likevel følge alle reglene fullt ut', 'The vessel must still comply fully with all of the Rules')],
+    L2('Hvis et fartøy av særlig konstruksjon eller formål ikke kan følge reglene fullt ut, skal staten fastsette andre bestemmelser om antall, plassering, rekkevidde eller lysvinkel på lysene, skapningene og lydsignalapparatene, så nær reglene som mulig (regel 1 (e)).', 'For a vessel of special construction or purpose, her government shall determine other provisions regarding the number, position, range or arc of visibility of lights or shapes and the siting and characteristics of sound-signalling appliances, with the closest possible compliance (rule 1 (e)).'), 'Regel 1 (e), s. 26–27', 'a'),
+  mk(L2('Fritar reglene fartøyet, rederiet, skipsføreren eller mannskapet fra følgene av forsømmelse (regel 2 (a))?', 'Do the rules exonerate the vessel, her owner, master or crew from the consequences of neglect (rule 2 (a))?'),
+    [L2('Nei, ikke fra følgene av forsømmelse av reglene eller av vanlig sjømannskap', 'No, not from the consequences of neglect to comply with the Rules or of ordinary seamanship'), L2('Ja, hvis fartøyet følger kurs og fart', 'Yes, if the vessel keeps course and speed'), L2('Ja, hvis fartøyet har forkjørsrett', 'Yes, if the vessel has the right of way'), L2('Ja, hvis ulykken skjer i mørke', 'Yes, if the accident happens in darkness')],
+    L2('Reglene fritar ikke fartøyet, rederiet, skipsføreren eller mannskapet for følgene av forsømmelse av å følge reglene, eller av forsømmelse av noen forholdsregel som vanlig sjømannskap eller omstendighetene i det enkelte tilfellet krever (regel 2 (a)).', 'Nothing in the Rules shall exonerate any vessel, or the owner, master or crew thereof, from the consequences of any neglect to comply with the Rules or of the neglect of any precaution which may be required by the ordinary practice of seamen, or by the special circumstances of the case (rule 2 (a)).'), 'Regel 2 (a), s. 29', 'a'),
+  mk(L2('Hvilke forholdsregler kan komme i tillegg til selve reglene (regel 2 (a))?', 'Which precautions may be required in addition to the Rules themselves (rule 2 (a))?'),
+    [L2('De som vanlig sjømannskap eller omstendighetene i det enkelte tilfellet krever', 'Those required by the ordinary practice of seamen or by the special circumstances of the case'), L2('Bare de som rederiet har bestemt', 'Only those the owner has decided'), L2('Ingen; reglene er fullstendige', 'None; the Rules are complete'), L2('Bare de som kystvakten pålegger', 'Only those the coast guard orders')],
+    L2('Forsømmelse av forholdsregler som vanlig sjømannskap eller omstendighetene i det enkelte tilfellet krever, kan også føre til ansvar (regel 2 (a)).', 'Neglect of precautions required by the ordinary practice of seamen or by the special circumstances of the case can also lead to liability (rule 2 (a)).'), 'Regel 2 (a), s. 29', 'a'),
+  mk(L2('Når kan det være nødvendig å fravike reglene (regel 2 (b))?', 'When may a departure from the Rules be necessary (rule 2 (b))?'),
+    [L2('For å unngå umiddelbar fare', 'To avoid immediate danger'), L2('For å spare drivstoff', 'To save fuel'), L2('Når det andre fartøyet er mindre', 'When the other vessel is smaller'), L2('Når skipsføreren synes det passer', 'When the master finds it convenient')],
+    L2('Ved tolkingen og anvendelsen av reglene skal det tas hensyn til alle farer ved seilasen og risikoen for sammenstøt, og til alle særlige omstendigheter. Det kan være nødvendig å fravike reglene for å unngå umiddelbar fare (regel 2 (b)).', 'In construing and complying with the Rules due regard shall be had to all dangers of navigation and collision and to any special circumstances. A departure from the Rules may be necessary to avoid immediate danger (rule 2 (b)).'), 'Regel 2 (b), s. 29', 'a'),
+  mk(L2('Hva skal det tas hensyn til når reglene tolkes og anvendes (regel 2 (b))?', 'What shall be taken into account when the Rules are construed and complied with (rule 2 (b))?'),
+    [L2('Alle farer ved seilasen og ved sammenstøt, og alle særlige omstendigheter, også begrensninger hos de fartøyene det gjelder', 'All dangers of navigation and collision and any special circumstances, including the limitations of the vessels involved'), L2('Bare fartøyenes størrelse', 'Only the size of the vessels'), L2('Bare flaggstaten', 'Only the flag state'), L2('Bare siktforholdene', 'Only the visibility')],
+    L2('Det skal tas hensyn til alle farer ved seilasen og ved sammenstøt, og til alle særlige omstendigheter, herunder begrensninger hos de fartøyene som er involvert (regel 2 (b)).', 'Due regard shall be had to all dangers of navigation and collision and to any special circumstances, including the limitations of the vessels involved (rule 2 (b)).'), 'Regel 2 (b), s. 29', 'a'),
+  mk(L2('Kan en skipsfører fravike reglene fordi han frykter at et annet fartøy vil bryte dem (Boka)?', 'May a master depart from the Rules because he fears another vessel will break them (the book)?'),
+    [L2('Nei, avvik er bare tillatt der det er nødvendig for å unngå umiddelbar fare', 'No, a departure is only allowed where necessary to avoid immediate danger'), L2('Ja, så snart han mistenker brudd', 'Yes, as soon as he suspects a breach'), L2('Ja, hvis det andre fartøyet er større', 'Yes, if the other vessel is larger'), L2('Ja, hvis han har forkjørsrett', 'Yes, if he has the right of way')],
+    L2('Boka (s. 30) skriver at man ikke kan fravike reglene bare fordi man venter at andre vil bryte dem. Avvik er bare riktig når det er nødvendig for å unngå umiddelbar fare (regel 2 (b)). Boka understreker også at det ikke finnes noen absolutt «forkjørsrett».', 'The book (p. 30) says one cannot depart from the Rules merely because one expects others to break them. A departure is only right when necessary to avoid immediate danger (rule 2 (b)). The book also stresses that there is no absolute “right of way”.'), 'Regel 2 (b), s. 29; Boka s. 30 (forklaring, ikke regeltekst)', 'a'),
+
+  /* ---- Regel 3 ---- */
+  mk(L2('Hva regnes som «fartøy» etter regel 3 (a)?', 'What counts as a “vessel” under rule 3 (a)?'),
+    [L2('Enhver type vannfartøy, også fartøy uten deplasement, WIG-fartøy og sjøfly, som brukes eller kan brukes som transportmiddel på vann', 'Every description of water craft, including non-displacement craft, wing-in-ground craft and seaplanes, used or capable of being used as a means of transportation on water'), L2('Bare skip over 20 meter', 'Only ships over 20 metres'), L2('Bare fartøy med motor', 'Only craft with an engine'), L2('Bare fartøy som er registrert i et skipsregister', 'Only craft entered in a ship register')],
+    L2('«Fartøy» omfatter enhver type vannfartøy, også fartøy uten deplasement, WIG-fartøy og sjøfly, som brukes eller kan brukes som transportmiddel på vann (regel 3 (a)).', '“Vessel” includes every description of water craft, including non-displacement craft, WIG craft and seaplanes, used or capable of being used as a means of transportation on water (rule 3 (a)).'), 'Regel 3 (a), s. 36–37', 'd'),
+  mk(L2('Hva er et «maskindrevet fartøy» (regel 3 (b))?', 'What is a “power-driven vessel” (rule 3 (b))?'),
+    [L2('Ethvert fartøy som drives fram av maskineri', 'Any vessel propelled by machinery'), L2('Ethvert fartøy med seil', 'Any vessel with sails'), L2('Bare fartøy over 50 meter', 'Only vessels over 50 metres'), L2('Bare fartøy med dieselmotor', 'Only vessels with a diesel engine')],
+    L2('Et maskindrevet fartøy er ethvert fartøy som drives fram av maskineri (regel 3 (b)).', '“Power-driven vessel” means any vessel propelled by machinery (rule 3 (b)).'), 'Regel 3 (b), s. 36–37', 'd'),
+  mk(L2('Når regnes et fartøy med både seil og motor som «seilfartøy» (regel 3 (c))?', 'When is a vessel with both sails and an engine a “sailing vessel” (rule 3 (c))?'),
+    [L2('Når det går for seil og fremdriftsmaskineriet ikke brukes', 'When she is under sail and her propelling machinery, if fitted, is not being used'), L2('Så snart seilene er heist, også når motoren går', 'As soon as the sails are hoisted, even when the engine is running'), L2('Når mer enn halvparten av farten kommer fra seilene', 'When more than half of the speed comes from the sails'), L2('Alltid, så lenge det har seil om bord', 'Always, as long as she has sails on board')],
+    L2('Et seilfartøy er ethvert fartøy som går for seil, forutsatt at eventuelt fremdriftsmaskineri ikke brukes (regel 3 (c)). Går motoren, er det et maskindrevet fartøy.', '“Sailing vessel” means any vessel under sail provided that propelling machinery, if fitted, is not being used (rule 3 (c)). If the engine is used, she is a power-driven vessel.'), 'Regel 3 (c), s. 36–37', 'd'),
+  mk(L2('Hva er et «fartøy som fisker» (regel 3 (d))?', 'What is a “vessel engaged in fishing” (rule 3 (d))?'),
+    [L2('Et fartøy som fisker med garn, liner, trål eller annet redskap som begrenser manøvreringsevnen', 'A vessel fishing with nets, lines, trawls or other fishing apparatus which restrict manoeuvrability'), L2('Ethvert fartøy med fiskeredskap om bord', 'Any vessel with fishing gear on board'), L2('Ethvert fartøy som er registrert som fiskefartøy', 'Any vessel registered as a fishing vessel'), L2('Bare fartøy som trålere', 'Only vessels trawling')],
+    L2('Det som teller, er at redskapet begrenser manøvreringsevnen mens det fiskes. Redskap om bord eller registrering som fiskefartøy er ikke nok (regel 3 (d)).', 'What matters is that the apparatus restricts manoeuvrability while fishing. Gear on board or registration as a fishing vessel is not enough (rule 3 (d)).'), 'Regel 3 (d), s. 36–37', 'd'),
+  mk(L2('Regnes et fartøy som fisker med liner på slep (trolling) som «fartøy som fisker» (regel 3 (d))?', 'Is a vessel fishing with trolling lines a “vessel engaged in fishing” (rule 3 (d))?'),
+    [L2('Nei, fiske med liner på slep eller redskap som ikke begrenser manøvreringsevnen er unntatt', 'No, fishing with trolling lines or apparatus which do not restrict manoeuvrability is excluded'), L2('Ja, alt fiske teller', 'Yes, all fishing counts'), L2('Ja, men bare om natten', 'Yes, but only at night'), L2('Ja, hvis fartøyet er under 12 meter', 'Yes, if the vessel is under 12 metres')],
+    L2('Fiske med liner på slep (trolling) eller annet redskap som ikke begrenser manøvreringsevnen, regnes ikke som å fiske etter regel 3 (d).', 'Fishing with trolling lines or other apparatus which do not restrict manoeuvrability is not “engaged in fishing” under rule 3 (d).'), 'Regel 3 (d), s. 36–37', 'd'),
+  mk(L2('Hva er et «sjøfly» (regel 3 (e))?', 'What is a “seaplane” (rule 3 (e))?'),
+    [L2('Ethvert luftfartøy som er konstruert for å manøvrere på vann', 'Any aircraft designed to manoeuvre on the water'), L2('Ethvert fly som har landet i sjøen', 'Any aircraft that has landed in the sea'), L2('Bare fly med flottører', 'Only aircraft with floats'), L2('Ethvert fly som flyr over sjøen', 'Any aircraft flying over the sea')],
+    L2('Et sjøfly er ethvert luftfartøy som er konstruert for å manøvrere på vann (regel 3 (e)).', '“Seaplane” includes any aircraft designed to manoeuvre on the water (rule 3 (e)).'), 'Regel 3 (e), s. 36–37', 'd'),
+  mk(L2('Hva kjennetegner et «fartøy uten manøvreringsevne» (regel 3 (f))?', 'What characterises a “vessel not under command” (rule 3 (f))?'),
+    [L2('Det kan på grunn av noe uvanlig ikke manøvrere som reglene krever, og kan derfor ikke vike for et annet fartøy', 'Through some exceptional circumstance it is unable to manoeuvre as required by the Rules and is therefore unable to keep out of the way of another vessel'), L2('Det ligger til ankers', 'It is at anchor'), L2('Det går med lav fart', 'It is proceeding at low speed'), L2('Det arbeider med undervannskabel', 'It is working on a submarine cable')],
+    L2('Et fartøy uten manøvreringsevne er et fartøy som på grunn av noe uvanlig ikke kan manøvrere som reglene krever, og derfor ikke kan vike for et annet fartøy (regel 3 (f)).', 'A vessel not under command is a vessel which through some exceptional circumstance is unable to manoeuvre as required by these Rules and is therefore unable to keep out of the way of another vessel (rule 3 (f)).'), 'Regel 3 (f), s. 36–37', 'd'),
+  mk(L2('Hva kjennetegner et «fartøy med begrenset evne til å manøvrere» (regel 3 (g))?', 'What characterises a “vessel restricted in her ability to manoeuvre” (rule 3 (g))?'),
+    [L2('Det har på grunn av arbeidets art begrenset evne til å manøvrere som reglene krever, og kan derfor ikke vike for et annet fartøy', 'Because of the nature of her work she is restricted in her ability to manoeuvre as required by the Rules and is therefore unable to keep out of the way of another vessel'), L2('Det er bare lastet tungt', 'It is only heavily laden'), L2('Det er svært stort', 'It is very large'), L2('Det går sakte', 'It is going slowly')],
+    L2('Det er arbeidets art som begrenser evnen til å manøvrere som reglene krever (regel 3 (g)). Fart eller størrelse alene gjør ikke et fartøy til et slikt fartøy.', 'It is the nature of the work that restricts the ability to manoeuvre as required by the Rules (rule 3 (g)). Speed or size alone does not make a vessel one.'), 'Regel 3 (g), s. 36–37', 'd'),
+  mk(L2('Hvilket arbeid er nevnt i regel 3 (g) som eksempel på begrenset evne til å manøvrere?', 'Which work is named in rule 3 (g) as an example of restricted ability to manoeuvre?'),
+    [L2('Utlegging, ettersyn eller opptak av navigasjonsmerke, undervannskabel eller rørledning', 'Laying, servicing or picking up a navigation mark, submarine cable or pipeline'), L2('Fiske med liner på slep', 'Fishing with trolling lines'), L2('Å ligge til kai', 'Lying alongside a quay'), L2('Seilas for seil med motoren av', 'Sailing under sail with the engine off')],
+    L2('Regel 3 (g) nevner blant annet utlegging, ettersyn eller opptak av navigasjonsmerke, undervannskabel eller rørledning, mudring, oppmåling eller undervannsarbeid, overføring av personer, proviant eller last under gange, og avgang eller landing av luftfartøy. Listen er ikke uttømmende.', 'Rule 3 (g) names, among others, laying, servicing or picking up a navigation mark, submarine cable or pipeline; dredging, surveying or underwater operations; replenishment or transferring persons, provisions or cargo while underway; and launching or recovery of aircraft. The list is not exhaustive.'), 'Regel 3 (g), s. 36–37', 'd'),
+  mk(L2('Når regnes slep som arbeid som begrenser evnen til å manøvrere (regel 3 (g)(vi))?', 'When does towing count as work restricting the ability to manoeuvre (rule 3 (g)(vi))?'),
+    [L2('Når det i alvorlig grad begrenser slepefartøyet og slepets evne til å avvike fra kursen', 'When it severely restricts the towing vessel and her tow in their ability to deviate from their course'), L2('Alltid når et fartøy sleper', 'Always when a vessel is towing'), L2('Bare om natten', 'Only at night'), L2('Aldri', 'Never')],
+    L2('Slep regnes bare slik når det i alvorlig grad begrenser slepefartøyet og slepets evne til å avvike fra kursen (regel 3 (g)(vi)).', 'A towing operation counts only when it is such as severely restricts the towing vessel and her tow in their ability to deviate from their course (rule 3 (g)(vi)).'), 'Regel 3 (g)(vi), s. 36–37', 'd'),
+  mk(L2('Hva er et «fartøy begrenset av dypgående» (regel 3 (h))?', 'What is a “vessel constrained by her draught” (rule 3 (h))?'),
+    [L2('Et maskindrevet fartøy som på grunn av dypgåendet i forhold til vanndybde og bredde i alvorlig grad er begrenset i å avvike fra kursen', 'A power-driven vessel which, because of her draught in relation to the available depth and width of navigable water, is severely restricted in her ability to deviate from the course she is following'), L2('Et fartøy som er lastet', 'Any vessel that is loaded'), L2('Et seilfartøy i trange farvann', 'A sailing vessel in narrow waters'), L2('Et fartøy som har grunnstøtt', 'A vessel that has run aground')],
+    L2('Et fartøy begrenset av dypgående er et maskindrevet fartøy som på grunn av dypgåendet i forhold til tilgjengelig vanndybde og bredde i alvorlig grad er begrenset i evnen til å avvike fra kursen (regel 3 (h)).', 'A vessel constrained by her draught is a power-driven vessel which, because of her draught in relation to the available depth and width of navigable water, is severely restricted in her ability to deviate from the course she is following (rule 3 (h)).'), 'Regel 3 (h), s. 36–37', 'd'),
+  mk(L2('Kan et seilfartøy være et «fartøy begrenset av dypgående» (regel 3 (h))?', 'Can a sailing vessel be a “vessel constrained by her draught” (rule 3 (h))?'),
+    [L2('Nei, definisjonen gjelder bare maskindrevne fartøy', 'No, the definition applies only to power-driven vessels'), L2('Ja, hvis det har dypt kjøl', 'Yes, if it has a deep keel'), L2('Ja, alle fartøy kan det', 'Yes, any vessel can'), L2('Bare om natten', 'Only at night')],
+    L2('Regel 3 (h) definerer et fartøy begrenset av dypgående som et maskindrevet fartøy.', 'Rule 3 (h) defines a vessel constrained by her draught as a power-driven vessel.'), 'Regel 3 (h), s. 36–37', 'd'),
+  mk(L2('Når er et fartøy «underveis» (regel 3 (i))?', 'When is a vessel “underway” (rule 3 (i))?'),
+    [L2('Når det ikke ligger til ankers, ikke er fortøyd til land og ikke står på grunn', 'When she is not at anchor, or made fast to the shore, or aground'), L2('Bare når maskinen går', 'Only when the engine is running'), L2('Bare når det har fart gjennom vannet', 'Only when she has way through the water'), L2('Bare på åpent hav', 'Only on the open sea')],
+    L2('«Underveis» betyr at fartøyet ikke ligger til ankers, ikke er fortøyd til land og ikke står på grunn (regel 3 (i)). Fart er ikke en betingelse. (Boka s. 38 viser til «punkt (l)»; riktig punkt er (i).)', '“Underway” means that a vessel is not at anchor, or made fast to the shore, or aground (rule 3 (i)). Making way is not a condition. (The book, p. 38, refers to “point (l)”; the correct point is (i).)'), 'Regel 3 (i), s. 36–37', 'd'),
+  mk(L2('Hvordan måles «lengde» og «bredde» etter regel 3 (j)?', 'How are “length” and “breadth” measured under rule 3 (j)?'),
+    [L2('Lengde er største lengde (lengde over alt) og bredde er største bredde', 'Length is the length overall and breadth is the greatest breadth'), L2('Lengde mellom perpendikulærene og konstruert bredde', 'Length between perpendiculars and moulded breadth'), L2('Lengde i vannlinjen og bredde i vannlinjen', 'Waterline length and waterline breadth'), L2('Registrert lengde og registrert bredde', 'Registered length and registered breadth')],
+    L2('Et fartøys lengde er dets største lengde, og bredden er dets største bredde (regel 3 (j)).', 'The length of a vessel is her length overall and the breadth is her greatest breadth (rule 3 (j)).'), 'Regel 3 (j), s. 36–37', 'd'),
+  mk(L2('Når regnes fartøyer å være «i sikte av hverandre» (regel 3 (k))?', 'When are vessels deemed to be “in sight of one another” (rule 3 (k))?'),
+    [L2('Bare når det ene kan observeres visuelt fra det andre', 'Only when one can be observed visually from the other'), L2('Når det ene er synlig på radaren til det andre', 'When one is visible on the other’s radar'), L2('Når de har VHF-kontakt', 'When they have VHF contact'), L2('Når det ene vises på AIS hos det andre', 'When one is shown on the other’s AIS')],
+    L2('Fartøyer regnes bare å være i sikte av hverandre når det ene kan observeres visuelt fra det andre (regel 3 (k)). Å se et annet fartøy bare på radar eller AIS er ikke å ha det i sikte.', 'Vessels shall be deemed to be in sight of one another only when one can be observed visually from the other (rule 3 (k)). Seeing another vessel only on radar or AIS is not having it in sight.'), 'Regel 3 (k), s. 36–37', 'd'),
+  mk(L2('Er et fartøy som bare vises på radaren, «i sikte» etter regel 3 (k)?', 'Is a vessel shown only on the radar “in sight” under rule 3 (k)?'),
+    [L2('Nei, i sikte betyr at det kan observeres visuelt', 'No, “in sight” means it can be observed visually'), L2('Ja, radar regnes som å se', 'Yes, radar counts as seeing'), L2('Ja, hvis ekkoet er tydelig', 'Yes, if the echo is clear'), L2('Ja, hvis avstanden er under 6 nautiske mil', 'Yes, if the distance is under 6 nautical miles')],
+    L2('Regel 3 (k) krever visuell observasjon. Et ekko på radaren er ikke en visuell observasjon.', 'Rule 3 (k) requires visual observation. A radar echo is not a visual observation.'), 'Regel 3 (k), s. 36–37', 'd'),
+  mk(L2('Hva er «nedsatt sikt» (regel 3 (l))?', 'What is “restricted visibility” (rule 3 (l))?'),
+    [L2('Enhver tilstand der sikten er begrenset av tåke, disig vær, snøfall, kraftige regnskyll, sandstorm eller lignende årsaker', 'Any condition in which visibility is restricted by fog, mist, falling snow, heavy rainstorms, sandstorms or any other similar causes'), L2('Alle forhold om natten', 'Any condition at night'), L2('Bare tåke', 'Only fog'), L2('Når sikten er under en bestemt avstand i nautiske mil', 'When visibility is less than a fixed distance in nautical miles')],
+    L2('Nedsatt sikt er enhver tilstand der sikten er begrenset av tåke, disig vær, snøfall, kraftige regnskyll, sandstorm eller lignende årsaker (regel 3 (l)). Mørke alene er ikke nevnt, og regelen oppgir ingen bestemt avstand.', 'Restricted visibility means any condition in which visibility is restricted by fog, mist, falling snow, heavy rainstorms, sandstorms or any other similar causes (rule 3 (l)). Darkness alone is not named, and the rule gives no fixed distance.'), 'Regel 3 (l), s. 36–37', 'd'),
+  mk(L2('Hva er et «WIG-fartøy» (regel 3 (m))?', 'What is a “WIG craft” (rule 3 (m))?'),
+    [L2('Et flermodus-fartøy som i hovedmodus flyr nær overflaten ved hjelp av bakkeeffekt', 'A multimodal craft which, in its main operational mode, flies in close proximity to the surface by utilizing surface-effect action'), L2('Et fartøy med vingeseil', 'A vessel with wing sails'), L2('Et fartøy som slepes av et fly', 'A vessel towed by an aircraft'), L2('Et fartøy som går på land', 'A craft that runs on land')],
+    L2('Et WIG-fartøy er et flermodus-fartøy som i hovedmodus flyr nær overflaten ved å utnytte bakkeeffekt (regel 3 (m)).', 'A wing-in-ground (WIG) craft is a multimodal craft which, in its main operational mode, flies in close proximity to the surface by utilizing surface-effect action (rule 3 (m)).'), 'Regel 3 (m), s. 36–37', 'd'),
+
+  /* ---- Regel 4 og 38 ---- */
+  mk(L2('Under hvilke siktforhold gjelder reglene i avsnitt I (regel 4)?', 'In what conditions of visibility do the rules in Section I apply (rule 4)?'),
+    [L2('Under alle siktforhold', 'In any condition of visibility'), L2('Bare i klart vær', 'Only in clear weather'), L2('Bare i nedsatt sikt', 'Only in restricted visibility'), L2('Bare om dagen', 'Only by day')],
+    L2('Reglene i avsnitt I gjelder under alle siktforhold (regel 4). Boka (s. 40–41) understreker at dette gjelder hele tiden.', 'The rules in Section I apply in any condition of visibility (rule 4). The book (pp. 40–41) stresses that this applies at all times.'), 'Regel 4, s. 41', 'v'),
+  mk(L2('Gjelder regel 7 (fare for sammenstøt) bare i nedsatt sikt?', 'Does rule 7 (risk of collision) apply only in restricted visibility?'),
+    [L2('Nei, den ligger i avsnitt I og gjelder under alle siktforhold', 'No, it is in Section I and applies in any condition of visibility'), L2('Ja, bare i tåke', 'Yes, only in fog'), L2('Ja, bare om natten', 'Yes, only at night'), L2('Ja, bare når fartøyene ser hverandre', 'Yes, only when the vessels see each other')],
+    L2('Regel 7 står i avsnitt I («Fartøyers framferd under alle siktforhold»), og avsnitt I gjelder under alle siktforhold (regel 4).', 'Rule 7 is in Section I (conduct of vessels in any condition of visibility), and Section I applies in any condition of visibility (rule 4).'), 'Regel 4, s. 41', 'v'),
+  mk(L2('Hvilket vilkår må et fartøy oppfylle for å kunne fritas etter regel 38?', 'Which condition must a vessel meet to be exempted under rule 38?'),
+    [L2('Kjølen er lagt før reglene trådte i kraft, og fartøyet oppfyller 1960-reglene', 'Her keel was laid before the Regulations entered into force, and she complies with the 1960 Regulations'), L2('Fartøyet er under 20 meter', 'The vessel is under 20 metres'), L2('Fartøyet er et krigsskip', 'The vessel is a warship'), L2('Fartøyet har aldri vært i en ulykke', 'The vessel has never been in an accident')],
+    L2('Fritak etter regel 38 gjelder fartøy hvis kjøl er lagt, eller som er på tilsvarende byggetrinn, før reglene trådte i kraft, og som oppfyller kravene i 1960-reglene for å forebygge sammenstøt på sjøen. Det er i dag stort sett en historisk regel.', 'Exemptions under rule 38 apply to vessels whose keel was laid, or which were at a corresponding stage of construction, before the Regulations entered into force and which comply with the 1960 Collision Regulations. Today it is largely a historical rule.'), 'Regel 38, s. 223–224', 'v'),
+  mk(L2('Hvor lenge kunne et fartøy fritas fra regel 22 (lysenes rekkevidde) etter regel 38 (a)?', 'For how long could a vessel be exempted from rule 22 (range of lights) under rule 38 (a)?'),
+    yrs(Y4, Y9, YP, Y1),
+    L2('Installasjon av lykter med den rekkevidden regel 22 krever, kunne utsettes i fire år etter at reglene trådte i kraft (regel 38 (a)).', 'Installation of lights with the range prescribed by rule 22 could be postponed for four years after entry into force of the Regulations (rule 38 (a)).'), 'Regel 38 (a), s. 223–224', 'v'),
+  mk(L2('Hvor lenge kunne et fartøy fritas fra fargekravene i vedlegg I punkt 7 etter regel 38 (b)?', 'For how long could a vessel be exempted from the colour specifications in Annex I, section 7 under rule 38 (b)?'),
+    yrs(Y4, Y9, YP, Y2),
+    L2('Overgang til fargespesifikasjonene i vedlegg I punkt 7 kunne utsettes i fire år (regel 38 (b)).', 'Conversion to the colour specifications of Annex I, section 7 could be postponed for four years (rule 38 (b)).'), 'Regel 38 (b), s. 223–224', 'v'),
+  mk(L2('Hva gjelder flytting av lykter som følge av omregning fra britiske til metriske mål og avrunding (regel 38 (c))?', 'What applies to repositioning of lights resulting from conversion from British to metric units and rounding (rule 38 (c))?'),
+    yrs(YP, Y4, Y9, Y1),
+    L2('Flytting av lykter som skyldes omregning fra britiske til metriske mål og avrunding, er fritatt varig (regel 38 (c)).', 'Repositioning of lights resulting from the conversion of British to metric units and rounding off figures is exempted permanently (rule 38 (c)).'), 'Regel 38 (c), s. 223–224', 'v'),
+  mk(L2('Hva gjelder flytting av toppfyr på fartøy under 150 meter som følge av vedlegg I punkt 3 (a) (regel 38 (d)(i))?', 'What applies to repositioning of masthead lights on vessels under 150 metres resulting from Annex I, section 3 (a) (rule 38 (d)(i))?'),
+    yrs(YP, Y4, Y9, Y1),
+    L2('For fartøy på under 150 meter er fritaket varig (regel 38 (d)(i)).', 'For vessels of less than 150 metres in length the exemption is permanent (rule 38 (d)(i)).'), 'Regel 38 (d)(i), s. 223–224', 'v'),
+  mk(L2('Hvor lenge gjaldt fritaket for flytting av toppfyr på fartøy på 150 meter eller mer (regel 38 (d)(ii))?', 'For how long did the exemption for repositioning masthead lights apply to vessels of 150 metres or more (rule 38 (d)(ii))?'),
+    yrs(Y9, Y4, YP, Y2),
+    L2('For fartøy på 150 meter eller mer gjaldt fritaket i ni år etter at reglene trådte i kraft (regel 38 (d)(ii)).', 'For vessels of 150 metres or more the exemption applied for nine years after entry into force (rule 38 (d)(ii)).'), 'Regel 38 (d)(ii), s. 223–224', 'v'),
+  mk(L2('Hvor lenge kunne flytting av toppfyr som følge av vedlegg I punkt 2 (b) utsettes (regel 38 (e))?', 'For how long could repositioning of masthead lights resulting from Annex I, section 2 (b) be postponed (rule 38 (e))?'),
+    yrs(Y9, Y4, YP, Y1),
+    L2('Flytting av toppfyr som følge av vedlegg I punkt 2 (b) kunne utsettes i ni år (regel 38 (e)).', 'Repositioning of masthead lights resulting from Annex I, section 2 (b) could be postponed for nine years (rule 38 (e)).'), 'Regel 38 (e), s. 223–224', 'v'),
+  mk(L2('Hvor lenge kunne flytting av sidelys som følge av vedlegg I punkt 2 (g) og 3 (b) utsettes (regel 38 (f))?', 'For how long could repositioning of sidelights resulting from Annex I, sections 2 (g) and 3 (b) be postponed (rule 38 (f))?'),
+    yrs(Y9, Y4, YP, Y1),
+    L2('Flytting av sidelys som følge av vedlegg I punkt 2 (g) og 3 (b) kunne utsettes i ni år (regel 38 (f)).', 'Repositioning of sidelights resulting from Annex I, sections 2 (g) and 3 (b) could be postponed for nine years (rule 38 (f)).'), 'Regel 38 (f), s. 223–224', 'v'),
+  mk(L2('Hvor lenge kunne fartøy fritas fra kravene til lydsignalapparater i vedlegg III (regel 38 (g))?', 'For how long could vessels be exempted from the requirements for sound signal appliances in Annex III (rule 38 (g))?'),
+    yrs(Y9, Y4, YP, Y1),
+    L2('Kravene til lydsignalapparater i vedlegg III kunne utsettes i ni år (regel 38 (g)).', 'The requirements for sound signal appliances in Annex III could be postponed for nine years (rule 38 (g)).'), 'Regel 38 (g), s. 223–224', 'v'),
+  mk(L2('Hva gjelder flytting av rundtlysende lykter som følge av vedlegg I punkt 9 (b) (regel 38 (h))?', 'What applies to repositioning of all-round lights resulting from Annex I, section 9 (b) (rule 38 (h))?'),
+    yrs(YP, Y4, Y9, Y1),
+    L2('Flytting av rundtlysende lykter som følge av vedlegg I punkt 9 (b) er fritatt varig (regel 38 (h)).', 'Repositioning of all-round lights resulting from Annex I, section 9 (b) is exempted permanently (rule 38 (h)).'), 'Regel 38 (h), s. 223–224', 'v'),
+  mk(L2('Når trådte de internasjonale sjøveisreglene (COLREG) i kraft (Boka)?', 'When did the International Regulations for Preventing Collisions at Sea (COLREG) enter into force (the book)?'),
+    [L2('15. juli 1977', '15 July 1977'), L2('15. juli 1960', '15 July 1960'), L2('15. juli 1972', '15 July 1972'), L2('15. juli 1983', '15 July 1983')],
+    L2('Boka (s. 3) oppgir at reglene trådte i kraft 15. juli 1977. Fristene i regel 38 regnes fra denne datoen.', 'The book (p. 3) gives 15 July 1977 as the date the Regulations entered into force. The periods in rule 38 count from that date.'), 'Boka s. 3 (historikk, ikke regeltekst)', 'v')
+];
+function factQuestion(i) {
+  const f = FACTS[i];
+  return { kind: 'mc', pool: 'f' + i, stem: f.q, opts: shuffle(f.o.map((x, j) => ({ id: 'o' + j, nb: x.nb, en: x.en }))), ok: 'o0', x: f.x, ref: f.ref };
+}
+const FIDX = g => FACTS.map((f, i) => i).filter(i => g.includes(FACTS[i].g));
+
+/* ---------- Runde ---------- */
+function typesFor(mode) {
+  if (mode === 'anv') return shuffle(['fa', 'fa', 'fa', 'fa', 'fa', 'fa', 'fa', 'fa', 'fa', 'fa']);
+  if (mode === 'def') return shuffle(['uw', 'fish', 'fd', 'fd', 'fd', 'fd', 'fd', 'fd', 'fd', 'fd']);
+  if (mode === 'sikt') return shuffle(['fv', 'fv', 'fv', 'fv', 'fv', 'fv', 'fv', 'fv', 'fv', 'fv']);
+  return shuffle(['fa', 'fa', 'fd', 'fd', 'fd', 'uw', 'fish', 'fv', 'fv', 'fv']);
+}
+function makeRound(mode) {
+  const fa = cycle(FIDX(['a'])), fd = cycle(FIDX(['d'])), fv = cycle(FIDX(['v']));
+  const out = [], used = new Set();
+  typesFor(mode).forEach(t => {
+    for (let tries = 0; tries < 40; tries++) {
+      let q;
+      if (t === 'fa') q = factQuestion(fa());
+      else if (t === 'fd') q = factQuestion(fd());
+      else if (t === 'fv') q = factQuestion(fv());
+      else if (t === 'uw') q = uwQuestion();
+      else q = fishQuestion();
+      if (!used.has(q.pool) || tries === 39) { used.add(q.pool); out.push(q); break; }
+    }
+  });
+  return out;
+}
+
+/* ---------- Spill ---------- */
+if (typeof document !== 'undefined') (function () {
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ingen lagring */ } }
+  };
+  const params = new URLSearchParams(location.search);
+  let lang = params.get('lang') === 'en' ? 'en' : (params.get('lang') === 'nb' ? 'nb' : (store.get('cphd-lang') || 'nb'));
+  let mode = 'anv';
+  let round = null, timer = null;
+  const t = k => T[lang][k];
+
+  function applyLang() {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nb';
+    document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
+    document.title = `${t('title')} · Captain PhD`;
+    $('lang').textContent = t('langBtn');
+    const home = document.querySelector('.home'); home.href = lang === 'en' ? home.dataset.hrefEn : home.dataset.hrefNb;
+    showBest();
+    if (round && !$('play').hidden) renderQ(true);
+    if (round && !$('result').hidden) showResult();
+  }
+  $('lang').addEventListener('click', () => { lang = lang === 'nb' ? 'en' : 'nb'; store.set('cphd-lang', lang); applyLang(); });
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    showBest();
+  }));
+  function showBest() {
+    const b = store.get('cphd-definisjoner-best-' + mode);
+    $('best').textContent = b ? t('best')(b, T[lang].modeName[mode]) : '';
+  }
+  const fmt = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+  function start() {
+    round = { qs: makeRound(mode), n: 0, correct: 0, pts: 0, t0: Date.now(), wrong: [], answered: false };
+    $('start').hidden = true; $('result').hidden = true; $('play').hidden = false;
+    clearInterval(timer);
+    timer = setInterval(() => { $('clock').textContent = fmt(Date.now() - round.t0); }, 500);
+    renderQ();
+  }
+
+  function sceneFor(q, solved) {
+    if (!q.scene) return '';
+    const tx = { lbl: t('lbl') };
+    if (q.scene.uw) return panelsSVG(q.scene.uw, tx, solved, t('uwAlt'));
+    if (q.scene.fish) return panelsSVG(q.scene.fish, tx, solved, t('fishAlt'));
+    return '';
+  }
+
+  function renderQ(keepState) {
+    const q = round.qs[round.n];
+    $('count').textContent = t('count')(round.n + 1, N);
+    $('score').textContent = t('score')(round.pts);
+    const solved = keepState && round.answered && q.scene && q.scene.sol;
+    $('sceneBox').innerHTML = sceneFor(q, solved);
+    $('cap').textContent = t('solution'); $('cap').hidden = !solved;
+    $('question').textContent = q.stem[lang];
+    const box = $('opts'); box.innerHTML = '';
+    q.opts.forEach((o, idx) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.a = o.id;
+      b.innerHTML = `<kbd>${idx + 1}</kbd><span>${o[lang]}</span>`;
+      b.addEventListener('click', () => answer(o.id));
+      box.appendChild(b);
+    });
+    if (keepState && round.answered) { markAnswer(round.lastPick); return; }
+    if (!keepState) { round.answered = false; round.qStart = Date.now(); }
+    $('explain').hidden = true; $('next').hidden = true;
+    const first = box.querySelector('button'); if (first && !keepState) first.focus({ preventScroll: true });
+  }
+
+  function answer(a) {
+    if (round.answered) return;
+    round.answered = true; round.lastPick = a;
+    const q = round.qs[round.n];
+    if (a === q.ok) {
+      round.correct++;
+      const secs = (Date.now() - round.qStart) / 1000;
+      round.pts += 100 + Math.max(0, Math.round(50 - secs * 3));
+    } else round.wrong.push(q);
+    markAnswer(a);
+  }
+
+  function markAnswer(a) {
+    const q = round.qs[round.n], ok = a === q.ok;
+    document.querySelectorAll('#opts button').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.a === q.ok) b.classList.add('right'); else if (b.dataset.a === a) b.classList.add('wrong');
+    });
+    const right = q.opts.find(o => o.id === q.ok);
+    const head = ok ? '' : `${t('answerWas')} <b>${right[lang]}</b>. `;
+    if (q.scene && q.scene.sol) { $('sceneBox').innerHTML = sceneFor(q, true); $('cap').textContent = t('solution'); $('cap').hidden = false; }
+    $('explain').innerHTML = `<b class="${ok ? 'ok' : 'bad'}">${ok ? t('right') : t('wrong')}</b> ${head}${q.x[lang]} <span style="color:var(--muted)">(${q.ref})</span>`;
+    $('explain').hidden = false;
+    $('score').textContent = t('score')(round.pts);
+    $('next').textContent = round.n === N - 1 ? t('finish') : t('next');
+    $('next').hidden = false; $('next').focus({ preventScroll: true });
+  }
+
+  $('next').addEventListener('click', () => {
+    if (round.n === N - 1) { finish(); return; }
+    round.n++; renderQ();
+    $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  function finish() {
+    clearInterval(timer);
+    round.time = Date.now() - round.t0;
+    const key = 'cphd-definisjoner-best-' + mode, best = +(store.get(key) || 0);
+    if (round.pts > best) store.set(key, String(round.pts));
+    showResult();
+  }
+
+  const SHARE_URL = 'https://captainphd.com/definisjoner/';
+
+  /* MORE-BEGIN */
+  const MORE_SELF = 'definisjoner';
+  const MORE_GAMES = [
+    { s: 'lanterner', nb: 'Lanterner og dagsignaler', en: 'Lights and shapes', rnb: 'Regel 20–31', ren: 'Rules 20–31' },
+    { s: 'hvem-viker', nb: 'Hvem viker?', en: 'Who gives way?', rnb: 'Regel 11–19', ren: 'Rules 11–19' },
+    { s: 'manovrer', nb: 'Manøver', en: 'Manoeuvres', rnb: 'Regel 8, 15–17, 34', ren: 'Rules 8, 15–17, 34' },
+    { s: 'lydsignaler', nb: 'Lydsignaler', en: 'Sound signals', rnb: 'Regel 32–37', ren: 'Rules 32–37' },
+    { s: 'nodsignaler', nb: 'Nødsignaler', en: 'Distress signals', rnb: 'Regel 37, vedlegg IV', ren: 'Rule 37, Annex IV' },
+    { s: 'utkikk-fart', nb: 'Utkikk, fart og farvann', en: 'Lookout, speed and channels', rnb: 'Regel 5–7, 9–10', ren: 'Rules 5–7, 9–10' },
+    { s: 'definisjoner', nb: 'Definisjoner', en: 'Definitions', rnb: 'Regel 1–4, 38', ren: 'Rules 1–4, 38' }
+  ];
+  function renderMore() {
+    const box = $('more'); if (!box) return;
+    const nb = lang !== 'en';
+    const i = MORE_GAMES.findIndex(g => g.s === MORE_SELF);
+    const order = [];
+    for (let k = 1; k < MORE_GAMES.length; k++) order.push(MORE_GAMES[(i + k) % MORE_GAMES.length]);
+    box.innerHTML = ''; box.className = 'more';
+    const h = document.createElement('h3'); h.textContent = nb ? 'Spill flere' : 'Play more'; box.appendChild(h);
+    const cards = document.createElement('div'); cards.className = 'cards'; box.appendChild(cards);
+    order.slice(0, 3).forEach((g, k) => {
+      const a = document.createElement('a'); a.className = 'card' + (k === 0 ? ' next' : '');
+      a.href = '/' + g.s + '/' + (nb ? '' : '?lang=en');
+      const b = document.createElement('b'); b.textContent = nb ? g.nb : g.en; a.appendChild(b);
+      const sp = document.createElement('span'); sp.textContent = nb ? g.rnb : g.ren; a.appendChild(sp);
+      cards.appendChild(a);
+    });
+    const home = document.createElement('a'); home.className = 'home';
+    home.href = nb ? '/' : '/en/'; home.textContent = nb ? 'Til forsiden' : 'Home';
+    box.appendChild(home);
+  }
+  /* MORE-END */
+
+  function renderShare() {
+    const box = $('share'); if (!box) return;
+    const nb = lang !== 'en';
+    const title = t('title');
+    const url = SHARE_URL + (nb ? '' : '?lang=en');
+    const text = nb ? `Jeg fikk ${round.pts} poeng i «${title}» på captainphd.com` : `I scored ${round.pts} points in “${title}” on captainphd.com`;
+    const L = nb ? { h: 'Del resultatet', share: 'Del …', copy: 'Kopier lenke', copied: 'Kopiert!' } : { h: 'Share result', share: 'Share …', copy: 'Copy link', copied: 'Copied!' };
+    const enc = encodeURIComponent;
+    box.innerHTML = ''; box.className = 'share';
+    const h = document.createElement('h3'); h.textContent = L.h; box.appendChild(h);
+    const row = document.createElement('div'); row.className = 'row'; box.appendChild(row);
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'main'; b.textContent = L.share;
+      b.addEventListener('click', () => { navigator.share({ title, text, url }).catch(() => {}); });
+      row.appendChild(b);
+    } else {
+      [['WhatsApp', 'https://wa.me/?text=' + enc(text + ' ' + url)],
+       ['X', 'https://x.com/intent/post?text=' + enc(text) + '&url=' + enc(url)],
+       ['Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + enc(url)]].forEach(([n, href]) => {
+        const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = n; row.appendChild(a);
+      });
+    }
+    const c = document.createElement('button'); c.type = 'button'; c.textContent = L.copy;
+    c.addEventListener('click', () => {
+      const done = () => { c.textContent = L.copied; setTimeout(() => { c.textContent = L.copy; }, 2000); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, done);
+      else { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) { /* ingen */ } document.body.removeChild(ta); done(); }
+    });
+    row.appendChild(c);
+  }
+
+  function showResult() {
+    $('play').hidden = true; $('result').hidden = false;
+    $('resTitle').textContent = t('resTitle')(round.correct, N);
+    $('resText').textContent = t('resText')(fmt(round.time), round.pts);
+    if (!round.wrong.length) { $('resReview').innerHTML = `<p>${t('perfect')}</p>`; }
+    else {
+      const seen = new Set();
+      const items = round.wrong.filter(q => { const k = q.ref + q.x.nb; return !seen.has(k) && seen.add(k); })
+        .map(q => `<li><b>${q.stem[lang].length > 150 ? q.stem[lang].slice(0, 147) + '…' : q.stem[lang]}</b> ${q.x[lang]} <span style="color:var(--muted)">(${q.ref})</span></li>`).join('');
+      $('resReview').innerHTML = `<p><b>${t('reviewTitle')}</b></p><ul class="review">${items}</ul>`;
+    }
+    showBest();
+    renderShare();
+    renderMore();
+    $('again').focus({ preventScroll: true });
+  }
+
+  $('go').addEventListener('click', start);
+  $('again').addEventListener('click', () => { $('result').hidden = true; $('start').hidden = false; round = null; showBest(); });
+
+  document.addEventListener('keydown', e => {
+    if ($('play').hidden || !round || e.ctrlKey || e.metaKey || e.altKey) return;
+    const q = round.qs[round.n];
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4 && !round.answered && q.opts[n - 1]) answer(q.opts[n - 1].id);
+  });
+
+  applyLang();
+})();
+
+if (typeof module !== 'undefined') module.exports = { FACTS, makeRound, uwQuestion, fishQuestion, factQuestion, panelsSVG, N, T };
+</script>
+<script id="ui-js">
+/* UI-BEGIN */
+(function () {
+  var d = document, root = d.documentElement;
+  var P = {
+    natt: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
+    dag: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+    blandet: 'M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5',
+    compass: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM15.5 8.5l-2 5-5 2 2-5z',
+    ship: 'M3 17l2 3h14l2-3zM6 17v-6h12v6M12 11V5M9 8h6',
+    list: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+    cloud: 'M7 18a4 4 0 0 1-.5-7.97A6 6 0 0 1 18 9a4.5 4.5 0 0 1 0 9z',
+    book: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM6.5 17H20v4H6.5A2.5 2.5 0 0 1 4 19.5',
+    speaker: 'M3 9v6h4l5 4V5L7 9zM16 8a5 5 0 0 1 0 8',
+    blocks: 'M3 3h8v8H3zM13 13h8v8h-8zM13 3h8v4h-8zM3 13h8v8H3z',
+    info: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 16v-5M12 8h.01',
+    flag: 'M5 21V4M5 4h12l-2 4 2 4H5',
+    alert: 'M12 3 2 21h20zM12 10v5M12 18h.01',
+    eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+    turn: 'M9 14 4 9l5-5M4 9h10a6 6 0 0 1 6 6v5',
+    hold: 'M8 5v14M16 5v14',
+    bell: 'M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0',
+    lanes: 'M4 4v16M12 4v16M20 4v16M8 8l2 2M16 14l-2 2',
+    strait: 'M4 4c3 5 3 11 0 16M20 4c-3 5-3 11 0 16M10 8l2-2 2 2M12 6v12'
+  };
+  var MAP = { natt: 'natt', dag: 'dag', blandet: 'blandet', situasjon: 'compass', 'fartøy': 'ship', rangering: 'list',
+    sikt: 'cloud', regler: 'book', signal: 'speaker', 'tåke': 'cloud', bygg: 'blocks', fakta: 'info', norge: 'flag',
+    nod: 'alert', se: 'eye', vik: 'turn', hold: 'hold', sig: 'bell', utk: 'eye', anv: 'flag', def: 'book', fare: 'alert', trang: 'strait', tss: 'lanes' };
+  function icon(mode) {
+    var path = P[MAP[mode] || 'compass'];
+    return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"/></svg>';
+  }
+  d.querySelectorAll('.modes button[data-mode]').forEach(function (b) {
+    if (!b.querySelector('.ic')) b.insertAdjacentHTML('afterbegin', icon(b.dataset.mode));
+  });
+
+  /* kicker: regelområde over tittelen, følger språkvalget */
+  var K = { nb: d.body.dataset.kickerNb, en: d.body.dataset.kickerEn };
+  var h1 = d.querySelector('#start h1');
+  if (h1 && K.nb && !d.querySelector('.kicker')) {
+    var kk = d.createElement('p'); kk.className = 'kicker'; h1.parentNode.insertBefore(kk, h1);
+  }
+  function setKicker() { var kk = d.querySelector('.kicker'); if (kk) kk.textContent = root.lang === 'en' ? K.en : K.nb; }
+  setKicker();
+  new MutationObserver(setKicker).observe(root, { attributes: true, attributeFilter: ['lang'] });
+
+  /* fremdriftslinje fra «Spørsmål i/n» */
+  var bar = d.querySelector('#play .bar'), count = d.getElementById('count');
+  if (bar && count && !d.querySelector('.pbar')) {
+    var pb = d.createElement('div'); pb.className = 'pbar'; pb.setAttribute('aria-hidden', 'true'); pb.innerHTML = '<i></i>';
+    bar.parentNode.insertBefore(pb, bar.nextSibling);
+    var fill = pb.firstChild;
+    var upd = function () {
+      var m = (count.textContent || '').match(/(\d+)\D+(\d+)/);
+      fill.style.width = m ? Math.max(0, Math.min(100, (parseInt(m[1], 10) - 1) / parseInt(m[2], 10) * 100)) + '%' : '0%';
+    };
+    new MutationObserver(upd).observe(count, { childList: true, characterData: true, subtree: true });
+    upd();
+  }
+
+  /* resultat: stor poengverdi med telling, aria-live, fokus */
+  var res = d.getElementById('result'), resText = d.getElementById('resText'), resTitle = d.getElementById('resTitle');
+  if (res && resText && resTitle) {
+    resTitle.setAttribute('role', 'status'); resTitle.setAttribute('aria-live', 'polite'); resTitle.tabIndex = -1;
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var big = null, anim = 0, shown = '';
+    var build = function () {
+      var m = (resText.textContent || '').match(/(?:Poeng|Points):\s*(\d+)/i);
+      if (!m) return;
+      var pts = parseInt(m[1], 10), label = root.lang === 'en' ? 'points' : 'poeng';
+      if (!big) {
+        big = d.createElement('div'); big.className = 'scorebig'; big.innerHTML = '<b></b><span></span>';
+        resText.parentNode.insertBefore(big, resText);
+      }
+      big.lastChild.textContent = label;
+      var num = big.firstChild, key = pts + '|' + res.hidden;
+      if (key === shown) return; shown = key;
+      cancelAnimationFrame(anim);
+      if (reduce || !window.requestAnimationFrame) { num.textContent = pts; return; }
+      var t0 = null, dur = 900;
+      var step = function (t) {
+        if (t0 === null) t0 = t;
+        var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+        num.textContent = Math.round(pts * e);
+        if (p < 1) anim = requestAnimationFrame(step);
+      };
+      num.textContent = 0; anim = requestAnimationFrame(step);
+    };
+    new MutationObserver(build).observe(resText, { childList: true, characterData: true, subtree: true });
+    new MutationObserver(function () {
+      if (!res.hidden) { shown = ''; build(); try { resTitle.focus({ preventScroll: true }); } catch (e) {} } else { shown = ''; }
+    }).observe(res, { attributes: true, attributeFilter: ['hidden'] });
+    build();
+  }
+})();
+/* UI-END */
+</script>
+<script id="musikk-js">
+/* MUSIKK-BEGIN */
+(function () {
+  var d = document, root = d.documentElement, game = d.body.dataset.game || '';
+  var go = d.getElementById('go'); if (!go || d.getElementById('musikk')) return;
+  var KEY = game === 'lydsignaler' ? 'cphd-music-lyd' : 'cphd-music';
+  var SRC = (location.pathname.replace(/[^\/]*$/, '').replace(/[^\/]+\/$/, '') || '/') + 'audio/tema.mp3';
+  var V = 0.35, X = 1500;
+  var T = { nb: { on: 'Musikk: på', off: 'Musikk: av', note: 'Musikk laget med KI (Google Lyria)' },
+            en: { on: 'Music: on', off: 'Music: off', note: 'Music made with AI (Google Lyria)' } };
+  var store = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+                set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  var want = store.get(KEY) === '1';           // brukerens valg (lagres)
+  var playing = false, hold = false, cur = 0, timer = null, resumeT = null, started = false;
+  var tracks = [new Audio(), new Audio()];
+  tracks.forEach(function (a) { a.preload = 'none'; a.volume = 0; a.setAttribute('playsinline', ''); });
+
+  var p = d.createElement('p'); p.className = 'musikk';
+  p.innerHTML = '<button type="button" id="musikk" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg><span></span></button><span class="muz-note"></span>';
+  go.parentNode.insertBefore(p, go.nextSibling);
+  var btn = p.querySelector('button'), label = btn.querySelector('span'), note = p.querySelector('.muz-note');
+
+  function L() { return T[root.lang === 'en' ? 'en' : 'nb']; }
+  function render() { label.textContent = want ? L().on : L().off; btn.setAttribute('aria-pressed', want ? 'true' : 'false'); note.textContent = L().note; }
+  function fade(a, to, ms, done) {
+    if (a._f) clearInterval(a._f);
+    var from = a.volume, t0 = Date.now();
+    a._f = setInterval(function () {
+      var k = Math.min(1, (Date.now() - t0) / ms); a.volume = Math.max(0, Math.min(1, from + (to - from) * k));
+      if (k >= 1) { clearInterval(a._f); a._f = null; if (done) done(); }
+    }, 50);
+  }
+  function begin(i) {
+    var a = tracks[i]; if (!a.src) a.src = SRC;
+    try { a.currentTime = 0; } catch (e) {}
+    var pr = a.play(); if (pr && pr.catch) pr.catch(function () { playing = false; });
+    fade(a, V, X);
+  }
+  function watch() {
+    var a = tracks[cur];
+    if (playing && a.duration && !a.paused && a.currentTime >= a.duration - X / 1000 - 0.1) {
+      fade(a, 0, X, function () { a.pause(); });
+      cur = 1 - cur; begin(cur);
+    }
+  }
+  function start() {
+    if (playing || hold || !want) return;
+    playing = true; begin(cur);
+    if (!timer) timer = setInterval(watch, 200);
+  }
+  function stop(ms) {
+    playing = false;
+    tracks.forEach(function (a) { fade(a, 0, ms == null ? 500 : ms, function () { if (!playing) a.pause(); }); });
+  }
+  btn.addEventListener('click', function () {
+    want = !want; store.set(KEY, want ? '1' : '0'); render();
+    if (want) { hold = false; start(); } else stop();
+  });
+  /* starter bare etter brukerklikk på Start, hvis brukeren allerede har valgt musikk */
+  go.addEventListener('click', function () { if (want) start(); });
+  /* signalspill: pause musikken mens lydsignalet spilles */
+  d.addEventListener('cphd:sound', function (e) {
+    if (!want || !playing) return;
+    var sec = (e.detail && e.detail.sec) || 6;
+    hold = true; stop(200);
+    clearTimeout(resumeT);
+    resumeT = setTimeout(function () { hold = false; if (want) start(); }, sec * 1000 + 800);
+  });
+  d.addEventListener('visibilitychange', function () {
+    if (d.hidden) { if (playing) { stop(100); playing = false; started = true; } }
+    else if (started && want) { started = false; start(); }
+  });
+  new MutationObserver(render).observe(root, { attributes: true, attributeFilter: ['lang'] });
+  render();
+})();
+/* MUSIKK-END */
+</script>
+</body>
+</html>

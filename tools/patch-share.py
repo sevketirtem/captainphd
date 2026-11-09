@@ -9,6 +9,7 @@ GAMES = {
  'nodsignaler': ('Nødsignaler', 'Distress signals'),
  'manovrer':    ('Manøver', 'Manoeuvres'),
  'utkikk-fart': ('Utkikk, fart og farvann', 'Lookout, speed and channels'),
+ 'definisjoner': ('Definisjoner', 'Definitions'),
 }
 CSS = """.share { margin: 16px 0 4px; }
 .share h3 { font-size: 15px; margin: 0 0 8px; }

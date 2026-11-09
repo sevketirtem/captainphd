@@ -18,6 +18,7 @@ GAMES = {
  'lydsignaler': ('K52 · Regel 32–37',            'K52 · Rules 32–37'),
  'nodsignaler': ('K52 · Regel 37, vedlegg IV',   'K52 · Rule 37, Annex IV'),
  'utkikk-fart': ('K52 · Regel 5–7, 9–10',        'K52 · Rules 5–7, 9–10'),
+ 'definisjoner': ('K52 · Regel 1–4, 38',          'K52 · Rules 1–4, 38'),
 }
 
 CSS = r"""<style id="ui-css">
@@ -148,7 +149,7 @@ JS = r"""<script id="ui-js">
   };
   var MAP = { natt: 'natt', dag: 'dag', blandet: 'blandet', situasjon: 'compass', 'fartøy': 'ship', rangering: 'list',
     sikt: 'cloud', regler: 'book', signal: 'speaker', 'tåke': 'cloud', bygg: 'blocks', fakta: 'info', norge: 'flag',
-    nod: 'alert', se: 'eye', vik: 'turn', hold: 'hold', sig: 'bell', utk: 'eye', fare: 'alert', trang: 'strait', tss: 'lanes' };
+    nod: 'alert', se: 'eye', vik: 'turn', hold: 'hold', sig: 'bell', utk: 'eye', anv: 'flag', def: 'book', fare: 'alert', trang: 'strait', tss: 'lanes' };
   function icon(mode) {
     var path = P[MAP[mode] || 'compass'];
     return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"/></svg>';

@@ -10,7 +10,7 @@
 Kjør etter patch-share.py, patch-more.py og patch-ui.py."""
 import re, os
 ROOT = os.path.join(os.path.dirname(__file__), '..', 'static')
-GAMES = ['lanterner', 'hvem-viker', 'manovrer', 'lydsignaler', 'nodsignaler', 'utkikk-fart']
+GAMES = ['lanterner', 'hvem-viker', 'manovrer', 'lydsignaler', 'nodsignaler', 'utkikk-fart', 'definisjoner']
 
 CSS = r"""<style id="musikk-css">
 /* MUSIKK-BEGIN */

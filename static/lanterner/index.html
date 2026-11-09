@@ -722,7 +722,8 @@ if (typeof document !== 'undefined') (function () {
     { s: 'manovrer', nb: 'Manøver', en: 'Manoeuvres', rnb: 'Regel 8, 15–17, 34', ren: 'Rules 8, 15–17, 34' },
     { s: 'lydsignaler', nb: 'Lydsignaler', en: 'Sound signals', rnb: 'Regel 32–37', ren: 'Rules 32–37' },
     { s: 'nodsignaler', nb: 'Nødsignaler', en: 'Distress signals', rnb: 'Regel 37, vedlegg IV', ren: 'Rule 37, Annex IV' },
-    { s: 'utkikk-fart', nb: 'Utkikk, fart og farvann', en: 'Lookout, speed and channels', rnb: 'Regel 5–7, 9–10', ren: 'Rules 5–7, 9–10' }
+    { s: 'utkikk-fart', nb: 'Utkikk, fart og farvann', en: 'Lookout, speed and channels', rnb: 'Regel 5–7, 9–10', ren: 'Rules 5–7, 9–10' },
+    { s: 'definisjoner', nb: 'Definisjoner', en: 'Definitions', rnb: 'Regel 1–4, 38', ren: 'Rules 1–4, 38' }
   ];
   function renderMore() {
     const box = $('more'); if (!box) return;
@@ -837,7 +838,7 @@ if (typeof module !== 'undefined') module.exports = { SC, A, buildBank, signatur
   };
   var MAP = { natt: 'natt', dag: 'dag', blandet: 'blandet', situasjon: 'compass', 'fartøy': 'ship', rangering: 'list',
     sikt: 'cloud', regler: 'book', signal: 'speaker', 'tåke': 'cloud', bygg: 'blocks', fakta: 'info', norge: 'flag',
-    nod: 'alert', se: 'eye', vik: 'turn', hold: 'hold', sig: 'bell', utk: 'eye', fare: 'alert', trang: 'strait', tss: 'lanes' };
+    nod: 'alert', se: 'eye', vik: 'turn', hold: 'hold', sig: 'bell', utk: 'eye', anv: 'flag', def: 'book', fare: 'alert', trang: 'strait', tss: 'lanes' };
   function icon(mode) {
     var path = P[MAP[mode] || 'compass'];
     return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + path + '"/></svg>';
