@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nødsignaler · Captain PhD</title>
+<meta name="description" content="Kjenn igjen nødsignalene i sjøveisreglene: regel 37 og vedlegg IV. Gratis læringsspill med tegninger og lyd.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+:root {
+  --bg: #f6f3ec; --surface: #fff; --fg: #0b2233; --muted: #4d6170; --line: #d9d3c4;
+  --signal: #d6402f; --sea: #1d5c7a; --ok: #1f7a4d; --bad: #b3261e;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0a1822; --surface: #10222f; --fg: #e8eef2; --muted: #9fb2bf; --line: #22394a;
+    --signal: #ef5a48; --sea: #6fb3d2; --ok: #4cc38a; --bad: #ff7a70; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--font); }
+a { color: var(--sea); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+.home { color: var(--fg); text-decoration: none; font-weight: 800; }
+.lang { font: 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; background: none; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+h1 { font-size: clamp(26px, 6vw, 36px); line-height: 1.15; margin: 6px 0 8px; }
+.lede { color: var(--muted); margin: 0 0 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 12px 0 16px; }
+.modes button, .opts button, .primary, .sound {
+  font: inherit; cursor: pointer; border-radius: 8px; padding: 12px; text-align: left;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.modes button[aria-pressed="true"] { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.modes b { display: block; }
+.modes span { font-size: 13px; color: var(--muted); }
+.primary { background: var(--signal); border-color: var(--signal); color: #fff; font-weight: 700; text-align: center; width: 100%; }
+button:focus-visible, .lang:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.bar { display: flex; justify-content: space-between; font: 14px var(--mono); color: var(--muted); margin-bottom: 10px; }
+.scene { display: block; width: 100%; height: auto; border-radius: 8px; }
+.card { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 14px; font-weight: 600; }
+.sound { display: inline-flex; gap: 8px; align-items: center; padding: 8px 14px; font-weight: 700; margin-top: 10px; }
+.sound svg { width: 18px; height: 18px; fill: currentColor; }
+.legend { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.q { font-weight: 700; margin: 14px 0 10px; }
+.opts { display: grid; gap: 8px; }
+.opts button { display: flex; gap: 10px; align-items: baseline; }
+.opts kbd { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+.opts button.right { border-color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
+.opts button.wrong { border-color: var(--bad); box-shadow: inset 0 0 0 2px var(--bad); }
+.opts button:disabled { cursor: default; }
+.explain { margin-top: 12px; padding: 12px; border-left: 4px solid var(--sea); background: var(--bg); border-radius: 0 8px 8px 0; }
+.explain b.ok { color: var(--ok); } .explain b.bad { color: var(--bad); }
+.next { margin-top: 12px; }
+.result h2 { margin: 0 0 6px; }
+.review { padding-left: 18px; }
+.review li { margin-bottom: 8px; }
+footer { font-size: 13px; color: var(--muted); padding: 24px 0 36px; }
+footer p { margin: 0 0 6px; }
+@media (max-width: 420px) { .modes { grid-template-columns: 1fr; } }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="home" href="../" data-href-nb="../" data-href-en="../en/">Captain PhD</a>
+    <button class="lang" id="lang" type="button">English</button>
+  </header>
+
+  <main>
+    <section id="start">
+      <h1 data-t="title"></h1>
+      <p class="lede" data-t="lede"></p>
+      <div class="panel">
+        <b data-t="chooseMode"></b>
+        <div class="modes" role="group">
+          <button type="button" data-mode="nod" aria-pressed="true"><b data-t="mYn"></b><span data-t="mYnSub"></span></button>
+          <button type="button" data-mode="se" aria-pressed="false"><b data-t="mSee"></b><span data-t="mSeeSub"></span></button>
+          <button type="button" data-mode="fakta" aria-pressed="false"><b data-t="mFact"></b><span data-t="mFactSub"></span></button>
+          <button type="button" data-mode="blandet" aria-pressed="false"><b data-t="mMix"></b><span data-t="mMixSub"></span></button>
+        </div>
+        <button class="primary" id="go" type="button" data-t="start"></button>
+        <p id="best" class="lede" style="margin:10px 0 0"></p>
+      </div>
+    </section>
+
+    <section id="play" hidden>
+      <div class="panel">
+        <div class="bar"><span id="count"></span><span id="clock">0:00</span><span id="score"></span></div>
+        <div id="stage"></div>
+        <p class="q" id="question"></p>
+        <div class="opts" id="opts"></div>
+        <div class="explain" id="explain" hidden aria-live="polite"></div>
+        <button class="primary next" id="next" type="button" hidden></button>
+      </div>
+    </section>
+
+    <section id="result" hidden>
+      <div class="panel result">
+        <h2 id="resTitle"></h2>
+        <p id="resText"></p>
+        <div id="resReview"></div>
+        <button class="primary" id="again" type="button" data-t="again"></button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-t="disclaimer"></p>
+    <p data-t="source"></p>
+    <p data-t="licence"></p>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ==========================================================================
+   Nødsignaler — Captain PhD
+   Kilde/Source: Marfag K52 Lærebok sjøveisreglene (regel 37, s. 222;
+   vedlegg IV Nødsignaler, s. 263–264), CC BY-SA 3.0; tilpasset/adapted.
+   Faktatabell: captainphd-prosjektet, k52-nodsignaler-faktatabell.md
+   Bevisst utelatt: morsegruppen (d) og DSC-verdiene (l); teksten i boken er uklar
+   og skal sammenlignes med den offisielle teksten før den tas med.
+   Tegningene og lydene er laget for dette spillet.
+   ========================================================================== */
+
+/* ---------- Tekster ---------- */
+const T = {
+  nb: {
+    title: 'Nødsignaler',
+    lede: 'Hvilke signaler skal et fartøy i nød bruke eller vise? Regel 37 og vedlegg IV i sjøveisreglene. Kjenn igjen nødsignalene, og skill dem fra signaler som ikke er nødsignaler. 10 spørsmål.',
+    chooseMode: 'Velg modus',
+    mYn: 'Nød eller ikke?', mYnSub: 'Ja eller nei',
+    mSee: 'Se og kjenn igjen', mSeeSub: 'Tegninger',
+    mFact: 'Fakta', mFactSub: 'Regel 37 og vedlegg IV',
+    mMix: 'Blandet', mMixSub: 'Alt',
+    start: 'Start', again: 'Spill igjen', next: 'Neste', finish: 'Se resultat',
+    listen: 'Spill av lyden',
+    legend: 'Lyden er forkortet. I virkeligheten varer et langt støt 4–6 sekunder, og skudd avfyres med om lag ett minutts mellomrom.',
+    qYn: 'Er dette et nødsignal etter vedlegg IV?',
+    qSee: 'Du ser dette fra et fartøy. Hvilket nødsignal i vedlegg IV er det?',
+    yes: 'Ja, et nødsignal i vedlegg IV', no: 'Nei, ikke et nødsignal',
+    right: 'Riktig!', wrong: 'Feil.', answerWas: 'Riktig svar:',
+    sceneLabel: 'Tegning av et nødsignal',
+    count: (i, n) => `Spørsmål ${i}/${n}`, score: s => `${s} poeng`,
+    resTitle: (c, n) => `${c} av ${n} riktige`,
+    resText: (time, pts) => `Tid: ${time}. Poeng: ${pts}.`,
+    best: (pts, mode) => `Din beste poengsum (${mode}): ${pts}`,
+    reviewTitle: 'Dette bør du lese en gang til:',
+    perfect: 'Alt riktig. Godt sjømannskap!',
+    disclaimer: 'Spillet er laget for læring og erstatter ikke offisiell eksamen eller opplæring. I en virkelig nødsituasjon følger du alltid gjeldende prosedyrer.',
+    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Tegningene og lydene er laget for dette spillet.',
+    licence: 'Spørsmål, tekster og tegninger i spillet deles under <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.no" rel="license">CC BY-SA 3.0</a>. Fant du en feil? Gi beskjed via <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { nod: 'nød eller ikke', se: 'se og kjenn igjen', fakta: 'fakta', blandet: 'blandet' },
+    langBtn: 'English'
+  },
+  en: {
+    title: 'Distress signals',
+    lede: 'Which signals shall a vessel in distress use or exhibit? Rule 37 and Annex IV of the collision regulations. Learn to recognise the distress signals and tell them apart from signals that are not distress signals. 10 questions.',
+    chooseMode: 'Choose a mode',
+    mYn: 'Distress or not?', mYnSub: 'Yes or no',
+    mSee: 'Look and recognise', mSeeSub: 'Drawings',
+    mFact: 'Facts', mFactSub: 'Rule 37 and Annex IV',
+    mMix: 'Mixed', mMixSub: 'Everything',
+    start: 'Start', again: 'Play again', next: 'Next', finish: 'See result',
+    listen: 'Play the sound',
+    legend: 'The sound is shortened. In reality a prolonged blast lasts 4–6 seconds, and shots are fired about a minute apart.',
+    qYn: 'Is this a distress signal under Annex IV?',
+    qSee: 'You see this from a vessel. Which distress signal in Annex IV is it?',
+    yes: 'Yes, a distress signal in Annex IV', no: 'No, not a distress signal',
+    right: 'Correct!', wrong: 'Wrong.', answerWas: 'Correct answer:',
+    sceneLabel: 'Drawing of a distress signal',
+    count: (i, n) => `Question ${i}/${n}`, score: s => `${s} points`,
+    resTitle: (c, n) => `${c} of ${n} correct`,
+    resText: (time, pts) => `Time: ${time}. Points: ${pts}.`,
+    best: (pts, mode) => `Your best score (${mode}): ${pts}`,
+    reviewTitle: 'Worth reading once more:',
+    perfect: 'All correct. Good seamanship!',
+    disclaimer: 'This game is made for learning and does not replace official examinations or training. In a real emergency, always follow the applicable procedures.',
+    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. The drawings and sounds were made for this game.',
+    licence: 'Questions, texts and drawings in this game are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>. Found a mistake? Tell us on <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { nod: 'distress or not', se: 'look and recognise', fakta: 'facts', blandet: 'mixed' },
+    langBtn: 'Norsk'
+  }
+};
+const N = 10;
+
+/* ---------- Nødsignaler (vedlegg IV punkt 1) ----------
+   fam: snd = lyd, vis = synlig, rad = radio. draw: tegning finnes. aud: lydmønster. */
+const D = {
+  a: { fam: 'snd', aud: 'xx',
+    nb: 'Et skudd eller annet knallsignal, avfyrt med om lag ett minutts mellomrom', en: 'A gun or other explosive signal fired at intervals of about a minute',
+    xnb: 'Et skudd eller annet knallsignal avfyrt med om lag ett minutts mellomrom er et nødsignal.', xen: 'A gun or other explosive signal fired at intervals of about a minute is a distress signal.',
+    ref: 'Vedlegg IV 1 (a), s. 263' },
+  b: { fam: 'snd', aud: 'c',
+    nb: 'Vedvarende lyd fra et hvilket som helst tåkesignalapparat', en: 'Continuous sounding of any fog-signalling apparatus',
+    xnb: 'Vedvarende (uavbrutt) signal med et hvilket som helst tåkesignalapparat er et nødsignal. Vanlige tåkesignaler gis med pauser og er ikke nødsignaler.', xen: 'Continuous sounding of any fog-signalling apparatus is a distress signal. Ordinary fog signals are given with pauses and are not distress signals.',
+    ref: 'Vedlegg IV 1 (b), s. 263' },
+  c: { fam: 'vis', draw: true,
+    nb: 'Raketter eller granater som kaster ut røde stjerner, avfyrt en av gangen med korte mellomrom', en: 'Rockets or shells throwing red stars, fired one at a time at short intervals',
+    xnb: 'Raketter eller granater som kaster ut røde stjerner og avfyres med korte mellomrom, én av gangen, er et nødsignal.', xen: 'Rockets or shells throwing red stars and fired at short intervals, one at a time, are a distress signal.',
+    ref: 'Vedlegg IV 1 (c), s. 263' },
+  e: { fam: 'rad',
+    nb: 'Det talte ordet «May-day» over radiotelefon', en: 'The spoken word “Mayday” by radiotelephony',
+    xnb: 'Det talte ordet «May-day» over radiotelefon er et nødsignal.', xen: 'The spoken word “Mayday” by radiotelephony is a distress signal.',
+    ref: 'Vedlegg IV 1 (e), s. 263' },
+  f: { fam: 'rad',
+    nb: 'Nødsignalet N.C. i den internasjonale signalboken', en: 'The distress signal N.C. of the International Code of Signals',
+    xnb: 'Nødsignalet N.C. i den internasjonale signalboken er et nødsignal.', xen: 'The distress signal N.C. of the International Code of Signals is a distress signal.',
+    ref: 'Vedlegg IV 1 (f), s. 263' },
+  g: { fam: 'vis', draw: true,
+    nb: 'Et firkantet flagg med en kule (eller noe som ligner en kule) over eller under flagget', en: 'A square flag with a ball (or anything resembling a ball) above or below it',
+    xnb: 'Et firkantet flagg med en kule eller noe som ligner en kule, over eller under flagget, er et nødsignal.', xen: 'A square flag having above or below it a ball or anything resembling a ball is a distress signal.',
+    ref: 'Vedlegg IV 1 (g), s. 263' },
+  h: { fam: 'vis', draw: true,
+    nb: 'En flamme på fartøyet, for eksempel fra en brennende tjære- eller oljetønne', en: 'Flames on the vessel, for example from a burning tar barrel or oil barrel',
+    xnb: 'En flamme på fartøyet, for eksempel fra en brennende tjære- eller oljetønne, er et nødsignal.', xen: 'Flames on the vessel, as from a burning tar barrel or oil barrel, are a distress signal.',
+    ref: 'Vedlegg IV 1 (h), s. 263' },
+  i: { fam: 'vis', draw: true,
+    nb: 'Et fallskjermlys eller et håndbluss som viser rødt lys', en: 'A parachute flare or a hand flare showing a red light',
+    xnb: 'Et fallskjermlys eller et håndbluss som viser rødt lys, er et nødsignal.', xen: 'A parachute flare or a hand flare showing a red light is a distress signal.',
+    ref: 'Vedlegg IV 1 (i), s. 263' },
+  j: { fam: 'vis', draw: true,
+    nb: 'Et røyksignal som sender ut tykk, orangefarget røyk', en: 'A smoke signal giving off thick orange-coloured smoke',
+    xnb: 'Et røyksignal som sender ut tykk, orangefarget røyk, er et nødsignal.', xen: 'A smoke signal giving off thick orange-coloured smoke is a distress signal.',
+    ref: 'Vedlegg IV 1 (j), s. 263' },
+  k: { fam: 'vis', draw: true,
+    nb: 'Langsom og gjentatt bevegelse opp og ned av armene, utstrakt til hver sin side', en: 'Slowly and repeatedly raising and lowering arms outstretched to each side',
+    xnb: 'Langsom og gjentatt bevegelse opp og ned av armene utstrakt til hver sin side er et nødsignal.', xen: 'Slowly and repeatedly raising and lowering the arms outstretched to each side is a distress signal.',
+    ref: 'Vedlegg IV 1 (k), s. 263' },
+  m: { fam: 'rad',
+    nb: 'En skip-til-land nødalarm sendt av skipets Inmarsat eller annen satellittleverandørs mobile skipsjordstasjon', en: 'A ship-to-shore distress alert sent by the ship’s Inmarsat or other mobile satellite service provider ship earth station',
+    xnb: 'En skip-til-land nødalarm sendt av skipets Inmarsat eller annen satellittleverandørs mobile skipsjordstasjon er et nødsignal.', xen: 'A ship-to-shore distress alert sent by the ship’s Inmarsat or other mobile satellite service provider ship earth station is a distress signal.',
+    ref: 'Vedlegg IV 1 (m), s. 263' },
+  n: { fam: 'rad',
+    nb: 'Signaler sendt av nødradiopeilesendere', en: 'Signals transmitted by emergency position-indicating radio beacons',
+    xnb: 'Signaler sendt av nødradiopeilesendere er nødsignaler.', xen: 'Signals transmitted by emergency position-indicating radio beacons are distress signals.',
+    ref: 'Vedlegg IV 1 (n), s. 263' },
+  o: { fam: 'rad',
+    nb: 'Godkjente signaler fra radiokommunikasjonssystemer, blant annet radar-transpondere for redningsfarkoster', en: 'Approved signals transmitted by radiocommunication systems, including survival craft radar transponders',
+    xnb: 'Godkjente signaler sendt av radiokommunikasjonssystemer, herunder radar-transpondere for redningsfarkoster, er nødsignaler.', xen: 'Approved signals transmitted by radiocommunication systems, including survival craft radar transponders, are distress signals.',
+    ref: 'Vedlegg IV 1 (o), s. 263' }
+};
+const DIST = Object.keys(D);
+const SEE = DIST.filter(k => D[k].draw);
+
+/* ---------- Signaler som IKKE er nødsignaler ---------- */
+const NON = {
+  n1: { aud: 'fffff',
+    nb: 'Fem korte, raske støt med fløyten', en: 'Five short and rapid blasts on the whistle',
+    xnb: 'Nei. Minst fem korte støt raskt etter hverandre er ikke et nødsignal. Det er signalet for at et fartøy i sikte ikke forstår hva det andre gjør, eller er i tvil om at det tar tilstrekkelige forholdsregler.',
+    xen: 'No. At least five short and rapid blasts are not a distress signal. They are the signal given by a vessel in sight that does not understand the other vessel’s intentions or doubts that it is taking sufficient action.',
+    ref: 'Regel 34 (d), s. 217' },
+  n2: { aud: 'l',
+    nb: 'Ett langt støt med fløyten hvert annet minutt i tåke', en: 'One prolonged blast on the whistle every two minutes in fog',
+    xnb: 'Nei. Det er tåkesignalet til et maskindrevet fartøy som gjør fart gjennom vannet.',
+    xen: 'No. It is the fog signal of a power-driven vessel making way through the water.',
+    ref: 'Regel 35 (a), s. 220' },
+  n3: { aud: 'r',
+    nb: 'Rask ringing med klokken i om lag 5 sekunder, minst hvert minutt, i tåke', en: 'Rapid ringing of the bell for about 5 seconds, every minute, in fog',
+    xnb: 'Nei. Det er tåkesignalet til et fartøy som ligger til ankers.',
+    xen: 'No. It is the fog signal of a vessel at anchor.',
+    ref: 'Regel 35 (g), s. 220' },
+  n4: { aud: 'lsls',
+    nb: 'Ett langt, ett kort, ett langt og ett kort støt med fløyten', en: 'One prolonged, one short, one prolonged and one short blast on the whistle',
+    xnb: 'Nei. Det er signalet fra et fartøy som blir innhentet i en trang lei eller renne og er enig i at det andre går forbi.',
+    xen: 'No. It is the signal of a vessel being overtaken in a narrow channel or fairway that agrees to be overtaken.',
+    ref: 'Regel 34 (c)(ii), s. 217' },
+  n5: { aud: 'ssss',
+    nb: 'Fire korte støt med fløyten fra et losfartøy på losoppdrag', en: 'Four short blasts on the whistle from a pilot vessel on pilotage duty',
+    xnb: 'Nei. Det er et kjenningssignal for losfartøy, gitt i tillegg til de vanlige tåkesignalene.',
+    xen: 'No. It is an identity signal for pilot vessels, given in addition to the ordinary fog signals.',
+    ref: 'Regel 35 (k)' },
+  n6: {
+    nb: 'To røde rundtlysende lanterner over hverandre om natten', en: 'Two all-round red lights in a vertical line at night',
+    xnb: 'Nei. Det viser et fartøy som ikke er under kommando. Lanternene viser at fartøyet ikke kan manøvrere som reglene krever, men er ikke et nødsignal.',
+    xen: 'No. They show a vessel not under command. The lights show that the vessel cannot manoeuvre as the rules require, but they are not a distress signal.',
+    ref: 'Regel 27 (a), s. 195' }
+};
+const NONK = Object.keys(NON);
+
+/* ---------- Faktaspørsmål (o[0] er riktig svar) ---------- */
+const FACTS = [
+  { q: ['Hvor beskrives nødsignalene et fartøy i nød skal bruke eller vise?', 'Where are the distress signals a vessel in distress shall use or exhibit described?'],
+    o: [['Vedlegg IV', 'Annex IV'], ['Vedlegg I', 'Annex I'], ['Vedlegg II', 'Annex II'], ['Vedlegg III', 'Annex III']],
+    x: ['Når et fartøy er i nød og trenger hjelp, skal det bruke eller vise signalene som er beskrevet i vedlegg IV.', 'When a vessel is in distress and requires assistance she shall use or exhibit the signals described in Annex IV.'], ref: 'Regel 37, s. 222' },
+  { q: ['Hvor ofte avfyres skudd eller annet knallsignal som nødsignal?', 'How often is a gun or other explosive signal fired as a distress signal?'],
+    o: [['Med om lag ett minutts mellomrom', 'At intervals of about a minute'], ['Hvert tiende sekund', 'Every ten seconds'], ['Hvert femte minutt', 'Every five minutes'], ['Bare én gang', 'Only once']],
+    x: ['Skuddet eller knallsignalet avfyres med om lag ett minutts mellomrom.', 'The gun or explosive signal is fired at intervals of about a minute.'], ref: 'Vedlegg IV 1 (a), s. 263' },
+  { q: ['Hvordan avfyres raketter eller granater med røde stjerner som nødsignal?', 'How are rockets or shells throwing red stars fired as a distress signal?'],
+    o: [['Med korte mellomrom, én av gangen', 'At short intervals, one at a time'], ['Alle samtidig', 'All at the same time'], ['Hvert tiende minutt', 'Every ten minutes'], ['Bare om natten, to om gangen', 'Only at night, two at a time']],
+    x: ['Rakettene eller granatene avfyres med korte mellomrom, en av gangen.', 'The rockets or shells are fired at short intervals, one at a time.'], ref: 'Vedlegg IV 1 (c), s. 263' },
+  { q: ['Hvilken farge har røyken i røyksignalet som nødsignal?', 'What colour is the smoke in the smoke signal used as a distress signal?'],
+    o: [['Orange, og tykk', 'Orange, and thick'], ['Svart, og tykk', 'Black, and thick'], ['Hvit, og tykk', 'White, and thick'], ['Grå, og tynn', 'Grey, and thin']],
+    x: ['Røyksignalet skal sende ut tykk, orangefarget røyk.', 'The smoke signal shall give off thick orange-coloured smoke.'], ref: 'Vedlegg IV 1 (j), s. 263' },
+  { q: ['Hvilken farge har lyset fra et fallskjermlys eller håndbluss som nødsignal?', 'What colour is the light from a parachute flare or hand flare used as a distress signal?'],
+    o: [['Rødt', 'Red'], ['Hvitt', 'White'], ['Grønt', 'Green'], ['Gult', 'Yellow']],
+    x: ['Fallskjermlyset eller håndblusset skal vise rødt lys.', 'The parachute flare or hand flare shall show a red light.'], ref: 'Vedlegg IV 1 (i), s. 263' },
+  { q: ['Hva består flaggsignalet i vedlegg IV av?', 'What does the flag signal in Annex IV consist of?'],
+    o: [['Et firkantet flagg med en kule over eller under', 'A square flag with a ball above or below it'], ['To trekantede flagg over hverandre', 'Two triangular flags one above the other'], ['Et firkantet flagg uten kule', 'A square flag without a ball'], ['Et rundt flagg med et kors', 'A round flag with a cross']],
+    x: ['Signalet består av et firkantet flagg med en kule eller noe som ligner en kule, over eller under flagget.', 'The signal consists of a square flag having above or below it a ball or anything resembling a ball.'], ref: 'Vedlegg IV 1 (g), s. 263' },
+  { q: ['Hva er et vedvarende signal med tåkesignalapparat?', 'What is a continuous sounding of a fog-signalling apparatus?'],
+    o: [['Et nødsignal', 'A distress signal'], ['Tåkesignalet til et fartøy for anker', 'The fog signal of a vessel at anchor'], ['Et manøversignal', 'A manoeuvring signal'], ['Et kjenningssignal for losfartøy', 'An identity signal for pilot vessels']],
+    x: ['Vedvarende signal med et hvilket som helst tåkesignalapparat angir nød og at det trengs hjelp.', 'Continuous sounding of any fog-signalling apparatus indicates distress and need of assistance.'], ref: 'Vedlegg IV 1 (b), s. 263' },
+  { q: ['Hvordan gis nødsignalet med armene?', 'How is the distress signal given with the arms?'],
+    o: [['Langsom og gjentatt bevegelse opp og ned med armene utstrakt til hver side', 'Slow and repeated raising and lowering of the arms outstretched to each side'], ['Rask vifting med én arm', 'Rapid waving of one arm'], ['Armene i kors foran brystet', 'Arms crossed in front of the chest'], ['Begge armene stille over hodet', 'Both arms held still above the head']],
+    x: ['Signalet er langsom og gjentatt bevegelse opp og ned av armene utstrakt til hver sin side.', 'The signal is a slow and repeated raising and lowering of the arms outstretched to each side.'], ref: 'Vedlegg IV 1 (k), s. 263' },
+  { q: ['Hvilket ord sier du i radiotelefonen som nødsignal?', 'Which word do you speak by radiotelephony as a distress signal?'],
+    o: [['«May-day»', '“Mayday”'], ['«Hjelp»', '“Help”'], ['«Alarm»', '“Alarm”'], ['«Stopp»', '“Stop”']],
+    x: ['Nødsignalet over radiotelefon er det talte ordet «May-day».', 'The distress signal by radiotelephony is the spoken word “Mayday”.'], ref: 'Vedlegg IV 1 (e), s. 263' },
+  { q: ['Hvilket nødsignal fra den internasjonale signalboken står i vedlegg IV?', 'Which distress signal of the International Code of Signals is listed in Annex IV?'],
+    o: [['N.C.', 'N.C.'], ['O.K.', 'O.K.'], ['A.B.', 'A.B.'], ['S.T.', 'S.T.']],
+    x: ['Nødsignalet N.C. i den internasjonale signalboken.', 'The distress signal N.C. of the International Code of Signals.'], ref: 'Vedlegg IV 1 (f), s. 263' },
+  { q: ['Når er det tillatt å bruke eller vise nødsignalene i vedlegg IV?', 'When may the distress signals in Annex IV be used or exhibited?'],
+    o: [['Bare for å tilkjennegi nød og at det trengs hjelp', 'Only to indicate distress and need of assistance'], ['Også for å teste utstyret', 'Also to test the equipment'], ['Også i havn om natten', 'Also in port at night'], ['Når kapteinen godkjenner det', 'When the master approves']],
+    x: ['Det er forbudt å bruke eller vise noen av nødsignalene unntatt for å tilkjennegi nød og at det trengs hjelp.', 'It is prohibited to use or exhibit any of the signals except for indicating distress and need of assistance.'], ref: 'Vedlegg IV 2, s. 264' },
+  { q: ['Hva gjelder for andre signaler som kan forveksles med nødsignalene?', 'What applies to other signals that may be confused with the distress signals?'],
+    o: [['Det er forbudt å bruke dem', 'It is prohibited to use them'], ['De er tillatt i tåke', 'They are allowed in fog'], ['De er tillatt om natten', 'They are allowed at night'], ['De er tillatt for fiskefartøy', 'They are allowed for fishing vessels']],
+    x: ['Det er også forbudt å bruke andre signaler som kan forveksles med nødsignalene.', 'It is also prohibited to use other signals that may be confused with the distress signals.'], ref: 'Vedlegg IV 2, s. 264' },
+  { q: ['Hva er et eksempel på «en flamme på fartøyet» som nødsignal?', 'What is an example of “flames on the vessel” as a distress signal?'],
+    o: [['En brennende tjære- eller oljetønne', 'A burning tar barrel or oil barrel'], ['En lanterne som blinker', 'A flashing lantern'], ['Et grønt håndbluss', 'A green hand flare'], ['En lommelykt mot himmelen', 'A torch pointed at the sky']],
+    x: ['Vedlegg IV nevner en flamme på fartøyet, for eksempel fra en brennende tjære- eller oljetønne.', 'Annex IV mentions flames on the vessel, as from a burning tar barrel or oil barrel.'], ref: 'Vedlegg IV 1 (h), s. 263' },
+  { q: ['Hvilke radiosignaler regnes også som nødsignaler i vedlegg IV?', 'Which radio signals are also distress signals in Annex IV?'],
+    o: [['Signaler fra nødradiopeilesendere og radar-transpondere for redningsfarkoster', 'Signals from emergency position-indicating radio beacons and survival craft radar transponders'], ['Alle radarekko', 'All radar echoes'], ['Signaler fra autopiloten', 'Signals from the autopilot'], ['Alle samtaler på VHF', 'All VHF conversations']],
+    x: ['Signaler sendt av nødradiopeilesendere og godkjente signaler fra radiokommunikasjonssystemer, herunder radar-transpondere for redningsfarkoster.', 'Signals transmitted by emergency position-indicating radio beacons, and approved signals from radiocommunication systems, including survival craft radar transponders.'], ref: 'Vedlegg IV 1 (n) og (o), s. 263' },
+  { q: ['Hva sier vedlegg IV punkt 3 om et stykke orangefarget duk?', 'What does Annex IV paragraph 3 say about a piece of orange-coloured canvas?'],
+    o: [['Den kan ha en sort firkant og sirkel eller annet symbol, for identifikasjon fra luften', 'It may carry a black square and circle or other symbol, for identification from the air'], ['Den skal henge fra masten i tåke', 'It shall hang from the mast in fog'], ['Den brukes som kjenningssignal for losfartøy', 'It is used as an identity signal for pilot vessels'], ['Den erstatter nødflagget', 'It replaces the distress flag']],
+    x: ['Oppmerksomheten henledes på et stykke orangefarget duk påført enten en sort firkant og sirkel eller et annet passende symbol, for identifikasjon fra luften.', 'Attention is drawn to a piece of orange-coloured canvas with either a black square and circle or other appropriate symbol (for identification from the air).'], ref: 'Vedlegg IV 3 (a), s. 264' }
+];
+
+/* ---------- Spørsmålsbank ---------- */
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function cycle(pool) { let q = []; return () => { if (!q.length) q = shuffle(pool.slice()); return q.pop(); }; }
+function ynItem(k, isDist) {
+  return { type: 'yn', k, dist: isDist, opts: [{ id: 'yes', key: 'yes' }, { id: 'no', key: 'no' }], correct: isDist ? 'yes' : 'no' };
+}
+function makeRound(mode) {
+  const dd = cycle(DIST), nn = cycle(NONK), ss = cycle(SEE), ff = cycle(FACTS.map((f, i) => i));
+  const types = mode === 'nod' ? Array(N).fill('yn') : mode === 'se' ? Array(N).fill('see') : mode === 'fakta' ? Array(N).fill('fact')
+    : shuffle(['yn', 'yn', 'yn', 'see', 'see', 'see', 'fact', 'fact', 'fact', 'fact']);
+  return types.map(type => {
+    if (type === 'yn') return Math.random() < 0.5 ? ynItem(dd(), true) : ynItem(nn(), false);
+    if (type === 'see') {
+      const k = ss();
+      const others = shuffle(SEE.filter(x => x !== k)).slice(0, 3);
+      return { type, k, variant: Math.random() < 0.5 ? 0 : 1, opts: shuffle([k, ...others]).map(id => ({ id })), correct: k };
+    }
+    const i = ff();
+    const opts = shuffle(FACTS[i].o.map((o, j) => ({ id: 'f' + i + '_' + j, nb: o[0], en: o[1], ok: j === 0 })));
+    return { type: 'fact', f: i, opts, correct: opts.find(o => o.ok).id };
+  });
+}
+
+/* ---------- Tegninger (egne SVG) ---------- */
+function drawing(k, variant, label) {
+  const sky = '<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b3a52"/><stop offset="1" stop-color="#6d93a8"/></linearGradient>' +
+    '<radialGradient id="gl"><stop offset="0" stop-color="#ff6a4d" stop-opacity=".9"/><stop offset="1" stop-color="#ff6a4d" stop-opacity="0"/></radialGradient></defs>' +
+    '<rect width="320" height="190" fill="url(#sk)"/><rect y="128" width="320" height="62" fill="#1d4d66"/>' +
+    '<path d="M0 138 q20 -5 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#3c7a98" stroke-width="1.5"/>';
+  const hull = '<path d="M70 118 H250 L236 140 H86 Z" fill="#0b1820"/><rect x="170" y="98" width="46" height="20" fill="#16303f"/><rect x="178" y="104" width="30" height="5" fill="#ffd27a" opacity=".7"/>';
+  let body = '';
+  if (k === 'g') {
+    const flagY = variant ? 56 : 62, ballY = variant ? 104 - 10 : 38;
+    body = hull + '<rect x="118" y="30" width="3" height="88" fill="#0b1820"/>' +
+      `<rect x="121" y="${flagY - 8}" width="40" height="40" fill="#f2e7c0" stroke="#0b1820" stroke-width="2"/>` +
+      `<line x1="121" y1="${flagY - 8}" x2="161" y2="${flagY + 32}" stroke="#2a6fb0" stroke-width="3"/>` +
+      `<circle cx="140" cy="${variant ? 104 : 24}" r="10" fill="#0b1820"/>`;
+    if (variant) body = body.replace(`cy="104"`, `cy="104"`);
+  } else if (k === 'j') {
+    let puffs = '';
+    [[150, 100, 10], [166, 86, 14], [186, 70, 18], [210, 54, 22], [238, 40, 26], [268, 30, 28]].forEach(([x, y, r]) => { puffs += `<circle cx="${x}" cy="${y}" r="${r}" fill="#f08a24" opacity=".88"/>`; });
+    body = hull + '<rect x="140" y="102" width="12" height="16" fill="#0b1820"/>' + puffs;
+  } else if (k === 'i') {
+    if (!variant) {
+      body = hull + '<path d="M110 40 a34 26 0 0 1 68 0 Z" fill="#ece8dc" stroke="#0b1820" stroke-width="1.5"/>' +
+        '<path d="M110 40 L144 78 M178 40 L144 78 M144 40 L144 78" stroke="#0b1820" stroke-width="1"/>' +
+        '<circle cx="144" cy="82" r="30" fill="url(#gl)"/><circle cx="144" cy="82" r="6" fill="#ff3b2f"/>';
+    } else {
+      body = hull + '<circle cx="120" cy="82" r="8" fill="#e0b48a"/><rect x="112" y="90" width="16" height="28" fill="#16303f"/>' +
+        '<path d="M128 94 L146 78" stroke="#0b1820" stroke-width="4"/><circle cx="148" cy="76" r="34" fill="url(#gl)"/><circle cx="148" cy="76" r="6" fill="#ff3b2f"/>';
+    }
+  } else if (k === 'c') {
+    let st = '';
+    [[0, -24], [24, -8], [-24, -8], [14, 20], [-14, 20], [0, 0]].forEach(([dx, dy]) => { st += `<circle cx="${190 + dx}" cy="${48 + dy}" r="5" fill="#ff3b2f"/><circle cx="${190 + dx}" cy="${48 + dy}" r="11" fill="url(#gl)"/>`; });
+    body = hull + '<path d="M130 112 Q150 90 160 70 T190 52" fill="none" stroke="#e8e8e8" stroke-width="2" stroke-dasharray="6 5"/>' + st;
+  } else if (k === 'h') {
+    body = hull + '<rect x="132" y="100" width="22" height="18" rx="3" fill="#5b4a3a"/><rect x="132" y="104" width="22" height="3" fill="#2b2118"/>' +
+      '<path d="M143 100 C128 86 136 74 140 62 C142 74 152 76 150 88 C158 80 156 70 152 62 C168 78 162 92 154 100 Z" fill="#ff8a1f"/>' +
+      '<path d="M143 100 C136 92 140 86 143 78 C146 86 150 90 147 100 Z" fill="#ffd24a"/><circle cx="143" cy="84" r="34" fill="url(#gl)" opacity=".5"/>';
+  } else if (k === 'k') {
+    body = hull + '<circle cx="160" cy="64" r="9" fill="#e0b48a"/><rect x="152" y="73" width="16" height="30" rx="3" fill="#c9372c"/><rect x="154" y="103" width="5" height="15" fill="#0b1820"/><rect x="161" y="103" width="5" height="15" fill="#0b1820"/>' +
+      '<path d="M152 78 L112 78" stroke="#e0b48a" stroke-width="6" stroke-linecap="round"/><path d="M168 78 L208 78" stroke="#e0b48a" stroke-width="6" stroke-linecap="round"/>' +
+      '<path d="M104 70 v-14 m-5 5 l5 -5 l5 5" fill="none" stroke="#fff" stroke-width="2"/><path d="M104 86 v14 m-5 -5 l5 5 l5 -5" fill="none" stroke="#fff" stroke-width="2"/>' +
+      '<path d="M216 70 v-14 m-5 5 l5 -5 l5 5" fill="none" stroke="#fff" stroke-width="2"/><path d="M216 86 v14 m-5 -5 l5 5 l5 -5" fill="none" stroke="#fff" stroke-width="2"/>';
+  }
+  return `<svg class="scene" viewBox="0 0 320 190" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">${sky}${body}</svg>`;
+}
+
+/* ---------- Lyd (Web Audio) ---------- */
+const EV = {
+  s: { k: 'w', d: 1, gap: 1 }, l: { k: 'w', d: 5, gap: 2 }, f: { k: 'w', d: 0.25, gap: 0.25 },
+  r: { k: 'r', d: 5, gap: 0.5 }, x: { k: 'x', d: 0.3, gap: 6 }, c: { k: 'w', d: 8, gap: 0 }
+};
+function schedule(pat, speed) {
+  const out = []; let t = 0;
+  [...pat].forEach((ch, i) => { const e = EV[ch]; out.push({ i, ch, k: e.k, t0: t * speed, d: e.d * speed }); t += e.d + e.gap; });
+  return { ev: out, total: t * speed };
+}
+
+/* ---------- Spill ---------- */
+if (typeof document !== 'undefined') (function () {
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ingen lagring */ } }
+  };
+  const params = new URLSearchParams(location.search);
+  let lang = params.get('lang') === 'en' ? 'en' : (params.get('lang') === 'nb' ? 'nb' : (store.get('cphd-lang') || 'nb'));
+  let mode = 'nod', round = null, timer = null;
+  const t = k => T[lang][k];
+  const hasAudio = !!(window.AudioContext || window.webkitAudioContext);
+  let ctx = null;
+  function ac() {
+    if (!hasAudio) return null;
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function whistle(c, at, d) {
+    const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1500;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(0.32, at + Math.min(0.05, d / 3));
+    g.gain.setValueAtTime(0.32, at + Math.max(0.06, d - 0.08)); g.gain.linearRampToValueAtTime(0, at + d);
+    [[196, 'sawtooth', 0.5], [200, 'square', 0.4], [392, 'sine', 0.25]].forEach(([fr, ty, vol]) => {
+      const o = c.createOscillator(), og = c.createGain();
+      o.type = ty; o.frequency.value = fr; og.gain.value = vol; o.connect(og); og.connect(f); o.start(at); o.stop(at + d + 0.03);
+    });
+    f.connect(g); g.connect(c.destination);
+  }
+  function strike(c, at, base, dec, vol) {
+    [[1, 1], [2.76, 0.5], [5.4, 0.25]].forEach(([m, a]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = base * m;
+      g.gain.setValueAtTime(vol * a, at); g.gain.exponentialRampToValueAtTime(0.0001, at + dec);
+      o.connect(g); g.connect(c.destination); o.start(at); o.stop(at + dec + 0.03);
+    });
+  }
+  function bang(c, at) {
+    const len = Math.floor(c.sampleRate * 0.5), buf = c.createBuffer(1, len, c.sampleRate), data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (c.sampleRate * 0.09));
+    const src = c.createBufferSource(); src.buffer = buf;
+    const lp = c.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900;
+    const g = c.createGain(); g.gain.value = 0.9; src.connect(lp); lp.connect(g); g.connect(c.destination); src.start(at);
+    const o = c.createOscillator(), og = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(90, at); o.frequency.exponentialRampToValueAtTime(35, at + 0.3);
+    og.gain.setValueAtTime(0.7, at); og.gain.exponentialRampToValueAtTime(0.0001, at + 0.35); o.connect(og); og.connect(c.destination); o.start(at); o.stop(at + 0.4);
+  }
+  function play(pat) {
+    const c = ac(); if (!c) return;
+    const { ev } = schedule(pat, 0.5), now = c.currentTime + 0.06;
+    ev.forEach(e => {
+      const at = now + e.t0;
+      if (e.k === 'w') whistle(c, at, Math.max(0.12, e.d));
+      else if (e.k === 'x') bang(c, at);
+      else if (e.k === 'r') for (let s = 0; s * 0.2 < e.d; s++) strike(c, at + s * 0.2, 700, 0.22, 0.28);
+    });
+  }
+
+  function applyLang() {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nb';
+    document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
+    document.title = `${t('title')} · Captain PhD`;
+    $('lang').textContent = t('langBtn');
+    const home = document.querySelector('.home'); home.href = lang === 'en' ? home.dataset.hrefEn : home.dataset.hrefNb;
+    showBest();
+    if (round && !$('play').hidden) renderQ(true);
+    if (round && !$('result').hidden) showResult();
+  }
+  $('lang').addEventListener('click', () => { lang = lang === 'nb' ? 'en' : 'nb'; store.set('cphd-lang', lang); applyLang(); });
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    showBest();
+  }));
+  function showBest() {
+    const b = store.get('cphd-nodsignaler-best-' + mode);
+    $('best').textContent = b ? t('best')(b, T[lang].modeName[mode]) : '';
+  }
+  const fmt = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+  function start() {
+    ac();
+    round = { qs: makeRound(mode), n: 0, correct: 0, pts: 0, t0: Date.now(), wrong: [], answered: false };
+    $('start').hidden = true; $('result').hidden = true; $('play').hidden = false;
+    clearInterval(timer);
+    timer = setInterval(() => { $('clock').textContent = fmt(Date.now() - round.t0); }, 500);
+    renderQ();
+  }
+  const itemOf = q => (q.type === 'yn' ? (q.dist ? D[q.k] : NON[q.k]) : D[q.k]);
+  const optLabel = (q, o) => q.type === 'yn' ? t(o.id) : q.type === 'see' ? D[o.id][lang] : o[lang];
+
+  function renderQ(keepState) {
+    const q = round.qs[round.n];
+    $('count').textContent = t('count')(round.n + 1, N);
+    $('score').textContent = t('score')(round.pts);
+    const stage = $('stage'); stage.innerHTML = '';
+    if (q.type === 'yn') {
+      const it = itemOf(q);
+      stage.innerHTML = `<div class="card">${it[lang]}</div>`;
+      if (it.aud && hasAudio) {
+        stage.innerHTML += `<button class="sound" id="listen" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg><span>${t('listen')}</span></button><p class="legend">${t('legend')}</p>`;
+        $('listen').addEventListener('click', () => play(it.aud));
+      }
+      $('question').textContent = t('qYn');
+    } else if (q.type === 'see') {
+      stage.innerHTML = drawing(q.k, q.variant, t('sceneLabel'));
+      $('question').textContent = t('qSee');
+    } else {
+      $('question').textContent = FACTS[q.f].q[lang === 'en' ? 1 : 0];
+    }
+    const box = $('opts'); box.innerHTML = '';
+    q.opts.forEach((o, idx) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.a = o.id;
+      b.innerHTML = `<kbd>${idx + 1}</kbd><span>${optLabel(q, o)}</span>`;
+      b.addEventListener('click', () => answer(o.id));
+      box.appendChild(b);
+    });
+    if (keepState && round.answered) { markAnswer(round.lastPick); return; }
+    round.answered = false; round.qStart = Date.now();
+    $('explain').hidden = true; $('next').hidden = true;
+    const first = box.querySelector('button'); if (first && !keepState) first.focus({ preventScroll: true });
+  }
+
+  function answer(a) {
+    if (round.answered) return;
+    round.answered = true; round.lastPick = a;
+    const q = round.qs[round.n];
+    if (a === q.correct) {
+      round.correct++;
+      const secs = (Date.now() - round.qStart) / 1000;
+      round.pts += 100 + Math.max(0, Math.round(50 - secs * 5));
+    } else round.wrong.push(q);
+    markAnswer(a);
+  }
+  function explainOf(q) {
+    if (q.type === 'fact') { const f = FACTS[q.f]; return { body: f.x[lang === 'en' ? 1 : 0], ref: f.ref }; }
+    const it = itemOf(q);
+    if (q.type === 'yn' && q.dist) return { body: (lang === 'en' ? 'Yes. ' : 'Ja. ') + (lang === 'en' ? it.xen : it.xnb), ref: it.ref };
+    return { body: lang === 'en' ? it.xen : it.xnb, ref: it.ref };
+  }
+  function markAnswer(a) {
+    const q = round.qs[round.n], ok = a === q.correct;
+    document.querySelectorAll('#opts button').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.a === q.correct) b.classList.add('right'); else if (b.dataset.a === a) b.classList.add('wrong');
+    });
+    const right = q.opts.find(o => o.id === q.correct);
+    const ex = explainOf(q);
+    $('explain').innerHTML = `<b class="${ok ? 'ok' : 'bad'}">${ok ? t('right') : t('wrong')}</b> ` +
+      (ok || q.type === 'yn' ? '' : `${t('answerWas')} <b>${optLabel(q, right)}</b>. `) + ex.body + ` <span style="color:var(--muted)">(${ex.ref})</span>`;
+    $('explain').hidden = false;
+    $('score').textContent = t('score')(round.pts);
+    $('next').textContent = round.n === N - 1 ? t('finish') : t('next');
+    $('next').hidden = false; $('next').focus({ preventScroll: true });
+  }
+  $('next').addEventListener('click', () => {
+    if (round.n === N - 1) { finish(); return; }
+    round.n++; renderQ();
+    $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+  function finish() {
+    clearInterval(timer);
+    round.time = Date.now() - round.t0;
+    const key = 'cphd-nodsignaler-best-' + mode, best = +(store.get(key) || 0);
+    if (round.pts > best) store.set(key, String(round.pts));
+    showResult();
+  }
+  function showResult() {
+    $('play').hidden = true; $('result').hidden = false;
+    $('resTitle').textContent = t('resTitle')(round.correct, N);
+    $('resText').textContent = t('resText')(fmt(round.time), round.pts);
+    if (!round.wrong.length) { $('resReview').innerHTML = `<p>${t('perfect')}</p>`; }
+    else {
+      const seen = new Set();
+      const items = round.wrong.filter(q => { const k = q.type === 'fact' ? 'f' + q.f : q.k; return !seen.has(k) && seen.add(k); }).map(q => {
+        const ex = explainOf(q);
+        const head = q.type === 'fact' ? FACTS[q.f].q[lang === 'en' ? 1 : 0] : itemOf(q)[lang];
+        return `<li><b>${head}</b> ${ex.body} <span style="color:var(--muted)">(${ex.ref})</span></li>`;
+      }).join('');
+      $('resReview').innerHTML = `<p><b>${t('reviewTitle')}</b></p><ul class="review">${items}</ul>`;
+    }
+    showBest();
+    $('again').focus({ preventScroll: true });
+  }
+  $('go').addEventListener('click', start);
+  $('again').addEventListener('click', () => { $('result').hidden = true; $('start').hidden = false; round = null; showBest(); });
+  document.addEventListener('keydown', e => {
+    if ($('play').hidden || !round || round.answered || e.ctrlKey || e.metaKey || e.altKey) return;
+    const n = parseInt(e.key, 10), q = round.qs[round.n];
+    if (n >= 1 && q.opts[n - 1]) answer(q.opts[n - 1].id);
+  });
+  applyLang();
+})();
+
+if (typeof module !== 'undefined') module.exports = { D, NON, FACTS, DIST, SEE, NONK, makeRound, drawing, schedule, N, T };
+</script>
+</body>
+</html>
