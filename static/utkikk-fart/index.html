@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Utkikk, fart og farvann · Captain PhD</title>
+<meta name="description" content="Utkikk, sikker fart, fare for sammenstøt, trange farvann og trafikkseparasjonssystemer: øv på sjøveisreglene regel 5, 6, 7, 9 og 10. Gratis læringsspill med tegninger, tidtaker og poeng.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+:root {
+  --bg: #f6f3ec; --surface: #fff; --fg: #0b2233; --muted: #4d6170; --line: #d9d3c4;
+  --signal: #d6402f; --sea: #1d5c7a; --ok: #1f7a4d; --bad: #b3261e; --amber: #b9730b; --water: #e6eef1;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0a1822; --surface: #10222f; --fg: #e8eef2; --muted: #9fb2bf; --line: #22394a;
+    --signal: #ef5a48; --sea: #6fb3d2; --ok: #4cc38a; --bad: #ff7a70; --amber: #f0b44c; --water: #0c1d29; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--font); }
+a { color: var(--sea); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+.home { color: var(--fg); text-decoration: none; font-weight: 800; }
+.lang { font: 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; background: none; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+h1 { font-size: clamp(26px, 6vw, 36px); line-height: 1.15; margin: 6px 0 8px; }
+.lede { color: var(--muted); margin: 0 0 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 14px; }
+.modes button, .opts button, .primary, .undo {
+  font: inherit; cursor: pointer; border-radius: 8px; padding: 12px; text-align: left;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.modes button[aria-pressed="true"] { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.modes b { display: block; }
+.modes span { font-size: 13px; color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
+.primary { background: var(--signal); border-color: var(--signal); color: #fff; font-weight: 700; text-align: center; width: 100%; }
+button:focus-visible, .lang:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.bar { display: flex; justify-content: space-between; font: 14px var(--mono); color: var(--muted); margin-bottom: 10px; }
+.scene { display: block; width: 100%; height: auto; max-height: 300px; background: var(--water); border-radius: 8px; }
+.cap { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+.q { font-weight: 700; margin: 14px 0 10px; }
+.opts { display: grid; gap: 8px; margin-top: 10px; }
+.opts button { display: flex; gap: 10px; align-items: baseline; position: relative; }
+.opts kbd { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+.opts button.right { border-color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
+.opts button.wrong { border-color: var(--bad); box-shadow: inset 0 0 0 2px var(--bad); }
+.opts button.picked { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.opts .ord { margin-left: auto; font: 700 14px var(--mono); color: var(--sea); min-width: 1.5em; text-align: right; }
+.opts button:disabled { cursor: default; opacity: .8; }
+.undo { margin-top: 10px; text-align: center; width: 100%; }
+.explain { margin-top: 12px; padding: 12px; border-left: 4px solid var(--sea); background: var(--bg); border-radius: 0 8px 8px 0; }
+.explain b.ok { color: var(--ok); } .explain b.bad { color: var(--bad); }
+.next { margin-top: 12px; }
+.result h2 { margin: 0 0 6px; }
+.review { padding-left: 18px; }
+.review li { margin-bottom: 8px; }
+footer { font-size: 13px; color: var(--muted); padding: 24px 0 36px; }
+footer p { margin: 0 0 6px; }
+@media (max-width: 460px) { .modes { grid-template-columns: repeat(2, 1fr); } }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="home" href="../" data-href-nb="../" data-href-en="../en/">Captain PhD</a>
+    <button class="lang" id="lang" type="button">English</button>
+  </header>
+
+  <main>
+    <section id="start">
+      <h1 data-t="title"></h1>
+      <p class="lede" data-t="lede"></p>
+      <div class="panel">
+        <b data-t="chooseMode"></b>
+        <div class="modes" role="group">
+          <button type="button" data-mode="utk" aria-pressed="true"><b data-t="mUtk"></b><span data-t="mUtkSub"></span></button>
+          <button type="button" data-mode="fare" aria-pressed="false"><b data-t="mFare"></b><span data-t="mFareSub"></span></button>
+          <button type="button" data-mode="trang" aria-pressed="false"><b data-t="mTrang"></b><span data-t="mTrangSub"></span></button>
+          <button type="button" data-mode="tss" aria-pressed="false"><b data-t="mTss"></b><span data-t="mTssSub"></span></button>
+          <button type="button" data-mode="blandet" aria-pressed="false"><b data-t="mMix"></b><span data-t="mMixSub"></span></button>
+        </div>
+        <p class="note" data-t="note"></p>
+        <button class="primary" id="go" type="button" data-t="start"></button>
+        <p id="best" class="lede" style="margin:10px 0 0"></p>
+      </div>
+    </section>
+
+    <section id="play" hidden>
+      <div class="panel">
+        <div class="bar"><span id="count"></span><span id="clock">0:00</span><span id="score"></span></div>
+        <div id="sceneBox"></div>
+        <p class="cap" id="cap" hidden></p>
+        <p class="q" id="question"></p>
+        <div class="opts" id="opts"></div>
+                <div class="explain" id="explain" hidden aria-live="polite"></div>
+        <button class="primary next" id="next" type="button" hidden></button>
+      </div>
+    </section>
+
+    <section id="result" hidden>
+      <div class="panel result">
+        <h2 id="resTitle"></h2>
+        <p id="resText"></p>
+        <div id="resReview"></div>
+        <button class="primary" id="again" type="button" data-t="again"></button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-t="disclaimer"></p>
+    <p data-t="source"></p>
+    <p data-t="licence"></p>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ==========================================================================
+   Utkikk, fart og farvann — Captain PhD
+   Kilde/Source: Marfag K52 Lærebok sjøveisreglene (regel 5 s. 41; regel 6 s. 69–70; regel 7 s. 78–79;
+   regel 9 s. 90; regel 10 s. 104; regel 34 s. 216–217), CC BY-SA 3.0; tilpasset/adapted.
+   Faktatabell: captainphd-prosjektet, k52-utkikk-fart-faktatabell.md
+   Bare regelteksten brukes som fasit. Lærebokens egne forklaringer og eksempler er merket «Boka»
+   i begrunnelsen og er ikke regeltekst. Lærebokens tommelfingerregler (avstander i nm, antall grader) er ikke med.
+   ========================================================================== */
+
+const T = {
+  nb: {
+    title: 'Utkikk, fart og farvann',
+    lede: 'Utkikk, sikker fart, fare for sammenstøt, trange farvann og trafikkseparasjonssystemer: sjøveisreglene regel 5, 6, 7, 9 og 10. Tegninger ovenfra, tidtaker og poeng. 10 spørsmål.',
+    chooseMode: 'Velg modus',
+    mUtk: 'Utkikk og fart', mUtkSub: 'Regel 5, 6',
+    mFare: 'Fare for sammenstøt', mFareSub: 'Regel 7',
+    mTrang: 'Trange farvann', mTrangSub: 'Regel 9',
+    mTss: 'Trafikkseparasjon', mTssSub: 'Regel 10',
+    mMix: 'Blandet', mMixSub: 'Alt',
+    note: 'Fasit er regelteksten. Spørsmål som bygger på lærebokens egne forklaringer og eksempler er merket «Boka» i begrunnelsen, og er ikke regeltekst. Bare de internasjonale reglene gjelder her, ikke de norske særreglene.',
+    start: 'Start', again: 'Spill igjen', next: 'Neste', finish: 'Se resultat',
+    right: 'Riktig!', wrong: 'Feil.', answerWas: 'Riktig svar:',
+    count: (i, n) => `Spørsmål ${i}/${n}`, score: s => `${s} poeng`,
+    resTitle: (c, n) => `${c} av ${n} riktige`,
+    resText: (time, pts) => `Tid: ${time}. Poeng: ${pts}.`,
+    best: (pts, mode) => `Din beste poengsum (${mode}): ${pts}`,
+    reviewTitle: 'Dette bør du lese en gang til:',
+    perfect: 'Alt riktig. Godt sjømannskap!',
+    you: 'Du', other: 'Den andre', kn: 'kn', min: 'min',
+    sceneAlt: 'Tegning ovenfra', bearAlt: 'Tegning av et fartøy som nærmer seg, med kompasspeilinger til tre tidspunkter',
+    chanAlt: 'Tegning av en trang lei med tre mulige posisjoner A, B og C', tssAlt: 'Tegning av et trafikkseparasjonssystem med tre mulige ruter A, B og C',
+    laneDown: 'seilingslei', laneUp: 'seilingslei', zone: 'separasjonssone',
+    solution: 'Grønn rute: den riktige. Tegningen er laget for dette spillet.',
+    disclaimer: 'Spillet er laget for læring og erstatter ikke offisiell eksamen eller opplæring.',
+    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Tegningene er laget for dette spillet.',
+    licence: 'Spørsmål, tekster og tegninger i spillet deles under <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.no" rel="license">CC BY-SA 3.0</a>. Fant du en feil? Gi beskjed via <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { utk: 'utkikk og fart', fare: 'fare for sammenstøt', trang: 'trange farvann', tss: 'trafikkseparasjon', blandet: 'blandet' },
+    langBtn: 'English'
+  },
+  en: {
+    title: 'Lookout, speed and channels',
+    lede: 'Look-out, safe speed, risk of collision, narrow channels and traffic separation schemes: collision regulations rules 5, 6, 7, 9 and 10. Drawings from above, a timer and score. 10 questions.',
+    chooseMode: 'Choose a mode',
+    mUtk: 'Lookout and speed', mUtkSub: 'Rules 5, 6',
+    mFare: 'Risk of collision', mFareSub: 'Rule 7',
+    mTrang: 'Narrow channels', mTrangSub: 'Rule 9',
+    mTss: 'Traffic separation', mTssSub: 'Rule 10',
+    mMix: 'Mixed', mMixSub: 'Everything',
+    note: 'The answer key is the text of the rules. Questions based on the textbook’s own explanations and examples are marked “Book” in the explanation and are not rule text. Only the international rules apply here, not the Norwegian special rules.',
+    start: 'Start', again: 'Play again', next: 'Next', finish: 'See result',
+    right: 'Correct!', wrong: 'Wrong.', answerWas: 'Correct answer:',
+    count: (i, n) => `Question ${i}/${n}`, score: s => `${s} points`,
+    resTitle: (c, n) => `${c} of ${n} correct`,
+    resText: (time, pts) => `Time: ${time}. Points: ${pts}.`,
+    best: (pts, mode) => `Your best score (${mode}): ${pts}`,
+    reviewTitle: 'Worth reading once more:',
+    perfect: 'All correct. Good seamanship!',
+    you: 'You', other: 'The other', kn: 'kn', min: 'min',
+    sceneAlt: 'Drawing from above', bearAlt: 'Drawing of an approaching vessel with compass bearings at three times',
+    chanAlt: 'Drawing of a narrow channel with three possible positions A, B and C', tssAlt: 'Drawing of a traffic separation scheme with three possible routes A, B and C',
+    laneDown: 'traffic lane', laneUp: 'traffic lane', zone: 'separation zone',
+    solution: 'Green route: the correct one. The drawing was made for this game.',
+    disclaimer: 'This game is made for learning and does not replace official examinations or training.',
+    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. The drawings were made for this game.',
+    licence: 'Questions, texts and drawings in this game are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>. Found a mistake? Tell us on <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { utk: 'lookout and speed', fare: 'risk of collision', trang: 'narrow channels', tss: 'traffic separation', blandet: 'mixed' },
+    langBtn: 'Norsk'
+  }
+};
+const N = 10;
+
+/* ---------- Hjelpere ---------- */
+const rad = d => d * Math.PI / 180;
+const norm = a => ((a % 360) + 360) % 360;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function cycle(pool) { let q = []; return () => { if (!q.length) q = shuffle(pool.slice()); return q.pop(); }; }
+const L2 = (nb, en) => ({ nb, en });
+const f1 = x => x.toFixed(1);
+const p3 = b => String(Math.round(norm(b))).padStart(3, '0') + '°';
+
+/* ---------- Tegning (SVG) ---------- */
+function hull(x, y, h, col, w) {
+  return `<g transform="translate(${f1(x)} ${f1(y)}) rotate(${f1(h)})"><path d="M0 -14 L6.5 -5 L6.5 11 L-6.5 11 L-6.5 -5 Z" fill="${col}" stroke="var(--fg)" stroke-width="${w || 1.4}" stroke-linejoin="round"/></g>`;
+}
+function badge(x, y, ch, col) {
+  return `<circle cx="${f1(x)}" cy="${f1(y)}" r="10" fill="var(--surface)" stroke="${col || 'var(--fg)'}" stroke-width="2"/>` +
+    `<text x="${f1(x)}" y="${f1(y + 4.5)}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--fg)">${ch}</text>`;
+}
+function arrowHead(x, y, h, col) {
+  return `<polygon transform="translate(${f1(x)} ${f1(y)}) rotate(${h})" points="0,-7 5,5 -5,5" fill="${col}"/>`;
+}
+
+/* Tre peilinger (kompasspeiling) til samme fartøy; eget fartøy kurs 000° */
+function bearSVG(bs, tx) {
+  const W = 340, H = 250, ox = 170, oy = 218, k = 24;
+  const pts = bs.b.map((b, i) => ({ x: ox + bs.r[i] * k * Math.sin(rad(b)), y: oy - bs.r[i] * k * Math.cos(rad(b)) }));
+  let g = '';
+  pts.forEach(p => { g += `<line x1="${ox}" y1="${oy}" x2="${f1(p.x)}" y2="${f1(p.y)}" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4"/>`; });
+  g += `<polyline points="${pts.map(p => f1(p.x) + ',' + f1(p.y)).join(' ')}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-dasharray="6 4"/>`;
+  const dx = pts[2].x - pts[1].x, dy = pts[2].y - pts[1].y, hd = norm(Math.atan2(dx, -dy) * 180 / Math.PI);
+  pts.forEach((p, i) => {
+    g += `<g opacity="${i === 2 ? 1 : 0.55}">${hull(p.x, p.y, hd, 'var(--amber)', 1.2)}</g>`;
+    const left = bs.b[i] > 180, lx = p.x + (left ? -14 : 14), anc = left ? 'end' : 'start';
+    g += `<text x="${f1(lx)}" y="${f1(p.y - 4)}" text-anchor="${anc}" font-size="12" font-weight="700" fill="var(--fg)">${p3(bs.b[i])}</text>` +
+      `<text x="${f1(lx)}" y="${f1(p.y + 9)}" text-anchor="${anc}" font-size="11" fill="var(--muted)">${bs.t[i] === 0 ? '0' : '+' + bs.t[i]} ${tx.min}</text>`;
+  });
+  g += `<line x1="${ox}" y1="${oy}" x2="${ox}" y2="${oy - 62}" stroke="var(--sea)" stroke-width="1.6" stroke-dasharray="5 4"/>` + arrowHead(ox, oy - 62, 0, 'var(--sea)') +
+    `<text x="${ox + 8}" y="${oy - 52}" font-size="11" fill="var(--sea)">000°</text>`;
+  g += hull(ox, oy, 0, 'var(--sea)', 2) + `<text x="${ox + 12}" y="${oy + 14}" font-size="12" font-weight="700" fill="var(--fg)">${tx.you}</text>`;
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tx.bearAlt}">${g}</svg>`;
+}
+
+/* Trang lei, tre posisjoner (stiplet), eget fartøy nederst. pos: x-posisjoner for A,B,C i bokstavrekkefølge */
+function chanSVG(sc, tx, solved) {
+  const W = 340, H = 250, xl = 90, xr = 250;
+  let g = `<rect x="0" y="0" width="${xl}" height="${H}" fill="var(--line)"/><rect x="${xr}" y="0" width="${W - xr}" height="${H}" fill="var(--line)"/>` +
+    `<line x1="${xl}" y1="0" x2="${xl}" y2="${H}" stroke="var(--fg)" stroke-width="2"/><line x1="${xr}" y1="0" x2="${xr}" y2="${H}" stroke="var(--fg)" stroke-width="2"/>`;
+  sc.slots.forEach(s => {
+    const good = solved && s.letter === sc.ok;
+    g += `<g opacity="${good ? 1 : 0.65}">${hull(s.x, 108, 0, good ? 'var(--ok)' : 'none', 1.8).replace('<path', '<path stroke-dasharray="' + (good ? '0' : '3 3') + '"')}</g>` + badge(s.x, 78, s.letter, good ? 'var(--ok)' : 'var(--fg)');
+  });
+  g += `<line x1="170" y1="215" x2="170" y2="170" stroke="var(--sea)" stroke-width="1.6" stroke-dasharray="5 4"/>` + arrowHead(170, 168, 0, 'var(--sea)');
+  g += hull(170, 225, 0, 'var(--sea)', 2) + `<text x="184" y="240" font-size="12" font-weight="700" fill="var(--fg)">${tx.you}</text>`;
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tx.chanAlt}">${g}</svg>`;
+}
+
+/* TSS: to seilingsleier (vest: sørover, øst: nordover) og separasjonssone. kind: 'cross' | 'join'. */
+const LANE = { wl: 112, wr: 158, zl: 158, zr: 182, el: 182, er: 228 };
+function tssSVG(sc, tx, solved) {
+  const W = 340, H = 280, L = LANE;
+  let g = `<rect x="${L.wl}" y="0" width="${L.wr - L.wl}" height="${H}" fill="var(--water)" stroke="var(--line)"/>` +
+    `<rect x="${L.zl}" y="0" width="${L.zr - L.zl}" height="${H}" fill="var(--line)" opacity=".8"/>` +
+    `<rect x="${L.el}" y="0" width="${L.er - L.el}" height="${H}" fill="var(--water)" stroke="var(--line)"/>`;
+  [60, 140, 220].forEach(y => {
+    g += arrowHead((L.wl + L.wr) / 2, y, 180, 'var(--muted)') + arrowHead((L.el + L.er) / 2, y, 0, 'var(--muted)');
+  });
+  g += `<text x="${(L.zl + L.zr) / 2 + 3}" y="140" text-anchor="middle" font-size="9" fill="var(--muted)" transform="rotate(-90 ${(L.zl + L.zr) / 2 + 3} 140)">${tx.zone}</text>`;
+  sc.tracks.forEach(t => {
+    const good = solved && t.letter === sc.ok;
+    const col = good ? 'var(--ok)' : 'var(--sea)';
+    g += `<polyline points="${t.pts.map(p => f1(p[0]) + ',' + f1(p[1])).join(' ')}" fill="none" stroke="${col}" stroke-width="${good ? 4 : 2.2}" stroke-linejoin="round" stroke-linecap="round" opacity="${solved && !good ? 0.45 : 1}"/>`;
+  });
+  sc.tracks.forEach(t => { g += badge(t.lab[0], t.lab[1], t.letter, solved && t.letter === sc.ok ? 'var(--ok)' : 'var(--fg)'); });
+  g += hull(sc.start[0], sc.start[1], sc.hd, 'var(--sea)', 2) + `<text x="${sc.start[0] + (sc.kind === 'join' ? 0 : 12)}" y="${sc.start[1] + (sc.kind === 'join' ? 27 : -20)}" text-anchor="${sc.kind === 'join' ? 'middle' : 'start'}" font-size="12" font-weight="700" fill="var(--fg)">${tx.you}</text>`;
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tx.tssAlt}">${g}</svg>`;
+}
+function crossScene() {
+  const start = [26, 250], X1 = 312, Y1 = 14, heads = [90, 62, 40], letters = shuffle(['A', 'B', 'C']);
+  const tracks = heads.map((h, i) => {
+    const dx = Math.sin(rad(h)), dy = -Math.cos(rad(h));
+    const tx = dx > 0 ? (X1 - start[0]) / dx : Infinity, ty = dy < 0 ? (Y1 - start[1]) / dy : Infinity, t = Math.min(tx, ty);
+    const end = [start[0] + dx * t, start[1] + dy * t];
+    return { letter: letters[i], h, pts: [start, end], lab: [start[0] + dx * t * 0.9, start[1] + dy * t * 0.9 + (i === 0 ? -16 : 0)] };
+  });
+  return { kind: 'cross', start, hd: 90, tracks, ok: tracks[0].letter };
+}
+function joinScene() {
+  const start = [310, 244], cx = (LANE.el + LANE.er) / 2, angs = [25, 50, 80], letters = shuffle(['A', 'B', 'C']);
+  const tracks = angs.map((a, i) => {
+    const jy = start[1] - (start[0] - cx) / Math.tan(rad(a));
+    const mid = [(start[0] + cx) / 2, (start[1] + jy) / 2];
+    return { letter: letters[i], a, pts: [start, [cx, jy], [cx, 12]], lab: [mid[0] + (i === 0 ? 14 : 12), mid[1] - 8] };
+  });
+  return { kind: 'join', start, hd: 315, tracks, ok: tracks[0].letter };
+}
+
+/* ---------- Scene-spørsmål ---------- */
+const o = (id, nb, en) => ({ id, nb, en });
+const LETTER = ['A', 'B', 'C'];
+const letterOpts = () => LETTER.map(l => ({ id: l, nb: 'Rute ' + l, en: 'Route ' + l }));
+const slotOpts = () => LETTER.map(l => ({ id: l, nb: 'Posisjon ' + l, en: 'Position ' + l }));
+
+function bearQuestion(kind) {
+  const side = pick([1, -1]), B = pick([35, 50, 65]), r = [6, 4.5, 3], t = [0, 3, 6];
+  const bs = kind === 'const' ? { b: [norm(side * B), norm(side * B), norm(side * B)], r, t }
+    : { b: [norm(side * B), norm(side * (B + 7)), norm(side * (B + 17))], r, t };
+  bs.b = bs.b.map(Math.round);
+  if (kind === 'const') return { kind: 'mc', scene: { bear: bs }, pool: 'bc' + side + B,
+    stem: L2('Et maskindrevet fartøy nærmer seg deg. Du tok kompasspeiling til det tre ganger med tre minutters mellomrom (se tegningen), og avstanden minker. Hva sier regel 7 (d)(i)?',
+             'A power-driven vessel is approaching you. You took a compass bearing of it three times at three-minute intervals (see the drawing) and the range is decreasing. What does rule 7 (d)(i) say?'),
+    opts: shuffle([o('ok', 'Det skal regnes med at det er fare for sammenstøt', 'Risk of collision shall be deemed to exist'),
+      o('a', 'Det er ikke fare for sammenstøt så lenge det andre fartøyet ennå er langt unna', 'There is no risk of collision as long as the other vessel is still far away'),
+      o('b', 'Det er ikke fare for sammenstøt, for det er det andre fartøyet som skal vike', 'There is no risk of collision, because the other vessel is the one to give way'),
+      o('c', 'Du må vente til fartøyene er på tvers av hverandre før du vurderer faren', 'You must wait until the vessels are abeam of each other before assessing the risk')]),
+    ok: 'ok', ref: 'Regel 7 (d)(i), s. 78–79',
+    x: L2('Det skal regnes med at det er fare for sammenstøt hvis kompasspeilingen av et fartøy som nærmer seg, ikke forandrer seg merkbart (regel 7 (d)(i)). Her er peilingen den samme hver gang. Hvem som skal vike, avgjøres først etterpå av de øvrige reglene.',
+          'Such risk shall be deemed to exist if the compass bearing of an approaching vessel does not appreciably change (rule 7 (d)(i)). Here the bearing is the same every time. Who is to give way is decided afterwards by the other rules.') };
+  return { kind: 'mc', scene: { bear: bs }, pool: 'bx' + side + B,
+    stem: L2('Peilingen til et fartøy som nærmer seg, endrer seg tydelig (se tegningen). Betyr det at det ikke er fare for sammenstøt?',
+             'The bearing of an approaching vessel is clearly changing (see the drawing). Does that mean there is no risk of collision?'),
+    opts: shuffle([o('ok', 'Nei, ikke nødvendigvis: slik fare kan undertiden foreligge, spesielt ved et meget stort fartøy, et slep eller kort avstand', 'Not necessarily: such risk may sometimes exist, particularly when approaching a very large vessel or a tow, or at close range'),
+      o('a', 'Ja, en merkbar peilingsendring utelukker alltid fare', 'Yes, an appreciable bearing change always rules out risk'),
+      o('b', 'Ja, så lenge avstanden bare minker sakte', 'Yes, as long as the range only decreases slowly'),
+      o('c', 'Peilingen har ingen betydning for vurderingen', 'The bearing has no bearing on the assessment')]),
+    ok: 'ok', ref: 'Regel 7 (d)(ii), s. 78–79',
+    x: L2('Slik fare kan undertiden foreligge selv om det er en merkbar forandring i peilingen, spesielt når man nærmer seg et meget stort fartøy eller et slep, eller et fartøy på kort avstand (regel 7 (d)(ii)). Og er du i tvil, skal du regne med at det er fare (regel 7 (a)).',
+          'Such risk may sometimes exist even when an appreciable bearing change is evident, particularly when approaching a very large vessel or a tow or when approaching a vessel at close range (rule 7 (d)(ii)). And if in doubt, risk shall be deemed to exist (rule 7 (a)).') };
+}
+
+function chanQuestion() {
+  const letters = shuffle(LETTER.slice()), xs = [118, 170, 222];
+  const slots = xs.map((x, i) => ({ x, letter: letters[i] })), ok = letters[2];
+  return { kind: 'mc', scene: { chan: { slots, ok }, sol: true }, pool: 'ch' + letters.join(''),
+    stem: L2('Du følger en trang lei i pilens retning. Hvor i leia skal du holde deg, når det lar seg gjøre uten fare? (Stiplede fartøy A, B og C viser tre mulige posisjoner.)',
+             'You are proceeding along a narrow channel in the direction of the arrow. Where in the channel shall you keep, when it is safe and practicable? (The dashed vessels A, B and C show three possible positions.)'),
+    opts: slotOpts(), ok, ref: 'Regel 9 (a), s. 90',
+    x: L2('Et fartøy som seiler i en trang lei, skal så nær som mulig holde seg til den av leias yttergrenser som det har på sin styrbord side, når det lar seg gjøre uten fare (regel 9 (a)). Se på tegningen: styrbord er til høyre i fartsretningen.',
+          'A vessel proceeding along the course of a narrow channel shall keep as near to the outer limit of the channel which lies on her starboard side as is safe and practicable (rule 9 (a)). In the drawing, starboard is to the right in the direction of travel.') };
+}
+function tssCrossQuestion() {
+  const sc = crossScene();
+  return { kind: 'mc', scene: { tss: sc, sol: true }, pool: 'tc' + sc.tracks.map(t => t.letter).join(''),
+    stem: L2('Du er nødt til å krysse seilingsleiene i et trafikkseparasjonssystem. Trafikken går som pilene viser. Hvilken rute følger regel 10 (c)?',
+             'You are obliged to cross the traffic lanes of a traffic separation scheme. Traffic flows as the arrows show. Which route follows rule 10 (c)?'),
+    opts: letterOpts(), ok: sc.ok, ref: 'Regel 10 (c), s. 104; Boka s. 109',
+    x: L2('Et fartøy som er nødt til å krysse en seilingslei, skal krysse på en kurs så nær som praktisk mulig tvers på den generelle retningen for skipstrafikken (regel 10 (c)). Boka (s. 109) understreker at det er fartøyets kjøllinje, altså heading, som skal stå tvers, ikke kursen over grunnen. Det korter ned krysstiden og gjør det lettere for trafikken i leia å se hva du gjør.',
+          'A vessel obliged to cross traffic lanes shall cross on a heading as nearly as practicable at right angles to the general direction of traffic flow (rule 10 (c)). The book (p. 109) stresses that it is the vessel’s heading, not her course over the ground, that shall be at right angles. This shortens the crossing time and makes it easier for the traffic in the lane to see what you are doing.'),};
+}
+function tssJoinQuestion() {
+  const sc = joinScene();
+  return { kind: 'mc', scene: { tss: sc, sol: true }, pool: 'tj' + sc.tracks.map(t => t.letter).join(''),
+    stem: L2('Du skal gå inn i den østre seilingsleia fra siden, ikke fra leias begynnelse. Hvilken rute følger regel 10 (b)(iii)?',
+             'You are going to join the eastern traffic lane from the side, not from the start of the lane. Which route follows rule 10 (b)(iii)?'),
+    opts: letterOpts(), ok: sc.ok, ref: 'Regel 10 (b)(iii), s. 104',
+    x: L2('Et fartøy skal normalt gå inn i eller ut av en seilingslei der den begynner eller slutter. Når det går inn i eller ut av en lei fra siden, skal det gjøre dette med så liten vinkel på den generelle retningen for seilasen som er praktisk mulig (regel 10 (b)(iii)).',
+          'A vessel shall normally join or leave a traffic lane at the termination of the lane. When joining or leaving from either side, she shall do so at as small an angle to the general direction of traffic flow as practicable (rule 10 (b)(iii)).'),};
+}
+
+/* ---------- Regnestykker (Boka) ---------- */
+const TCPA_SETS = [[6, 12], [6, 24], [9, 18], [3, 12], [8, 16], [12, 24], [4, 8], [5, 20], [9, 36], [6, 18], [6, 36], [12, 48]];
+function tcpaQuestion() {
+  const [d, v] = pick(TCPA_SETS), t = Math.round(d / v * 60);
+  const vals = [t, t * 2, Math.max(1, Math.round(t / 2)), t + 10].filter((x, i, a) => a.indexOf(x) === i);
+  while (vals.length < 4) vals.push(vals[vals.length - 1] + 7);
+  return { kind: 'mc', pool: 'tcpa' + d + '-' + v,
+    stem: L2(`Et fartøy ligger på konstant kompasspeiling og nærmer seg deg. Avstanden er ${d} nm, og den relative farten er ${v} kn. Hvor mange minutter er det til det er i nærmeste passeringspunkt (TCPA)?`,
+             `A vessel is on a constant compass bearing and approaching you. The range is ${d} nm and the relative speed is ${v} kn. How many minutes is it to the closest point of approach (TCPA)?`),
+    opts: shuffle(vals.map(x => o('v' + x, x + ' min', x + ' min'))), ok: 'v' + t,
+    x: L2(`TCPA = avstand ÷ relativ fart × 60 = ${d} ÷ ${v} × 60 = ${t} minutter.`, `TCPA = range ÷ relative speed × 60 = ${d} ÷ ${v} × 60 = ${t} minutes.`),
+    ref: 'Boka s. 19, s. 85 (regnestykke, ikke regeltekst)' };
+}
+function stopQuestion() {
+  const len = pick([250, 300, 350]), nm = len * 15 / 1852, c = f1(nm);
+  const vals = [c, f1(nm / 2), f1(nm * 2), f1(nm * 3)];
+  return { kind: 'mc', pool: 'stop' + len,
+    stem: L2(`Et tankskip er ${len} m langt. Ifølge IMOs manøvreringsstandarder skal stoppelengden normalt ikke være mer enn 15 skipslengder. Omtrent hvor mange nautiske mil er det? (1 nm = 1852 m)`,
+             `A tanker is ${len} m long. According to IMO’s manoeuvrability standards the stopping distance shall normally not exceed 15 ship lengths. About how many nautical miles is that? (1 nm = 1852 m)`),
+    opts: shuffle(vals.map(x => o('v' + x, x + ' nm', x + ' nm'))), ok: 'v' + c,
+    x: L2(`${len} m × 15 = ${len * 15} m ≈ ${c} nm. Boka (s. 72) nevner at noen skip med høyt deplasement kan få lov til opptil 20 skipslengder. Det viser hvorfor sikker fart (regel 6) ikke kan avgjøres med et fast tall.`,
+          `${len} m × 15 = ${len * 15} m ≈ ${c} nm. The book (p. 72) mentions that some ships with large displacement may be allowed up to 20 ship lengths. That shows why safe speed (rule 6) cannot be decided by a fixed number.`),
+    ref: 'Boka s. 72 (IMO-standard, ikke regeltekst)' };
+}
+
+const mk = (stem, os, x, ref, g) => ({ g, q: stem, o: os, x, ref });
+/* Faktaspørsmål. o[0] er riktig svar. g: 'u' (regel 5, 6), 'f' (regel 7), 't' (regel 9), 's' (regel 10). */
+const FACTS = [
+  /* ---- Regel 5 og 6 ---- */
+  mk(L2('Hva er hensikten med utkikken etter regel 5?', 'What is the purpose of the look-out required by rule 5?'),
+    [L2('Å få en full vurdering av situasjonen og av faren for sammenstøt', 'To make a full appraisal of the situation and of the risk of collision'), L2('Å finne den raskeste ruten', 'To find the fastest route'), L2('Å føre navn på alle fartøy som passerer', 'To record the names of all passing vessels'), L2('Å rapportere trafikken til sjøtrafikksentralen', 'To report the traffic to the vessel traffic service')],
+    L2('Ethvert fartøy skal alltid holde forsvarlig utkikk, slik at det foreligger en full vurdering av situasjonen og av faren for sammenstøt (regel 5).', 'Every vessel shall at all times maintain a proper look-out so as to make a full appraisal of the situation and of the risk of collision (rule 5).'), 'Regel 5, s. 41', 'u'),
+  mk(L2('Hvordan skal utkikken holdes etter regel 5?', 'How shall the look-out be kept under rule 5?'),
+    [L2('Ved syn og hørsel og ved alle tilgjengelige midler som er brukbare under de rådende forhold', 'By sight and hearing and by all available means appropriate in the prevailing circumstances and conditions'), L2('Bare ved syn', 'By sight only'), L2('Bare ved radar når den er i drift', 'By radar only, when it is operating'), L2('Bare ved AIS', 'By AIS only')],
+    L2('Utkikken skal holdes ved syn og hørsel, og ved alle tilgjengelige midler som er brukbare under de rådende omstendigheter og forhold (regel 5).', 'The look-out shall be kept by sight and hearing as well as by all available means appropriate in the prevailing circumstances and conditions (rule 5).'), 'Regel 5, s. 41', 'u'),
+  mk(L2('Når skal et fartøy holde forsvarlig utkikk (regel 5)?', 'When shall a vessel maintain a proper look-out (rule 5)?'),
+    [L2('Alltid', 'At all times'), L2('Bare i nedsatt sikt', 'Only in restricted visibility'), L2('Bare om natten', 'Only at night'), L2('Bare i trange farvann', 'Only in narrow waters')],
+    L2('Regel 5 sier at fartøyet «alltid» skal holde forsvarlig utkikk. Regelen gjelder i alle siktforhold.', 'Rule 5 says that the vessel shall “at all times” maintain a proper look-out. The rule applies in all conditions of visibility.'), 'Regel 5, s. 41', 'u'),
+  mk(L2('Gjelder regel 5 også et fartøy som ligger til ankers?', 'Does rule 5 also apply to a vessel at anchor?'),
+    [L2('Ja, regelen gjelder ethvert fartøy', 'Yes, the rule applies to every vessel'), L2('Nei, bare fartøy underveis', 'No, only vessels underway'), L2('Nei, bare maskindrevne fartøy', 'No, only power-driven vessels'), L2('Bare om natten', 'Only at night')],
+    L2('Regel 5 sier «ethvert fartøy». Boka (s. 41–42) understreker at utkikk også gjelder fartøy som ikke er underveis.', 'Rule 5 says “every vessel”. The book (pp. 41–42) stresses that look-out also applies to vessels that are not underway.'), 'Regel 5, s. 41 (Boka s. 41–42)', 'u'),
+  mk(L2('Hva skal et fartøy kunne når det går med sikker fart (regel 6)?', 'What shall a vessel be able to do when proceeding at a safe speed (rule 6)?'),
+    [L2('Manøvrere riktig og effektivt for å unngå sammenstøt, og stoppes på en distanse som passer til forholdene', 'Take proper and effective action to avoid collision and be stopped within a distance appropriate to the circumstances'), L2('Stoppe innen ett skips lengde', 'Stop within one ship length'), L2('Holde minst 10 knop', 'Keep at least 10 knots'), L2('Gå så fort at det unngår tåken', 'Go fast enough to outrun the fog')],
+    L2('Ethvert fartøy skal alltid gå med sikker fart slik at det kan manøvrere riktig og effektivt for å unngå sammenstøt og kan stoppes på en distanse som passer til de rådende omstendigheter og forhold (regel 6).', 'Any vessel shall at all times proceed at a safe speed so that she can take proper and effective action to avoid collision and be stopped within a distance appropriate to the prevailing circumstances and conditions (rule 6).'), 'Regel 6, s. 69–70', 'u'),
+  mk(L2('Hvilken av disse faktorene skal alle fartøy ta hensyn til når de fastsetter sikker fart (regel 6 (a))?', 'Which of these factors shall all vessels take into account when determining a safe speed (rule 6 (a))?'),
+    [L2('Trafikktettheten, også konsentrasjoner av fiskefartøy', 'The traffic density, including concentrations of fishing vessels'), L2('Hvilket klassifikasjonsselskap fartøyet har', 'The vessel’s classification society'), L2('Hvor mange som er i mannskapet', 'The size of the crew'), L2('Avstanden til neste havn', 'The distance to the next port')],
+    L2('Blant faktorene for alle fartøy står siktforholdene, trafikktettheten, manøvreringsevnen, bakgrunnsbelysning om natten, vind-, sjø- og strømforhold og dypgående i forhold til farvannsdybden (regel 6 (a)).', 'The factors for all vessels include the state of visibility, traffic density, manoeuvrability, background light at night, wind, sea and current, and the draught in relation to the depth of water (rule 6 (a)).'), 'Regel 6 (a)(ii), s. 69–70', 'u'),
+  mk(L2('Hva sier regel 6 (a)(iv) om natten?', 'What does rule 6 (a)(iv) say about the night?'),
+    [L2('Mulig bakgrunnsbelysning, som lys på land eller atmosfærisk refleks fra egne lanterner, skal tas med', 'The presence of background light, such as shore lights or back scatter of her own lights, shall be taken into account'), L2('Fartøyet skal alltid halvere farten', 'The vessel shall always halve its speed'), L2('Radar skal brukes i stedet for utkikk', 'Radar shall be used instead of a look-out'), L2('Lanternene skal slås av', 'The navigation lights shall be switched off')],
+    L2('Om natten skal mulig bakgrunnsbelysning tas med i vurderingen av sikker fart, for eksempel lys på land eller atmosfærisk refleks fra fartøyets egne lanterner (regel 6 (a)(iv)).', 'At night the presence of background light, such as from shore lights or from back scatter of her own lights, shall be taken into account in determining a safe speed (rule 6 (a)(iv)).'), 'Regel 6 (a)(iv), s. 69–70', 'u'),
+  mk(L2('Hva sier regel 6 (a)(vi) at man skal ta hensyn til?', 'What does rule 6 (a)(vi) say shall be taken into account?'),
+    [L2('Dypgående i forhold til den tilgjengelige farvannsdybden', 'The draught in relation to the available depth of water'), L2('Tidevannshøyden i neste havn', 'The height of tide in the next port'), L2('Fartøyets lengde alene', 'The length of the vessel alone'), L2('Lastens verdi', 'The value of the cargo')],
+    L2('Dypgående i forhold til den tilgjengelige farvannsdybden er en av faktorene for sikker fart (regel 6 (a)(vi)).', 'The draught in relation to the available depth of water is one of the factors for a safe speed (rule 6 (a)(vi)).'), 'Regel 6 (a)(vi), s. 69–70', 'u'),
+  mk(L2('Hvilken tilleggsfaktor skal fartøy med radar ta hensyn til (regel 6 (b))?', 'Which additional factor shall vessels with operational radar take into account (rule 6 (b))?'),
+    [L2('At små fartøy, is og andre flytende gjenstander kanskje ikke oppdages på tilstrekkelig avstand', 'That small vessels, ice and other floating objects may not be detected at an adequate range'), L2('Hvilken produsent radaren har', 'Which manufacturer made the radar'), L2('Hvor mange som er på vakt', 'How many people are on watch'), L2('Om AIS er montert', 'Whether AIS is fitted')],
+    L2('Fartøy med radar skal blant annet ta hensyn til radarens karakteristikk, effektivitet og begrensninger, det valgte avstandsområdet, sjø- og værforstyrrelser, og at små fartøy, is og flytende gjenstander kanskje ikke oppdages på tilstrekkelig avstand (regel 6 (b)).', 'Vessels with operational radar shall take into account, among other things, the characteristics, efficiency and limitations of the radar, the range scale in use, sea and weather interference, and that small vessels, ice and floating objects may not be detected at an adequate range (rule 6 (b)).'), 'Regel 6 (b)(iv), s. 69–70', 'u'),
+  mk(L2('Hvordan kan radar hjelpe når man vurderer siktforholdene (regel 6 (b)(vi))?', 'How can radar help when assessing visibility (rule 6 (b)(vi))?'),
+    [L2('Når man måler avstand til fartøy og gjenstander med radar, kan sikten bestemmes mer nøyaktig', 'Using radar to determine the range of vessels and objects may allow a more exact assessment of the visibility'), L2('Radaren viser sikten direkte som et tall', 'The radar shows the visibility directly as a number'), L2('Radar kan ikke brukes til dette', 'Radar cannot be used for this'), L2('Radar gjør utkikk ved syn unødvendig', 'Radar makes a visual look-out unnecessary')],
+    L2('Den mer nøyaktige bestemmelsen av sikten som kan være mulig når radar brukes til å måle avstand til fartøy eller andre gjenstander i nærheten, er en faktor for sikker fart (regel 6 (b)(vi)).', 'The more exact assessment of the visibility that may be possible when radar is used to determine the range of vessels or other objects in the vicinity is a factor for safe speed (rule 6 (b)(vi)).'), 'Regel 6 (b)(vi), s. 69–70', 'u'),
+  mk(L2('Hva skjer med bevegelsesenergien til et skip hvis farten dobles?', 'What happens to a ship’s kinetic energy if her speed is doubled?'),
+    [L2('Den blir firedoblet', 'It becomes four times as large'), L2('Den blir doblet', 'It doubles'), L2('Den blir åtte ganger så stor', 'It becomes eight times as large'), L2('Den er uendret', 'It stays the same')],
+    L2('Bevegelsesenergien er proporsjonal med farten i andre potens, så dobler du farten, firedobler du energien (Boka s. 71). Det er en av grunnene til at lavere fart gir både mer tid og mindre skade.', 'Kinetic energy is proportional to the square of the speed, so doubling the speed quadruples the energy (book p. 71). That is one reason why lower speed gives both more time and less damage.'), 'Boka s. 71 (fysikk, ikke regeltekst)', 'u'),
+  mk(L2('Ifølge IMOs manøvreringsstandarder (Boka): hvor stor skal «advance» høyst være?', 'According to IMO’s manoeuvrability standards (the book): what is the maximum «advance»?'),
+    [L2('4,5 skipslengder', '4.5 ship lengths'), L2('1,5 skipslengder', '1.5 ship lengths'), L2('10 skipslengder', '10 ship lengths'), L2('15 skipslengder', '15 ship lengths')],
+    L2('Advance er avstanden fartøyet beveger seg fremover til kursen har endret seg 90 grader. IMOs krav er høyst 4,5 skipslengder, og taktisk diameter (sideveis avstand ved 180 graders sving) høyst 5 skipslengder (Boka s. 71).', 'Advance is the distance travelled forward until the course has changed by 90 degrees. IMO requires at most 4.5 ship lengths, and the tactical diameter (lateral distance at a 180-degree turn) at most 5 ship lengths (book p. 71).'), 'Boka s. 71 (IMO-standard, ikke regeltekst)', 'u'),
+  mk(L2('Mørke alene: må farten da alltid reduseres (Boka)?', 'Darkness alone: must speed always be reduced (the book)?'),
+    [L2('Nei, det avhenger av de andre faktorene i regel 6, som bakgrunnsbelysning og radarens begrensninger', 'No, it depends on the other factors in rule 6, such as background light and the limitations of the radar'), L2('Ja, alltid med minst halvparten', 'Yes, always by at least half'), L2('Ja, til under 5 knop', 'Yes, to below 5 knots'), L2('Nei, mørke har ingen betydning for sikker fart', 'No, darkness has no bearing on safe speed')],
+    L2('Boka (s. 71) skriver at det faktum at det er mørkt, i seg selv ikke automatisk betyr at farten må reduseres. Det avhenger av de andre faktorene i regel 6, men siktforholdene og bakgrunnsbelysning er blant dem (regel 6 (a)(i) og (iv)).', 'The book (p. 71) says that the mere fact that it is dark does not automatically mean speed must be reduced. It depends on the other factors in rule 6, though the state of visibility and background light are among them (rule 6 (a)(i) and (iv)).'), 'Boka s. 71 (tolkning, ikke regeltekst)', 'u'),
+  /* ---- Regel 7 ---- */
+  mk(L2('Hva skal du gjøre hvis du er i tvil om det er fare for sammenstøt (regel 7 (a))?', 'What shall you do if you are in any doubt whether risk of collision exists (rule 7 (a))?'),
+    [L2('Regne med at det er fare for sammenstøt', 'Deem that such risk exists'), L2('Vente og se om avstanden minker', 'Wait and see whether the range decreases'), L2('Regne med at det ikke er fare', 'Assume that there is no risk'), L2('Kalle opp det andre fartøyet på VHF først', 'Call the other vessel on VHF first')],
+    L2('Hvis det er noen tvil, skal det regnes med at det er fare for sammenstøt (regel 7 (a)).', 'If there is any doubt, such risk shall be deemed to exist (rule 7 (a)).'), 'Regel 7 (a), s. 78–79', 'f'),
+  mk(L2('Hvilke midler skal brukes for å avgjøre om det er fare for sammenstøt (regel 7 (a))?', 'Which means shall be used to determine whether risk of collision exists (rule 7 (a))?'),
+    [L2('Alle tilgjengelige midler som er brukbare under de rådende omstendigheter og forhold', 'All available means appropriate to the prevailing circumstances and conditions'), L2('Bare visuelle peilinger', 'Visual bearings only'), L2('Bare radar', 'Radar only'), L2('Bare AIS', 'AIS only')],
+    L2('Ethvert fartøy skal bruke alle tilgjengelige midler som er brukbare under de rådende omstendigheter og forhold (regel 7 (a)).', 'Any vessel shall use all available means appropriate to the prevailing circumstances and conditions (rule 7 (a)).'), 'Regel 7 (a), s. 78–79', 'f'),
+  mk(L2('Hvordan skal radar brukes når den er anbrakt og brukbar (regel 7 (b))?', 'How shall radar be used if fitted and operational (rule 7 (b))?'),
+    [L2('Riktig, inkludert søking på lang avstand for tidlig varsel og radarplotting eller tilsvarende systematisk observasjon', 'Properly, including long-range scanning for early warning and radar plotting or equivalent systematic observation'), L2('Bare på kort avstandsområde', 'On a short range scale only'), L2('Bare i nedsatt sikt', 'Only in restricted visibility'), L2('Bare når AIS ikke virker', 'Only when AIS is not working')],
+    L2('Radar skal brukes riktig, inkludert søking på lang avstand for å få tidlig varsel om fare for sammenstøt, samt radarplotting eller tilsvarende systematisk observasjon (regel 7 (b)).', 'Proper use shall be made of radar, including long-range scanning to obtain early warning of risk of collision and radar plotting or equivalent systematic observation (rule 7 (b)).'), 'Regel 7 (b), s. 78–79', 'f'),
+  mk(L2('Hva sier regel 7 (c) om slutninger du trekker?', 'What does rule 7 (c) say about the conclusions you draw?'),
+    [L2('De skal ikke trekkes på grunnlag av sparsomme opplysninger, spesielt sparsomme radaropplysninger', 'They shall not be made on the basis of scanty information, especially scanty radar information'), L2('De skal alltid bekreftes på VHF', 'They shall always be confirmed on VHF'), L2('De skal trekkes så tidlig som mulig, uansett datagrunnlag', 'They shall be drawn as early as possible, whatever the data'), L2('De skal bygge på AIS alene', 'They shall be based on AIS alone')],
+    L2('Slutninger skal ikke trekkes på grunnlag av sparsomme opplysninger, spesielt sparsomme radaropplysninger (regel 7 (c)).', 'Assumptions shall not be made on the basis of scanty information, especially scanty radar information (rule 7 (c)).'), 'Regel 7 (c), s. 78–79', 'f'),
+  mk(L2('AIS er ikke nevnt i sjøveisreglene. Hvordan bør AIS-informasjon brukes ifølge Boka?', 'AIS is not mentioned in the Rules. How should AIS information be used according to the book?'),
+    [L2('Som tillegg til radarinformasjon, ikke prioritert foran den', 'In addition to radar information, not given priority over it'), L2('I stedet for radar og utkikk', 'Instead of radar and look-out'), L2('Den skal ikke brukes i det hele tatt', 'It shall not be used at all'), L2('Bare til å avgjøre hvem som skal vike', 'Only to decide who shall give way')],
+    L2('Boka (s. 79 og s. 83) skriver at AIS ikke erstatter, men kommer i tillegg til det man får ved å plotte på radar og fra VTS. Siden AIS bruker kurs over grunnen, stemmer ikke vektorene alltid med aspektvinklene, og det er aspektvinklene som avgjør hvem som skal vike.', 'The book (pp. 79 and 83) says that AIS does not replace, but adds to, what you get by plotting on radar and from VTS. Since AIS uses course over ground, vectors do not always match the aspect angles, and it is the aspect angles that decide who gives way.'), 'Boka s. 79, s. 83 (tolkning, ikke regeltekst)', 'f'),
+  mk(L2('Hvilken radarvektor viser nærmeste passeringsavstand (CPA) og faren for sammenstøt (Boka)?', 'Which radar vector shows the closest point of approach (CPA) and the risk of collision (the book)?'),
+    [L2('Relativ vektor', 'The relative vector'), L2('Sann vektor', 'The true vector'), L2('Baugvisiren (heading line)', 'The heading line'), L2('Bare ekkosporet bakover', 'The echo trail astern only')],
+    L2('Boka (s. 79) skriver at det er den relative vektoren som viser faren for kollisjon og hvor nærmeste passeringspunkt vil være. Det tar noen minutter før radaren har nok plott til å gi stabile data (s. 80).', 'The book (p. 79) says it is the relative vector that shows the danger of collision and where the closest point of approach will be. It takes a few minutes before the radar has enough plots to give stable data (p. 80).'), 'Boka s. 79–80 (radarteknikk, ikke regeltekst)', 'f'),
+  mk(L2('Hva betyr TCPA (Boka)?', 'What does TCPA mean (the book)?'),
+    [L2('Tiden som gjenstår til nærmeste passeringspunkt (Time to Closest Point of Approach)', 'The time remaining until the closest point of approach (Time to Closest Point of Approach)'), L2('Avstanden i nautiske mil ved nærmeste passering', 'The distance in nautical miles at closest approach'), L2('Den relative farten mellom to fartøy', 'The relative speed between two vessels'), L2('Total kollisjonskraft', 'Total collision force')],
+    L2('TCPA er tiden til nærmeste passeringspunkt. Avstanden ved nærmeste passering kalles CPA (Boka s. 19 og s. 80–81).', 'TCPA is the time to the closest point of approach. The distance at closest approach is called CPA (book pp. 19 and 80–81).'), 'Boka s. 19, s. 80–81 (begrep, ikke regeltekst)', 'f'),
+  /* ---- Regel 9 ---- */
+  mk(L2('Hvor i en trang lei skal et fartøy holde seg, når det lar seg gjøre uten fare (regel 9 (a))?', 'Where in a narrow channel shall a vessel keep, when it is safe and practicable (rule 9 (a))?'),
+    [L2('Så nær som mulig til leias yttergrense på sin styrbord side', 'As near as possible to the outer limit of the channel on her starboard side'), L2('Midt i leia', 'In the middle of the channel'), L2('Så nær som mulig til leias yttergrense på sin babord side', 'As near as possible to the outer limit of the channel on her port side'), L2('Der det er dypest, uansett side', 'Where it is deepest, whichever side')],
+    L2('Et fartøy som seiler i en trang lei, skal holde seg så nær som mulig til den av yttergrensene som det har på sin styrbord side, når det lar seg gjøre uten fare (regel 9 (a)).', 'A vessel proceeding along a narrow channel shall keep as near to the outer limit which lies on her starboard side as is safe and practicable (rule 9 (a)).'), 'Regel 9 (a), s. 90', 't'),
+  mk(L2('Hva gjelder et fartøy på under 20 meter eller et seilfartøy i en trang lei (regel 9 (b))?', 'What applies to a vessel of less than 20 metres or a sailing vessel in a narrow channel (rule 9 (b))?'),
+    [L2('Det skal ikke hindre gjennomfarten for et fartøy som bare kan navigere sikkert innenfor leia', 'It shall not impede the passage of a vessel which can navigate safely only within the channel'), L2('Det har alltid forrang foran større fartøy', 'It always has priority over larger vessels'), L2('Det må ikke gå inn i leia', 'It must not enter the channel'), L2('Det skal alltid ligge i midten av leia', 'It shall always keep to the middle of the channel')],
+    L2('Et fartøy på mindre enn 20 meters lengde eller et seilfartøy skal ikke hindre eller vanskeliggjøre gjennomfarten for et fartøy som bare kan navigere sikkert innenfor en trang lei (regel 9 (b)).', 'A vessel of less than 20 metres in length or a sailing vessel shall not impede the passage of a vessel which can navigate safely only within a narrow channel or fairway (rule 9 (b)).'), 'Regel 9 (b), s. 90', 't'),
+  mk(L2('Hva gjelder et fartøy som fisker i en trang lei (regel 9 (c))?', 'What applies to a vessel engaged in fishing in a narrow channel (rule 9 (c))?'),
+    [L2('Det skal ikke hindre gjennomfarten for noe annet fartøy som navigerer i leia', 'It shall not impede the passage of any other vessel navigating within the channel'), L2('Det har forrang foran alle andre fartøy', 'It has priority over all other vessels'), L2('Det må gi lydsignal hvert minutt', 'It must sound a signal every minute'), L2('Det må fiske midt i leia', 'It must fish in the middle of the channel')],
+    L2('Et fartøy som holder på med å fiske, skal ikke hindre eller vanskeliggjøre gjennomfarten for noe annet fartøy som navigerer innenfor en trang lei (regel 9 (c)).', 'A vessel engaged in fishing shall not impede the passage of any other vessel navigating within a channel or fairway (rule 9 (c)).'), 'Regel 9 (c), s. 90', 't'),
+  mk(L2('Når skal et fartøy ikke krysse en trang lei (regel 9 (d))?', 'When shall a vessel not cross a narrow channel (rule 9 (d))?'),
+    [L2('Når krysningen hindrer gjennomfarten for et fartøy som bare kan navigere sikkert innenfor leia', 'When the crossing impedes the passage of a vessel which can navigate safely only within the channel'), L2('Aldri; det er alltid tillatt å krysse', 'Never; crossing is always allowed'), L2('Bare om natten', 'Only at night'), L2('Bare når leia er smalere enn 2 kabler', 'Only when the channel is narrower than 2 cables')],
+    L2('Et fartøy skal ikke krysse en trang lei hvis krysningen hindrer eller vanskeliggjør gjennomfarten for et fartøy som bare kan navigere sikkert innenfor leia (regel 9 (d)).', 'A vessel shall not cross a narrow channel if such crossing impedes the passage of a vessel which can navigate safely only within such channel (rule 9 (d)).'), 'Regel 9 (d), s. 90', 't'),
+  mk(L2('Hvilket signal kan fartøyet som bare kan navigere innenfor leia, gi hvis det er i tvil om hva det kryssende fartøyet akter å gjøre (regel 9 (d))?', 'Which signal may the vessel that can navigate only within the channel give, if in doubt about the intention of the crossing vessel (rule 9 (d))?'),
+    [L2('Minst fem korte og raske støt (regel 34 (d))', 'At least five short and rapid blasts (rule 34 (d))'), L2('Ett langt støt', 'One prolonged blast'), L2('To korte støt', 'Two short blasts'), L2('Tre korte støt', 'Three short blasts')],
+    L2('Det kan bruke lydsignalet som er foreskrevet i regel 34 (d): minst fem korte og raske støt (regel 9 (d)).', 'It may use the sound signal prescribed in rule 34 (d): at least five short and rapid blasts (rule 9 (d)).'), 'Regel 9 (d), s. 90; regel 34 (d), s. 216–217', 't'),
+  mk(L2('Du vil gå forbi et fartøy i en trang lei der det må manøvrere for at du kan komme forbi, og du akter å gå på dets styrbord side. Hvilket signal gir du (regel 9 (e)(i), regel 34 (c)(i))?', 'You intend to overtake a vessel in a narrow channel where she must act to let you pass, on her starboard side. Which signal do you give (rule 9 (e)(i), rule 34 (c)(i))?'),
+    [L2('To lange støt etterfulgt av ett kort', 'Two prolonged blasts followed by one short blast'), L2('To lange støt etterfulgt av to korte', 'Two prolonged blasts followed by two short blasts'), L2('Ett langt, ett kort, ett langt og ett kort støt', 'One prolonged, one short, one prolonged and one short blast'), L2('Minst fem korte og raske støt', 'At least five short and rapid blasts')],
+    L2('To lange støt etterfulgt av ett kort betyr «jeg akter å gå forbi på deres styrbord side», og to lange etterfulgt av to korte betyr «på deres babord side» (regel 34 (c)(i)).', 'Two prolonged blasts followed by one short blast mean “I intend to overtake you on your starboard side”, and two prolonged followed by two short mean “on your port side” (rule 34 (c)(i)).'), 'Regel 9 (e)(i), s. 90; regel 34 (c)(i), s. 216–217', 't'),
+  mk(L2('Du blir innhentet i en trang lei og er enig i at det andre fartøyet går forbi. Hvilket signal gir du (regel 9 (e)(i), regel 34 (c)(ii))?', 'You are being overtaken in a narrow channel and agree to the other vessel passing. Which signal do you give (rule 9 (e)(i), rule 34 (c)(ii))?'),
+    [L2('Ett langt, ett kort, ett langt og ett kort støt', 'One prolonged, one short, one prolonged and one short blast'), L2('Ett langt støt', 'One prolonged blast'), L2('To lange støt etterfulgt av ett kort', 'Two prolonged blasts followed by one short blast'), L2('Fem korte og raske støt', 'Five short and rapid blasts')],
+    L2('Fartøyet som innhentes skal, hvis det er enig, gi signalet lang-kort-lang-kort (regel 34 (c)(ii)) og ta skritt for å tillate sikker passering (regel 9 (e)(i)). Hvis det er i tvil, kan det gi signalene i regel 34 (d).', 'The vessel to be overtaken shall, if in agreement, sound the signal prolonged-short-prolonged-short (rule 34 (c)(ii)) and take steps to permit safe passing (rule 9 (e)(i)). If in doubt she may sound the signals in rule 34 (d).'), 'Regel 9 (e)(i), s. 90; regel 34 (c)(ii), s. 216–217', 't'),
+  mk(L2('Fritar regel 9 (e) det innhentende fartøyet fra plikten etter regel 13?', 'Does rule 9 (e) relieve the overtaking vessel of her obligation under rule 13?'),
+    [L2('Nei, plikten til å holde av veien for det innhentede fartøyet består', 'No, the obligation to keep out of the way of the overtaken vessel remains'), L2('Ja, når signalet er gitt', 'Yes, once the signal has been given'), L2('Ja, hvis det innhentede fartøyet svarer', 'Yes, if the overtaken vessel replies'), L2('Ja, i alle trange farvann', 'Yes, in all narrow channels')],
+    L2('Regel 9 (e)(ii): denne regel fritar ikke det fartøy som innhenter et annet, fra dets forpliktelse etter regel 13.', 'Rule 9 (e)(ii): this Rule does not relieve the overtaking vessel of her obligation under rule 13.'), 'Regel 9 (e)(ii), s. 90', 't'),
+  mk(L2('Hva skal et fartøy gjøre som nærmer seg en sving der andre fartøy kan være skjult (regel 9 (f))?', 'What shall a vessel do which is nearing a bend where other vessels may be obscured (rule 9 (f))?'),
+    [L2('Navigere særlig aktsomt og forsiktig og gi signal etter regel 34 (e): ett langt støt', 'Navigate with particular alertness and caution and give the signal in rule 34 (e): one prolonged blast'), L2('Øke farten for å komme raskt forbi', 'Increase speed to get past quickly'), L2('Gi fem korte og raske støt', 'Give five short and rapid blasts'), L2('Ligge midt i leia', 'Keep to the middle of the channel')],
+    L2('Et fartøy som nærmer seg en sving eller et område hvor andre fartøy kan være skjult, skal navigere særlig aktsomt og forsiktig og gi det passende signalet i regel 34 (e): ett langt støt, som besvares med ett langt støt fra fartøy som hører det (regel 9 (f)).', 'A vessel nearing a bend or area where other vessels may be obscured shall navigate with particular alertness and caution and sound the signal in rule 34 (e): one prolonged blast, answered with one prolonged blast by any approaching vessel that hears it (rule 9 (f)).'), 'Regel 9 (f), s. 90; regel 34 (e), s. 216–217', 't'),
+  mk(L2('Hva sier regel 9 (g) om å ankre i en trang lei?', 'What does rule 9 (g) say about anchoring in a narrow channel?'),
+    [L2('Det skal så vidt mulig unngås, såfremt omstendighetene tillater det', 'It shall be avoided, if the circumstances of the case admit'), L2('Det er alltid forbudt', 'It is always forbidden'), L2('Det er tillatt midt i leia', 'It is allowed in the middle of the channel'), L2('Det er påbudt for fartøy over 100 meter', 'It is required for vessels over 100 metres')],
+    L2('Et hvilket som helst fartøy skal, såfremt omstendighetene tillater det, unngå å ankre i en trang lei (regel 9 (g)).', 'Any vessel shall, if the circumstances of the case admit, avoid anchoring in a narrow channel (rule 9 (g)).'), 'Regel 9 (g), s. 90', 't'),
+  mk(L2('Gir sjøveisreglene en definisjon av «trang lei» (Boka)?', 'Do the Rules define “narrow channel” (the book)?'),
+    [L2('Nei, reglene gir ingen definisjon; det må vurderes i hvert tilfelle', 'No, the Rules give no definition; it must be judged in each case'), L2('Ja, en lei smalere enn 2 kabler', 'Yes, a channel narrower than 2 cables'), L2('Ja, hvit sektor i fyrlykten', 'Yes, the white sector of the light'), L2('Ja, alle leder merket med bøyer', 'Yes, all channels marked with buoys')],
+    L2('Boka (s. 92) skriver at sjøveisreglene ikke gir noen definisjon av trangt farvann. Rettspraksis ser blant annet på områdets fysiske karakter, fartøyenes størrelse og manøvreringsegenskaper, og hvordan sjøfolk faktisk navigerer der.', 'The book (p. 92) says the Rules give no definition of narrow waters. Case law looks, among other things, at the physical character of the area, the size and manoeuvring characteristics of the vessels, and how seafarers actually navigate there.'), 'Boka s. 92 (rettspraksis, ikke regeltekst)', 't'),
+  mk(L2('Bankeffekt: hva er det viktigste tiltaket når du legger deg mot kanten på styrbord side av leia (Boka)?', 'Bank effect: what is the most important measure when you keep to the starboard edge of the channel (the book)?'),
+    [L2('Å redusere farten betydelig', 'To reduce speed considerably'), L2('Å øke farten for å få mer rorkraft', 'To increase speed for more rudder force'), L2('Å legge roret hardt til babord og holde det der', 'To put the rudder hard to port and hold it there'), L2('Å stoppe lydsignalene', 'To stop sounding signals')],
+    L2('Boka (s. 101–102) forklarer at bankeffekten gir et svingmoment som er vanskelig å stoppe, og at det viktigste tiltaket er å redusere farten betydelig. Da blir trykkfallet langs skroget mindre.', 'The book (pp. 101–102) explains that bank effect creates a turning moment that is hard to stop, and that the most important measure is to reduce speed considerably. The pressure drop along the hull is then smaller.'), 'Boka s. 101–102 (hydrodynamikk, ikke regeltekst)', 't'),
+  mk(L2('Interaksjonskreftene mellom to fartøy i en trang lei øker når … (Boka)', 'The interaction forces between two vessels in a narrow channel increase when … (the book)'),
+    [L2('avstanden mellom fartøyene blir mindre (omvendt proporsjonalt med kvadratet av avstanden)', 'the distance between the vessels decreases (inversely proportional to the square of the distance)'), L2('avstanden mellom fartøyene blir større', 'the distance between the vessels increases'), L2('vanndybden øker', 'the water depth increases'), L2('farten gjennom vannet minker', 'the speed through the water decreases')],
+    L2('Boka (s. 103): interaksjonskreftene øker med den relative farten mellom skip og vann, omvendt proporsjonalt med kvadratet av avstanden mellom fartøyene, og med minkende vanndybde.', 'The book (p. 103): interaction forces increase with the relative speed between ship and water, inversely with the square of the distance between the vessels, and with decreasing water depth.'), 'Boka s. 103 (hydrodynamikk, ikke regeltekst)', 't'),
+  /* ---- Regel 10 ---- */
+  mk(L2('For hvilke trafikkseparasjonssystemer gjelder regel 10 (a), og hva er virkningen på andre regler?', 'Which traffic separation schemes does rule 10 (a) apply to, and what is the effect on other Rules?'),
+    [L2('Systemer vedtatt av IMO; regelen fritar ikke et fartøy for plikter etter andre regler', 'Schemes adopted by IMO; it does not relieve any vessel of her obligations under any other Rule'), L2('Alle systemer som en kyststat har laget; andre regler gjelder ikke', 'Any scheme made by a coastal state; the other Rules do not apply'), L2('Bare systemer i åpent hav', 'Only schemes on the open sea'), L2('Systemer vedtatt av IMO; vikeplikt etter regel 15 gjelder ikke der', 'Schemes adopted by IMO; give-way duty under rule 15 does not apply there')],
+    L2('Regel 10 gjelder trafikkseparasjonssystemer vedtatt av organisasjonen (IMO) og fritar ikke et fartøy for plikt som følger av andre regler (regel 10 (a)). Boka (s. 108) tar frem at et fartøy i et TSS derfor må vike for kryssende fartøy fra styrbord etter regel 15.', 'Rule 10 applies to traffic separation schemes adopted by the Organization (IMO) and does not relieve any vessel of her obligation under any other Rule (rule 10 (a)). The book (p. 108) points out that a vessel in a TSS must therefore give way to a crossing vessel from starboard under rule 15.'), 'Regel 10 (a), s. 104; Boka s. 108', 's'),
+  mk(L2('Hvor skal et fartøy som bruker et TSS gå (regel 10 (b)(i))?', 'Where shall a vessel using a TSS proceed (rule 10 (b)(i))?'),
+    [L2('I den seilingsleia som passer, i den generelle retningen for trafikken i leia', 'In the appropriate traffic lane, in the general direction of traffic flow for that lane'), L2('I separasjonssonen', 'In the separation zone'), L2('I hvilken som helst lei, uansett retning', 'In any lane, whatever the direction'), L2('I kysttrafikksonen', 'In the inshore traffic zone')],
+    L2('Et fartøy som bruker et TSS, skal følge den seilingsleia som passer, i den generelle retningen for trafikken i vedkommende lei (regel 10 (b)(i)).', 'A vessel using a TSS shall proceed in the appropriate traffic lane in the general direction of traffic flow for that lane (rule 10 (b)(i)).'), 'Regel 10 (b)(i), s. 104', 's'),
+  mk(L2('Hvordan skal et fartøy forholde seg til separasjonslinjen og separasjonssonen (regel 10 (b)(ii))?', 'How shall a vessel behave with regard to the separation line and separation zone (rule 10 (b)(ii))?'),
+    [L2('Så langt det lar seg gjøre holde seg klar av dem', 'So far as practicable keep clear of them'), L2('Følge dem tett', 'Follow them closely'), L2('Bruke sonen som ekstra lei', 'Use the zone as an extra lane'), L2('Krysse dem for å spare tid', 'Cross them to save time')],
+    L2('Et fartøy skal så langt det lar seg gjøre holde seg klar av en separasjonslinje eller separasjonssone (regel 10 (b)(ii)).', 'A vessel shall so far as practicable keep clear of a traffic separation line or separation zone (rule 10 (b)(ii)).'), 'Regel 10 (b)(ii), s. 104', 's'),
+  mk(L2('Hva skal et fartøy så langt som mulig gjøre med seilingsleiene (regel 10 (c))?', 'What shall a vessel, so far as practicable, do about the traffic lanes (rule 10 (c))?'),
+    [L2('Unngå å krysse dem', 'Avoid crossing them'), L2('Krysse dem ofte for å få kort rute', 'Cross them often to get a short route'), L2('Krysse i en liten vinkel', 'Cross at a small angle'), L2('Krysse først og varsle etterpå', 'Cross first and report afterwards')],
+    L2('Et fartøy skal så langt det lar seg gjøre unngå å krysse seilingsleier, men hvis det er nødt til det, skal det krysse på en kurs så nær som praktisk mulig tvers på den generelle retningen for skipstrafikken (regel 10 (c)).', 'A vessel shall, so far as practicable, avoid crossing traffic lanes, but if obliged to do so shall cross on a heading as nearly as practicable at right angles to the general direction of traffic flow (rule 10 (c)).'), 'Regel 10 (c), s. 104', 's'),
+  mk(L2('Hvem kan alltid bruke en kysttrafikksone (regel 10 (d)(i))?', 'Who may always use an inshore traffic zone (rule 10 (d)(i))?'),
+    [L2('Fartøy under 20 meter, seilfartøy og fartøy som fisker', 'Vessels of less than 20 metres, sailing vessels and vessels engaged in fishing'), L2('Alle fartøy over 300 BT', 'All vessels over 300 GT'), L2('Bare lasteskip i ballast', 'Only cargo ships in ballast'), L2('Bare fartøy med los', 'Only vessels with a pilot')],
+    L2('Et fartøy skal ikke bruke kysttrafikksonen hvis det kan seile sikkert i en passende seilingslei i det tilstøtende TSS. Fartøy under 20 meter, seilfartøy og fartøy som holder på med fiske kan imidlertid i alle tilfelle bruke den (regel 10 (d)(i)).', 'A vessel shall not use an inshore traffic zone when she can safely use the appropriate traffic lane within the adjacent TSS. However, vessels of less than 20 metres, sailing vessels and vessels engaged in fishing may use the inshore traffic zone (rule 10 (d)(i)).'), 'Regel 10 (d)(i), s. 104', 's'),
+  mk(L2('Når kan et fartøy, som ellers skulle ha brukt seilingsleia, likevel bruke kysttrafikksonen (regel 10 (d)(ii))?', 'When may a vessel that would otherwise use the traffic lane still use the inshore traffic zone (rule 10 (d)(ii))?'),
+    [L2('På vei til eller fra havn, offshore installasjon, losstasjon eller annet sted i sonen, eller for å unngå øyeblikkelig fare', 'When en route to or from a port, offshore installation, pilot station or other place in the zone, or to avoid immediate danger'), L2('Når kysttrafikksonen er kortere', 'When the inshore traffic zone is shorter'), L2('Når seilingsleia er travel', 'When the traffic lane is busy'), L2('Aldri', 'Never')],
+    L2('Et fartøy kan bruke en kysttrafikksone til eller fra havn, offshore installasjon eller oppbygning, losstasjon eller annet sted innenfor sonen, eller for å unngå øyeblikkelig fare (regel 10 (d)(ii)).', 'A vessel may use an inshore traffic zone when en route to or from a port, offshore installation or structure, pilot station or any other place situated within the zone, or to avoid immediate danger (rule 10 (d)(ii)).'), 'Regel 10 (d)(ii), s. 104', 's'),
+  mk(L2('Når kan et fartøy som verken krysser eller går inn i eller ut av en lei, likevel gå inn i en separasjonssone eller krysse en separasjonslinje (regel 10 (e))?', 'When may a vessel that is neither crossing nor joining or leaving a lane still enter a separation zone or cross a separation line (rule 10 (e))?'),
+    [L2('I nødstilfelle for å unngå øyeblikkelig fare, eller for å fiske i separasjonssonen', 'In case of emergency to avoid immediate danger, or to engage in fishing within the separation zone'), L2('Når det er kortere', 'When it is shorter'), L2('Når det er lite trafikk', 'When traffic is light'), L2('Når fartøyet har los', 'When the vessel has a pilot')],
+    L2('Bortsett fra krysende fartøy og fartøy som går inn i eller ut av en lei, skal et fartøy normalt ikke gå inn i en separasjonssone eller krysse en separasjonslinje, unntatt i nødstilfelle for å unngå øyeblikkelig fare, eller for å fiske inne i sonen (regel 10 (e)).', 'A vessel other than a crossing vessel or one joining or leaving a lane shall not normally enter a separation zone or cross a separation line except in case of emergency to avoid immediate danger, or to engage in fishing within a separation zone (rule 10 (e)).'), 'Regel 10 (e), s. 104', 's'),
+  mk(L2('Hva sier regel 10 (f) om farvann nær begynnelsen og slutten av et TSS?', 'What does rule 10 (f) say about areas near the terminations of a TSS?'),
+    [L2('Fartøy skal navigere der med særlig forsiktighet', 'Vessels shall navigate there with particular caution'), L2('Farten skal ikke være under 12 knop', 'Speed shall not be below 12 knots'), L2('Ingen fartøy skal være der', 'No vessels shall be there'), L2('Fartøy skal ankre for å vente', 'Vessels shall anchor and wait')],
+    L2('Et fartøy som navigerer i farvann nær begynnelsen eller slutten av trafikkseparasjonssystemer, skal gjøre dette med særlig forsiktighet (regel 10 (f)).', 'A vessel navigating in areas near the terminations of traffic separation schemes shall do so with particular caution (rule 10 (f)).'), 'Regel 10 (f), s. 104', 's'),
+  mk(L2('Hva sier regel 10 (g) om å ankre i et TSS?', 'What does rule 10 (g) say about anchoring in a TSS?'),
+    [L2('Det skal så langt det lar seg gjøre unngås, også nær systemets begynnelse eller slutt', 'It shall be avoided so far as practicable, also in areas near its terminations'), L2('Det er påbudt i separasjonssonen', 'It is required in the separation zone'), L2('Det er bare forbudt om natten', 'It is forbidden only at night'), L2('Det er fritt i kysttrafikksonen for alle fartøy over 20 meter', 'It is free in the inshore traffic zone for all vessels over 20 metres')],
+    L2('Et fartøy skal så langt det lar seg gjøre unngå å ankre i et trafikkseparasjonssystem eller i farvann nær dets begynnelse eller slutt (regel 10 (g)).', 'A vessel shall so far as practicable avoid anchoring in a TSS or in areas near its terminations (rule 10 (g)).'), 'Regel 10 (g), s. 104', 's'),
+  mk(L2('Hva skal et fartøy som ikke bruker et TSS gjøre (regel 10 (h))?', 'What shall a vessel that is not using a TSS do (rule 10 (h))?'),
+    [L2('Unngå det med så stor margin som praktisk mulig', 'Avoid it by as wide a margin as is practicable'), L2('Gå langs separasjonssonen', 'Run along the separation zone'), L2('Gå gjennom det ved lav fart', 'Go through it at low speed'), L2('Melde seg til sjøtrafikksentralen og gå gjennom', 'Report to the VTS and go through')],
+    L2('Et fartøy som ikke bruker et trafikkseparasjonssystem, skal unngå det med så stor margin som praktisk mulig (regel 10 (h)).', 'A vessel not using a traffic separation scheme shall avoid it by as wide a margin as is practicable (rule 10 (h)).'), 'Regel 10 (h), s. 104', 's'),
+  mk(L2('Hva gjelder et fartøy som fisker i forhold til fartøy som følger en seilingslei (regel 10 (i))?', 'What applies to a vessel engaged in fishing in relation to vessels following a traffic lane (rule 10 (i))?'),
+    [L2('Det skal ikke hindre gjennomfarten for noe fartøy som følger leia', 'It shall not impede the passage of any vessel following the lane'), L2('Det har forrang i leia', 'It has priority in the lane'), L2('Det skal fiske i midten av leia', 'It shall fish in the middle of the lane'), L2('Det er fritatt fra alle regler', 'It is exempt from all rules')],
+    L2('Et fartøy som holder på med fiske, skal ikke hindre eller vanskeliggjøre gjennomfarten for noe fartøy som følger en seilingslei (regel 10 (i)).', 'A vessel engaged in fishing shall not impede the passage of any vessel following a traffic lane (rule 10 (i)).'), 'Regel 10 (i), s. 104', 's'),
+  mk(L2('Hva gjelder et fartøy på under 20 meter eller et seilfartøy i forhold til et maskindrevet fartøy i en seilingslei (regel 10 (j))?', 'What applies to a vessel of less than 20 metres or a sailing vessel in relation to a power-driven vessel in a traffic lane (rule 10 (j))?'),
+    [L2('Det skal ikke hindre den sikre gjennomfarten for det maskindrevne fartøyet', 'It shall not impede the safe passage of the power-driven vessel'), L2('Det har alltid forrang', 'It always has priority'), L2('Det skal gå i separasjonssonen', 'It shall go in the separation zone'), L2('Det skal holde kurs og fart', 'It shall keep course and speed')],
+    L2('Et fartøy på mindre enn 20 meters lengde eller et seilfartøy skal ikke hindre eller vanskeliggjøre den sikre gjennomfarten for et maskindrevet fartøy som følger en seilingslei (regel 10 (j)).', 'A vessel of less than 20 metres or a sailing vessel shall not impede the safe passage of a power-driven vessel following a traffic lane (rule 10 (j)).'), 'Regel 10 (j), s. 104', 's'),
+  mk(L2('Hvem er fritatt fra regel 10 i den utstrekning det er nødvendig for arbeidet (regel 10 (k) og (l))?', 'Who is exempt from rule 10 to the extent necessary for the work (rule 10 (k) and (l))?'),
+    [L2('Fartøy med begrenset evne til å manøvrere som arbeider med navigeringens sikkerhet eller med undervannskabel i TSS', 'Vessels restricted in their ability to manoeuvre engaged in maintaining safety of navigation or in cable work in a TSS'), L2('Alle fartøy over 200 meter', 'All vessels over 200 metres'), L2('Alle fartøy med los om bord', 'All vessels with a pilot on board'), L2('Alle fartøy i ballast', 'All vessels in ballast')],
+    L2('Et fartøy med begrenset evne til å manøvrere som holder på med et arbeid som angår navigeringens sikkerhet i et TSS, eller med å legge ut, etterse eller ta opp en undervannskabel der, er fritatt for regel 10 i den utstrekning det er nødvendig for arbeidet (regel 10 (k) og (l)).', 'A vessel restricted in her ability to manoeuvre engaged in an operation for the maintenance of safety of navigation in a TSS, or for the laying, servicing or picking up of a submarine cable there, is exempt from rule 10 to the extent necessary to carry out the operation (rule 10 (k) and (l)).'), 'Regel 10 (k)(l), s. 104', 's'),
+  mk(L2('Du følger en seilingslei i et TSS. Et annet maskindrevet fartøy krysser leia, og du har det på din styrbord side med fare for sammenstøt. Hvem skal vike?', 'You are following a traffic lane in a TSS. Another power-driven vessel is crossing the lane, you have it on your starboard side and risk of collision exists. Who gives way?'),
+    [L2('Du, etter regel 15, fordi regel 10 ikke fritar for plikter etter andre regler', 'You do, under rule 15, because rule 10 does not relieve any vessel of obligations under other Rules'), L2('Det kryssende fartøyet, fordi du følger leia', 'The crossing vessel, because you are following the lane'), L2('Ingen; begge holder kurs og fart', 'Nobody; both keep course and speed'), L2('Det største fartøyet', 'The larger vessel')],
+    L2('Regel 10 (a) fritar ikke et fartøy for plikt etter andre regler. Når det kryssende fartøyet er på din styrbord side, skal du holde av veien etter regel 15 (Boka s. 108). Det kryssende fartøyet skal samtidig krysse etter regel 10 (c).', 'Rule 10 (a) does not relieve any vessel of her obligations under other Rules. With the crossing vessel on your starboard side you shall keep out of the way under rule 15 (book p. 108). The crossing vessel must at the same time cross according to rule 10 (c).'), 'Regel 10 (a), s. 104; regel 15, s. 130; Boka s. 108', 's'),
+  mk(L2('Hvilken retning går trafikken i en rundkjøring i et TSS (Boka)?', 'Which way does traffic go round a roundabout in a TSS (the book)?'),
+    [L2('Mot klokken rundt separasjonspunktet eller -sonen', 'Counter-clockwise around the separation point or zone'), L2('Med klokken', 'Clockwise'), L2('Valgfritt, men helst med klokken', 'Optional, but preferably clockwise'), L2('Rundkjøringer finnes ikke i TSS', 'Roundabouts do not exist in a TSS')],
+    L2('Boka (s. 109) skriver at trafikken i en rundkjøring i et TSS går mot klokken rundt separasjonspunktet eller sonen, som i en rundkjøring i veitrafikken.', 'The book (p. 109) says traffic in a TSS roundabout goes counter-clockwise around the separation point or zone, as in a road traffic roundabout.'), 'Boka s. 109 (praksis, ikke regeltekst)', 's'),
+  mk(L2('Hvor ble det første trafikkseparasjonssystemet i verden etablert (Boka)?', 'Where was the world’s first traffic separation scheme established (the book)?'),
+    [L2('Dover-stredet, i 1967', 'The Dover Strait, in 1967'), L2('Singapore-stredet, i 1990', 'The Singapore Strait, in 1990'), L2('Gibraltar-stredet, i 1950', 'The Strait of Gibraltar, in 1950'), L2('Skagerrak, i 1975', 'The Skagerrak, in 1975')],
+    L2('Boka (s. 105) skriver at det første trafikkseparasjonssystemet i verden ble etablert i Dover-stredet i 1967. Først var det frivillig, og etter en serie hendelser i 1971 ble det obligatorisk.', 'The book (p. 105) says the world’s first traffic separation scheme was established in the Dover Strait in 1967. At first it was voluntary, and after a series of incidents in 1971 it became mandatory.'), 'Boka s. 105 (historikk, ikke regeltekst)', 's')
+];
+function factQuestion(i) {
+  const f = FACTS[i];
+  return { kind: 'mc', pool: 'f' + i, stem: f.q, opts: shuffle(f.o.map((x, j) => ({ id: 'o' + j, nb: x.nb, en: x.en }))), ok: 'o0', x: f.x, ref: f.ref };
+}
+const FIDX = g => FACTS.map((f, i) => i).filter(i => g.includes(FACTS[i].g));
+
+/* ---------- Runde ---------- */
+function typesFor(mode) {
+  if (mode === 'utk') return shuffle(['fu', 'fu', 'fu', 'fu', 'fu', 'fu', 'fu', 'fu', 'fu', 'stop']);
+  if (mode === 'fare') return shuffle(['bc', 'bx', 'tcpa', 'tcpa', 'ff', 'ff', 'ff', 'ff', 'ff', 'ff']);
+  if (mode === 'trang') return shuffle(['chan', 'chan', 'ft', 'ft', 'ft', 'ft', 'ft', 'ft', 'ft', 'ft']);
+  if (mode === 'tss') return shuffle(['tcross', 'tcross', 'tjoin', 'fs', 'fs', 'fs', 'fs', 'fs', 'fs', 'fs']);
+  return shuffle(['fu', 'fu', 'bc', 'tcpa', 'ff', 'chan', 'ft', 'tcross', 'fs', 'fs']);
+}
+function makeRound(mode) {
+  const fu = cycle(FIDX(['u'])), ff = cycle(FIDX(['f'])), ft = cycle(FIDX(['t'])), fs = cycle(FIDX(['s']));
+  const out = [], used = new Set();
+  typesFor(mode).forEach(t => {
+    for (let tries = 0; tries < 40; tries++) {
+      let q;
+      if (t === 'fu') q = factQuestion(fu());
+      else if (t === 'ff') q = factQuestion(ff());
+      else if (t === 'ft') q = factQuestion(ft());
+      else if (t === 'fs') q = factQuestion(fs());
+      else if (t === 'bc') q = bearQuestion('const');
+      else if (t === 'bx') q = bearQuestion('change');
+      else if (t === 'tcpa') q = tcpaQuestion();
+      else if (t === 'stop') q = stopQuestion();
+      else if (t === 'chan') q = chanQuestion();
+      else if (t === 'tcross') q = tssCrossQuestion();
+      else q = tssJoinQuestion();
+      if (!used.has(q.pool) || tries === 39) { used.add(q.pool); out.push(q); break; }
+    }
+  });
+  return out;
+}
+
+/* ---------- Spill ---------- */
+if (typeof document !== 'undefined') (function () {
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ingen lagring */ } }
+  };
+  const params = new URLSearchParams(location.search);
+  let lang = params.get('lang') === 'en' ? 'en' : (params.get('lang') === 'nb' ? 'nb' : (store.get('cphd-lang') || 'nb'));
+  let mode = 'utk';
+  let round = null, timer = null;
+  const t = k => T[lang][k];
+
+  function applyLang() {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nb';
+    document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
+    document.title = `${t('title')} · Captain PhD`;
+    $('lang').textContent = t('langBtn');
+    const home = document.querySelector('.home'); home.href = lang === 'en' ? home.dataset.hrefEn : home.dataset.hrefNb;
+    showBest();
+    if (round && !$('play').hidden) renderQ(true);
+    if (round && !$('result').hidden) showResult();
+  }
+  $('lang').addEventListener('click', () => { lang = lang === 'nb' ? 'en' : 'nb'; store.set('cphd-lang', lang); applyLang(); });
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    showBest();
+  }));
+  function showBest() {
+    const b = store.get('cphd-utkikk-best-' + mode);
+    $('best').textContent = b ? t('best')(b, T[lang].modeName[mode]) : '';
+  }
+  const fmt = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+  function start() {
+    round = { qs: makeRound(mode), n: 0, correct: 0, pts: 0, t0: Date.now(), wrong: [], answered: false };
+    $('start').hidden = true; $('result').hidden = true; $('play').hidden = false;
+    clearInterval(timer);
+    timer = setInterval(() => { $('clock').textContent = fmt(Date.now() - round.t0); }, 500);
+    renderQ();
+  }
+
+  function sceneFor(q, solved) {
+    if (!q.scene) return '';
+    const tx = { you: t('you'), min: t('min'), sceneAlt: t('sceneAlt'), bearAlt: t('bearAlt'), chanAlt: t('chanAlt'), tssAlt: t('tssAlt'), zone: t('zone') };
+    if (q.scene.bear) return bearSVG(q.scene.bear, tx);
+    if (q.scene.chan) return chanSVG(q.scene.chan, tx, solved);
+    if (q.scene.tss) return tssSVG(q.scene.tss, tx, solved);
+    return '';
+  }
+
+  function renderQ(keepState) {
+    const q = round.qs[round.n];
+    $('count').textContent = t('count')(round.n + 1, N);
+    $('score').textContent = t('score')(round.pts);
+    const solved = keepState && round.answered && q.scene && q.scene.sol;
+    $('sceneBox').innerHTML = sceneFor(q, solved);
+    $('cap').textContent = t('solution'); $('cap').hidden = !solved;
+    $('question').textContent = q.stem[lang];
+    const box = $('opts'); box.innerHTML = '';
+    q.opts.forEach((o, idx) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.a = o.id;
+      b.innerHTML = `<kbd>${idx + 1}</kbd><span>${o[lang]}</span>`;
+      b.addEventListener('click', () => answer(o.id));
+      box.appendChild(b);
+    });
+    if (keepState && round.answered) { markAnswer(round.lastPick); return; }
+    if (!keepState) { round.answered = false; round.qStart = Date.now(); }
+    $('explain').hidden = true; $('next').hidden = true;
+    const first = box.querySelector('button'); if (first && !keepState) first.focus({ preventScroll: true });
+  }
+
+  function answer(a) {
+    if (round.answered) return;
+    round.answered = true; round.lastPick = a;
+    const q = round.qs[round.n];
+    if (a === q.ok) {
+      round.correct++;
+      const secs = (Date.now() - round.qStart) / 1000;
+      round.pts += 100 + Math.max(0, Math.round(50 - secs * 3));
+    } else round.wrong.push(q);
+    markAnswer(a);
+  }
+
+  function markAnswer(a) {
+    const q = round.qs[round.n], ok = a === q.ok;
+    document.querySelectorAll('#opts button').forEach(b => {
+      b.disabled = true;
+      if (b.dataset.a === q.ok) b.classList.add('right'); else if (b.dataset.a === a) b.classList.add('wrong');
+    });
+    const right = q.opts.find(o => o.id === q.ok);
+    const head = ok ? '' : `${t('answerWas')} <b>${right[lang]}</b>. `;
+    if (q.scene && q.scene.sol) { $('sceneBox').innerHTML = sceneFor(q, true); $('cap').textContent = t('solution'); $('cap').hidden = false; }
+    $('explain').innerHTML = `<b class="${ok ? 'ok' : 'bad'}">${ok ? t('right') : t('wrong')}</b> ${head}${q.x[lang]} <span style="color:var(--muted)">(${q.ref})</span>`;
+    $('explain').hidden = false;
+    $('score').textContent = t('score')(round.pts);
+    $('next').textContent = round.n === N - 1 ? t('finish') : t('next');
+    $('next').hidden = false; $('next').focus({ preventScroll: true });
+  }
+
+  $('next').addEventListener('click', () => {
+    if (round.n === N - 1) { finish(); return; }
+    round.n++; renderQ();
+    $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  function finish() {
+    clearInterval(timer);
+    round.time = Date.now() - round.t0;
+    const key = 'cphd-utkikk-best-' + mode, best = +(store.get(key) || 0);
+    if (round.pts > best) store.set(key, String(round.pts));
+    showResult();
+  }
+  function showResult() {
+    $('play').hidden = true; $('result').hidden = false;
+    $('resTitle').textContent = t('resTitle')(round.correct, N);
+    $('resText').textContent = t('resText')(fmt(round.time), round.pts);
+    if (!round.wrong.length) { $('resReview').innerHTML = `<p>${t('perfect')}</p>`; }
+    else {
+      const seen = new Set();
+      const items = round.wrong.filter(q => { const k = q.ref + q.x.nb; return !seen.has(k) && seen.add(k); })
+        .map(q => `<li><b>${q.stem[lang].length > 150 ? q.stem[lang].slice(0, 147) + '…' : q.stem[lang]}</b> ${q.x[lang]} <span style="color:var(--muted)">(${q.ref})</span></li>`).join('');
+      $('resReview').innerHTML = `<p><b>${t('reviewTitle')}</b></p><ul class="review">${items}</ul>`;
+    }
+    showBest();
+    $('again').focus({ preventScroll: true });
+  }
+
+  $('go').addEventListener('click', start);
+  $('again').addEventListener('click', () => { $('result').hidden = true; $('start').hidden = false; round = null; showBest(); });
+
+  document.addEventListener('keydown', e => {
+    if ($('play').hidden || !round || e.ctrlKey || e.metaKey || e.altKey) return;
+    const q = round.qs[round.n];
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4 && !round.answered && q.opts[n - 1]) answer(q.opts[n - 1].id);
+  });
+
+  applyLang();
+})();
+
+if (typeof module !== 'undefined') module.exports = { FACTS, makeRound, bearQuestion, chanQuestion, tssCrossQuestion, tssJoinQuestion, tcpaQuestion, stopQuestion, factQuestion, bearSVG, chanSVG, tssSVG, crossScene, joinScene, N, T };
+</script>
+</body>
+</html>
