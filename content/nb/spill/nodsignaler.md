@@ -3,6 +3,7 @@ title: "Nødsignaler"
 description: "Kjenn igjen nødsignalene i sjøveisreglene: regel 37 og vedlegg IV. Tegninger, lyd, tidtaker og poeng."
 translationKey: "nodsignaler"
 weight: 4
+gorsel: "img/kort-nodsignaler.webp"
 lenke: "nodsignaler/"
 lisens: "CC BY-SA 3.0"
 lisensLenke: "https://creativecommons.org/licenses/by-sa/3.0/deed.no"

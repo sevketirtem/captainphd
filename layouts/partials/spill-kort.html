@@ -1,5 +1,8 @@
 {{- /* Oyun kartı. Ön bilgiler: title, description, lenke (oyunun adresi), status ("kommer" ise henüz yok), kilde, lisens, lisensLenke, doi */ -}}
 <article class="card{{ if eq .Params.status "kommer" }} soon{{ end }}">
+  {{- with .Params.gorsel }}
+  <img class="card-img" src="{{ . | relURL }}" width="1200" height="630" alt="" loading="lazy" decoding="async">
+  {{- end }}
   <h3>{{ if and .Params.lenke (ne .Params.status "kommer") }}<a href="{{ .Params.lenke | relURL }}">{{ .Title }}</a>{{ else }}{{ .Title }}{{ end }}</h3>
   <p>{{ .Description }}</p>
   {{- if eq .Params.status "kommer" }}
@@ -12,4 +15,5 @@
     {{- with .Params.lisens }}{{ i18n "lisens" }}: {{ with $.Params.lisensLenke }}<a href="{{ . }}" rel="license noopener">{{ $.Params.lisens }}</a>{{ else }}{{ . }}{{ end }}{{ end }}
     {{- with .Params.doi }} · DOI <a href="https://doi.org/{{ . }}" rel="noopener">{{ . }}</a>{{ end }}
   </p>
+  {{- if .Params.gorsel }}<p class="ki-note">{{ i18n "kiBilde" }}</p>{{ end }}
 </article>

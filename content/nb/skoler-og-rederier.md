@@ -1,6 +1,8 @@
 ---
 title: "For skoler og rederier"
 description: "Spillene er gratis og uten reklame. Skoler, akademier og rederier kan avtale tilpasning og sponsing."
+band: "img/bandet-skole.webp"
+bandAlt: "Et lasteskip ved horisonten over et rolig hav i gyllent kveldslys"
 translationKey: "skoler"
 ---
 Spillene på Captain PhD er gratis å spille, uten innlogging og uten reklame. Det skal de fortsatt være.

@@ -3,6 +3,7 @@ title: "Who gives way?"
 description: "Who must keep out of the way? Practise rules 11–19: head-on, crossing, overtaking, responsibilities between vessels and restricted visibility. Drawings from above, a timer and score."
 translationKey: "hvem-viker"
 weight: 3
+gorsel: "img/kort-hvem-viker.webp"
 lenke: "hvem-viker/?lang=en"
 lisens: "CC BY-SA 3.0"
 lisensLenke: "https://creativecommons.org/licenses/by-sa/3.0/"
