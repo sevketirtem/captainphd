@@ -7,6 +7,13 @@
   <p class="eyebrow">{{ site.Params.slogan }}</p>
   {{ .Content }}
 </section>
+<figure class="kapak video">
+  <video autoplay muted loop playsinline preload="metadata" poster="{{ "video/bro-natt.jpg" | relURL }}" width="1280" height="720" aria-label="{{ cond (eq site.Language.Lang "nb") "Atmosfærevideo: utsikt fra en skipsbro om natten" "Atmosphere video: a view from a ship's bridge at night" }}">
+    <source src="{{ "video/bro-natt.mp4" | relURL }}" type="video/mp4">
+  </video>
+  <figcaption>{{ cond (eq site.Language.Lang "nb") "Video laget med KI (Google Veo 3.1 Lite). Stemningsbilde; lysene er ikke en kilde for lanterner." "Video made with AI (Google Veo 3.1 Lite). Atmosphere only; the lights are not a reference for navigation lights." }}</figcaption>
+</figure>
+<script>if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches){var v=document.querySelector(".kapak.video video");if(v){v.removeAttribute("autoplay");v.pause();v.controls=true}}</script>
 {{- $seksjon := cond (eq site.Language.Lang "nb") "/spill" "/games" }}
 {{- with site.GetPage $seksjon }}
 <section>
