@@ -79,3 +79,5 @@ h2 { font-size: 24px; margin: 32px 0 16px; }
 .kapak { margin: 8px 0 0; }
 .kapak img { display: block; width: 100%; height: auto; border-radius: 10px; }
 .kapak figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.kapak.video { margin: 18px 0 0; }
+.kapak.video video { display: block; width: 100%; height: auto; border-radius: 10px; background: #0b1a2b; }
