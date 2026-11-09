@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lydsignaler · Captain PhD</title>
+<meta name="description" content="Hør og lær fløytesignalene i sjøveisreglene: manøver- og varselsignaler, tåkesignaler og utstyr. Regel 32–37. Gratis læringsspill.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+:root {
+  --bg: #f6f3ec; --surface: #fff; --fg: #0b2233; --muted: #4d6170; --line: #d9d3c4;
+  --signal: #d6402f; --sea: #1d5c7a; --ok: #1f7a4d; --bad: #b3261e; --amber: #b9730b;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0a1822; --surface: #10222f; --fg: #e8eef2; --muted: #9fb2bf; --line: #22394a;
+    --signal: #ef5a48; --sea: #6fb3d2; --ok: #4cc38a; --bad: #ff7a70; --amber: #f0b44c; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--font); }
+a { color: var(--sea); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+.home { color: var(--fg); text-decoration: none; font-weight: 800; }
+.lang { font: 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; background: none; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+h1 { font-size: clamp(26px, 6vw, 36px); line-height: 1.15; margin: 6px 0 8px; }
+.lede { color: var(--muted); margin: 0 0 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 14px; }
+.modes button, .opts button, .primary, .ctl button, .sound {
+  font: inherit; cursor: pointer; border-radius: 8px; padding: 12px; text-align: left;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.modes button[aria-pressed="true"] { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.modes b { display: block; }
+.modes span { font-size: 13px; color: var(--muted); }
+.settings { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 0 0 14px; font-size: 14px; color: var(--muted); align-items: center; }
+.settings select { font: inherit; background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; }
+.primary { background: var(--signal); border-color: var(--signal); color: #fff; font-weight: 700; text-align: center; width: 100%; }
+button:focus-visible, select:focus-visible, input:focus-visible, .lang:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.bar { display: flex; justify-content: space-between; font: 14px var(--mono); color: var(--muted); margin-bottom: 10px; }
+.q { font-weight: 700; margin: 14px 0 10px; }
+.sigbox { display: flex; gap: 12px; align-items: center; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.sound { display: flex; gap: 8px; align-items: center; padding: 10px 14px; font-weight: 700; flex: none; }
+.sound svg { width: 18px; height: 18px; fill: currentColor; }
+.pat { flex: 1; min-width: 0; }
+.pat svg { display: block; width: 100%; height: 48px; }
+.pat .ev { fill: var(--sea); transition: fill .08s; }
+.pat .ev.bell { fill: var(--amber); }
+.pat .ev.on { fill: var(--signal); }
+.pat .hidden { color: var(--muted); font: 14px var(--mono); }
+.legend { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.opts { display: grid; gap: 8px; margin-top: 10px; }
+.opts button { display: flex; gap: 10px; align-items: baseline; }
+.opts kbd { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+.opts button.right { border-color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
+.opts button.wrong { border-color: var(--bad); box-shadow: inset 0 0 0 2px var(--bad); }
+.opts button:disabled, .ctl button:disabled { cursor: default; opacity: .75; }
+.ctl { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
+.ctl button { text-align: center; font-weight: 700; }
+.ctl .wide { grid-column: 1 / -1; }
+.ctl kbd { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; margin-left: 6px; }
+.explain { margin-top: 12px; padding: 12px; border-left: 4px solid var(--sea); background: var(--bg); border-radius: 0 8px 8px 0; }
+.explain b.ok { color: var(--ok); } .explain b.bad { color: var(--bad); }
+.next { margin-top: 12px; }
+.result h2 { margin: 0 0 6px; }
+.review { padding-left: 18px; }
+.review li { margin-bottom: 8px; }
+footer { font-size: 13px; color: var(--muted); padding: 24px 0 36px; }
+footer p { margin: 0 0 6px; }
+@media (max-width: 460px) { .modes { grid-template-columns: repeat(2, 1fr); } .sigbox { flex-direction: column; align-items: stretch; } }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="home" href="../" data-href-nb="../" data-href-en="../en/">Captain PhD</a>
+    <button class="lang" id="lang" type="button">English</button>
+  </header>
+
+  <main>
+    <section id="start">
+      <h1 data-t="title"></h1>
+      <p class="lede" data-t="lede"></p>
+      <div class="panel">
+        <b data-t="chooseMode"></b>
+        <div class="modes" role="group">
+          <button type="button" data-mode="signal" aria-pressed="true"><b data-t="mSig"></b><span data-t="mSigSub"></span></button>
+          <button type="button" data-mode="tåke" aria-pressed="false"><b data-t="mFog"></b><span data-t="mFogSub"></span></button>
+          <button type="button" data-mode="bygg" aria-pressed="false"><b data-t="mBuild"></b><span data-t="mBuildSub"></span></button>
+          <button type="button" data-mode="fakta" aria-pressed="false"><b data-t="mFact"></b><span data-t="mFactSub"></span></button>
+          <button type="button" data-mode="norge" aria-pressed="false"><b data-t="mNor"></b><span data-t="mNorSub"></span></button>
+          <button type="button" data-mode="blandet" aria-pressed="false"><b data-t="mMix"></b><span data-t="mMixSub"></span></button>
+        </div>
+        <div class="settings">
+          <label><span data-t="speedLbl"></span> <select id="speed"><option value="0.5" data-t="speedFast"></option><option value="1" data-t="speedReal"></option></select></label>
+          <label><input type="checkbox" id="hide"> <span data-t="hideLbl"></span></label>
+        </div>
+        <button class="primary" id="go" type="button" data-t="start"></button>
+        <p id="best" class="lede" style="margin:10px 0 0"></p>
+      </div>
+    </section>
+
+    <section id="play" hidden>
+      <div class="panel">
+        <div class="bar"><span id="count"></span><span id="clock">0:00</span><span id="score"></span></div>
+        <p class="q" id="question"></p>
+        <div id="sigWrap" class="sigbox" hidden>
+          <button class="sound" id="listen" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg><span data-t="listen"></span></button>
+          <div class="pat" id="pat" role="img"></div>
+        </div>
+        <p class="legend" id="legend" hidden></p>
+        <div class="opts" id="opts"></div>
+        <div class="ctl" id="ctl" hidden>
+          <button type="button" id="bShort"><span data-t="short"></span><kbd>K</kbd></button>
+          <button type="button" id="bLong"><span data-t="long"></span><kbd>L</kbd></button>
+          <button type="button" id="bDel"><span data-t="del"></span><kbd>⌫</kbd></button>
+          <button type="button" id="bHear"><span data-t="hearMine"></span></button>
+          <button type="button" class="wide" id="bSubmit"><span data-t="submit"></span><kbd>Enter</kbd></button>
+        </div>
+        <div class="explain" id="explain" hidden aria-live="polite"></div>
+        <button class="primary next" id="next" type="button" hidden></button>
+      </div>
+    </section>
+
+    <section id="result" hidden>
+      <div class="panel result">
+        <h2 id="resTitle"></h2>
+        <p id="resText"></p>
+        <div id="resReview"></div>
+        <button class="primary" id="again" type="button" data-t="again"></button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-t="disclaimer"></p>
+    <p data-t="source"></p>
+    <p data-t="licence"></p>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ==========================================================================
+   Lydsignaler — Captain PhD
+   Kilde/Source: Marfag K52 Lærebok sjøveisreglene (regel 32–37, s. 214–222;
+   norske særregler 41–42, s. 228–229), CC BY-SA 3.0; tilpasset/adapted.
+   Tåkesignalene følger den norske teksten av regel 35 (s. 220); den engelske
+   teksten i boken (s. 219) har en trykkfeil i punkt (b)/(c).
+   Faktatabell: captainphd-prosjektet, k52-lydsignaler-faktatabell.md
+   Lydene er syntetisert i nettleseren (Web Audio); ingen lydfiler.
+   ========================================================================== */
+
+/* ---------- Tekster ---------- */
+const T = {
+  nb: {
+    title: 'Lydsignaler',
+    lede: 'Hør fløytesignalet og finn ut hva det betyr. Regel 32–37 i sjøveisreglene: manøver- og varselsignaler, tåkesignaler og utstyr. 10 spørsmål.',
+    chooseMode: 'Velg modus',
+    mSig: 'Signal', mSigSub: 'Hva betyr det?',
+    mFog: 'Tåke', mFogSub: 'Hvilket fartøy?',
+    mBuild: 'Bygg', mBuildSub: 'Lag signalet',
+    mFact: 'Fakta', mFactSub: 'Utstyr og regler',
+    mNor: 'Norge', mNorSub: 'Særregler 41–42',
+    mMix: 'Blandet', mMixSub: 'Alt',
+    speedLbl: 'Lydtempo:', speedFast: 'Rask (halv lengde)', speedReal: 'Virkelig lengde',
+    hideLbl: 'Skjul tegningen (bare lytte)',
+    start: 'Start', again: 'Spill igjen', next: 'Neste', finish: 'Se resultat',
+    listen: 'Spill av',
+    short: 'Kort støt', long: 'Langt støt', del: 'Slett siste', hearMine: 'Hør mitt signal', submit: 'Svar',
+    qHear: 'Fartøyene er i sikte av hverandre. Du hører dette fløytesignalet. Hva betyr det?',
+    qFog: 'Du er i eller nær et område med nedsatt sikt og hører dette signalet. Hvilket fartøy kan det være?',
+    qBuild: s => `Lag signalet som betyr: «${s}»`,
+    soundOff: 'Lyd er ikke tilgjengelig i denne nettleseren. Bruk tegningen.',
+    legend: 'Blå = fløyte (kort ca. 1 s, langt 4–6 s). Gul = klokke eller gongong. Tegningen viser lengdeforholdet.',
+    hidden: 'Lytt …',
+    right: 'Riktig!', wrong: 'Feil.', answerWas: 'Riktig svar:',
+    yourSignal: 'Ditt signal:', correctSignal: 'Riktig signal:', empty: '(tomt)',
+    patNames: { s: 'kort støt', l: 'langt støt', f: 'kort støt, raskt', b: 'slag på klokken', r: 'rask ringing med klokken', R: 'rask lyd på gongongen' },
+    patLabel: 'Fløytesignal',
+    count: (i, n) => `Spørsmål ${i}/${n}`, score: s => `${s} poeng`,
+    resTitle: (c, n) => `${c} av ${n} riktige`,
+    resText: (time, pts) => `Tid: ${time}. Poeng: ${pts}.`,
+    best: (pts, mode) => `Din beste poengsum (${mode}): ${pts}`,
+    reviewTitle: 'Dette bør du lese en gang til:',
+    perfect: 'Alt riktig. Godt sjømannskap!',
+    disclaimer: 'Spillet er laget for læring og erstatter ikke offisiell eksamen eller opplæring.',
+    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Lydene er laget for dette spillet.',
+    licence: 'Spørsmål, tekster og tegninger i spillet deles under <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.no" rel="license">CC BY-SA 3.0</a>. Fant du en feil? Gi beskjed via <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { signal: 'signal', 'tåke': 'tåke', bygg: 'bygg', fakta: 'fakta', norge: 'Norge', blandet: 'blandet' },
+    langBtn: 'English'
+  },
+  en: {
+    title: 'Sound signals',
+    lede: 'Listen to the whistle signal and work out what it means. Rules 32–37 of the collision regulations: manoeuvring and warning signals, fog signals and equipment. 10 questions.',
+    chooseMode: 'Choose a mode',
+    mSig: 'Signal', mSigSub: 'What does it mean?',
+    mFog: 'Fog', mFogSub: 'Which vessel?',
+    mBuild: 'Build', mBuildSub: 'Make the signal',
+    mFact: 'Facts', mFactSub: 'Equipment and rules',
+    mNor: 'Norway', mNorSub: 'Special rules 41–42',
+    mMix: 'Mixed', mMixSub: 'Everything',
+    speedLbl: 'Sound speed:', speedFast: 'Fast (half length)', speedReal: 'Real length',
+    hideLbl: 'Hide the drawing (listen only)',
+    start: 'Start', again: 'Play again', next: 'Next', finish: 'See result',
+    listen: 'Play',
+    short: 'Short blast', long: 'Prolonged blast', del: 'Delete last', hearMine: 'Hear my signal', submit: 'Answer',
+    qHear: 'The vessels are in sight of one another. You hear this whistle signal. What does it mean?',
+    qFog: 'You are in or near an area of restricted visibility and hear this signal. Which vessel could it be?',
+    qBuild: s => `Make the signal that means: “${s}”`,
+    soundOff: 'Sound is not available in this browser. Use the drawing.',
+    legend: 'Blue = whistle (short about 1 s, prolonged 4–6 s). Yellow = bell or gong. The drawing shows the length ratio.',
+    hidden: 'Listen …',
+    right: 'Correct!', wrong: 'Wrong.', answerWas: 'Correct answer:',
+    yourSignal: 'Your signal:', correctSignal: 'Correct signal:', empty: '(empty)',
+    patNames: { s: 'short blast', l: 'prolonged blast', f: 'short blast, rapid', b: 'stroke on the bell', r: 'rapid ringing of the bell', R: 'rapid sounding of the gong' },
+    patLabel: 'Whistle signal',
+    count: (i, n) => `Question ${i}/${n}`, score: s => `${s} points`,
+    resTitle: (c, n) => `${c} of ${n} correct`,
+    resText: (time, pts) => `Time: ${time}. Points: ${pts}.`,
+    best: (pts, mode) => `Your best score (${mode}): ${pts}`,
+    reviewTitle: 'Worth reading once more:',
+    perfect: 'All correct. Good seamanship!',
+    disclaimer: 'This game is made for learning and does not replace official examinations or training.',
+    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. The sounds were made for this game.',
+    licence: 'Questions, texts and drawings in this game are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>. Found a mistake? Tell us on <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { signal: 'signal', 'tåke': 'fog', bygg: 'build', fakta: 'facts', norge: 'Norway', blandet: 'mixed' },
+    langBtn: 'Norsk'
+  }
+};
+const N = 10;
+
+/* ---------- Signalmønstre ----------
+   s = kort støt (ca. 1 s), l = langt støt (4–6 s), f = kort støt raskt (regel 34 d),
+   b = ett slag på klokken, r = rask klokkeringing ca. 5 s, R = rask gongong ca. 5 s */
+const EV = {
+  s: { k: 'w', d: 1,   gap: 1 },
+  l: { k: 'w', d: 5,   gap: 2 },
+  f: { k: 'w', d: 0.25, gap: 0.25 },
+  b: { k: 'b', d: 0.2, gap: 1 },
+  r: { k: 'r', d: 5,   gap: 0.5 },
+  R: { k: 'g', d: 5,   gap: 0.5 }
+};
+function schedule(pat, speed) {
+  const out = []; let t = 0;
+  [...pat].forEach((ch, i) => {
+    const e = EV[ch];
+    out.push({ i, ch, k: e.k, t0: t * speed, d: e.d * speed });
+    t += e.d + e.gap;
+  });
+  return { ev: out, total: t * speed };
+}
+
+/* ---------- Svar: manøver- og varselsignaler (regel 34) og tåkesignaler (regel 35) ---------- */
+const A = {
+  m_stb: { fam: 'man', pat: 's',
+    nb: 'Jeg forandrer kurs til styrbord', en: 'I am altering my course to starboard',
+    xnb: 'Ett kort støt (ca. 1 sekund). Gis av et maskindrevet fartøy underveis som utfører en manøver, når fartøyene er i sikte av hverandre.',
+    xen: 'One short blast (about 1 second). Given by a power-driven vessel underway that is manoeuvring, when the vessels are in sight of one another.',
+    ref: 'Regel 34 (a), s. 217' },
+  m_bb: { fam: 'man', pat: 'ss',
+    nb: 'Jeg forandrer kurs til babord', en: 'I am altering my course to port',
+    xnb: 'To korte støt. Gis av et maskindrevet fartøy underveis som utfører en manøver, når fartøyene er i sikte av hverandre.',
+    xen: 'Two short blasts. Given by a power-driven vessel underway that is manoeuvring, when the vessels are in sight of one another.',
+    ref: 'Regel 34 (a), s. 217' },
+  m_ast: { fam: 'man', pat: 'sss',
+    nb: 'Jeg bruker maskinkraften akterover', en: 'I am operating astern propulsion',
+    xnb: 'Tre korte støt. Gis av et maskindrevet fartøy underveis som utfører en manøver, når fartøyene er i sikte av hverandre.',
+    xen: 'Three short blasts. Given by a power-driven vessel underway that is manoeuvring, when the vessels are in sight of one another.',
+    ref: 'Regel 34 (a), s. 217' },
+  m_ovst: { fam: 'man', pat: 'lls',
+    nb: 'Jeg akter å gå forbi på din styrbord side', en: 'I intend to overtake you on your starboard side',
+    xnb: 'To lange støt etterfulgt av ett kort. Gis i en trang lei eller renne av fartøyet som haler inn på et annet og akter å gå forbi (regel 9 (e)).',
+    xen: 'Two prolonged blasts followed by one short. Given in a narrow channel or fairway by the vessel that is overtaking (rule 9 (e)).',
+    ref: 'Regel 34 (c)(i), s. 217' },
+  m_ovbb: { fam: 'man', pat: 'llss',
+    nb: 'Jeg akter å gå forbi på din babord side', en: 'I intend to overtake you on your port side',
+    xnb: 'To lange støt etterfulgt av to korte. Gis i en trang lei eller renne av fartøyet som haler inn på et annet og akter å gå forbi (regel 9 (e)).',
+    xen: 'Two prolonged blasts followed by two short. Given in a narrow channel or fairway by the vessel that is overtaking (rule 9 (e)).',
+    ref: 'Regel 34 (c)(i), s. 217' },
+  m_agree: { fam: 'man', pat: 'lsls',
+    nb: 'Jeg er enig i at du går forbi', en: 'I agree to be overtaken',
+    xnb: 'Ett langt, ett kort, ett langt og ett kort støt, i den rekkefølgen. Gis av fartøyet som blir innhentet i en trang lei eller renne, når det tar forholdsregler etter regel 9 (e).',
+    xen: 'One prolonged, one short, one prolonged and one short blast, in that order. Given by the vessel being overtaken in a narrow channel or fairway when it takes action under rule 9 (e).',
+    ref: 'Regel 34 (c)(ii), s. 217' },
+  m_doubt: { fam: 'man', pat: 'fffff',
+    nb: 'Jeg forstår ikke hva du gjør, eller er i tvil om du tar tilstrekkelige forholdsregler',
+    en: 'I do not understand your intentions, or I doubt that you are taking sufficient action',
+    xnb: 'Minst fem korte støt raskt etter hverandre. Kan suppleres med minst fem korte blink raskt etter hverandre. Gis når to fartøy i sikte av hverandre nærmer seg.',
+    xen: 'At least five short and rapid blasts. May be supplemented by at least five short and rapid flashes. Given when two vessels in sight of one another are approaching.',
+    ref: 'Regel 34 (d), s. 217' },
+  m_bend: { fam: 'man', pat: 'l',
+    nb: 'Jeg nærmer meg en sving eller et sted der andre fartøy kan være skjult', en: 'I am approaching a bend or an area where other vessels may be hidden',
+    xnb: 'Ett langt støt. Besvares med ett langt støt av et fartøy innen hørevidde som nærmer seg svingen fra motsatt side eller ligger bak hindringen. Gis også under nedsatt sikt.',
+    xen: 'One prolonged blast. Answered with one prolonged blast by any vessel within hearing that is approaching from the other side or is behind the obstruction. Also given in restricted visibility.',
+    ref: 'Regel 34 (e), s. 217' },
+
+  f_mp: { fam: 'fog', pat: 'l',
+    nb: 'Maskindrevet fartøy som gjør fart gjennom vannet', en: 'Power-driven vessel making way through the water',
+    xnb: 'Ett langt støt minst hvert annet minutt.',
+    xen: 'One prolonged blast at intervals of not more than 2 minutes.',
+    ref: 'Regel 35 (a), s. 220' },
+  f_stop: { fam: 'fog', pat: 'll',
+    nb: 'Maskindrevet fartøy underveis, med stoppet maskin og uten fart gjennom vannet', en: 'Power-driven vessel underway but stopped and making no way through the water',
+    xnb: 'To lange støt med om lag 2 sekunders mellomrom, minst hvert annet minutt.',
+    xen: 'Two prolonged blasts with about 2 seconds between them, at intervals of not more than 2 minutes.',
+    ref: 'Regel 35 (b), s. 220' },
+  f_c: { fam: 'fog', pat: 'lss',
+    nb: 'Ikke under kommando, begrenset manøvreringsevne, hemmet av dypgående, seilfartøy, fiskefartøy eller fartøy som sleper eller skyver',
+    en: 'Vessel not under command, restricted in ability to manoeuvre, constrained by draught, sailing vessel, vessel fishing, or vessel towing or pushing',
+    xnb: 'Ett langt støt etterfulgt av to korte, minst hvert annet minutt, i stedet for signalene i (a) og (b). Samme signal gir fiskefartøy og fartøy med begrenset manøvreringsevne som arbeider mens de ligger til ankers.',
+    xen: 'One prolonged blast followed by two short, at intervals of not more than 2 minutes, instead of the signals in (a) and (b). The same signal is given by a vessel fishing, and by a vessel restricted in her ability to manoeuvre working, when at anchor.',
+    ref: 'Regel 35 (c) og (d), s. 220' },
+  f_tow: { fam: 'fog', pat: 'lsss',
+    nb: 'Fartøy som blir slept (det siste i slepet), hvis det er bemannet', en: 'Vessel being towed (the last vessel of the tow), if manned',
+    xnb: 'Ett langt støt etterfulgt av tre korte, minst hvert annet minutt. Når det er mulig, rett etter signalet fra fartøyet som sleper.',
+    xen: 'One prolonged blast followed by three short, at intervals of not more than 2 minutes. When practicable, immediately after the signal made by the towing vessel.',
+    ref: 'Regel 35 (e), s. 220' },
+  f_pilot: { fam: 'fog', pat: 'ssss',
+    nb: 'Losfartøy på losoppdrag (kjenningssignal)', en: 'Pilot vessel engaged on pilotage duty (identity signal)',
+    xnb: 'Fire korte støt, i tillegg til de vanlige tåkesignalene.',
+    xen: 'Four short blasts, in addition to the ordinary fog signals.',
+    ref: 'Regel 35 (k)' },
+  f_anch: { fam: 'fog', pat: 'r',
+    nb: 'Fartøy som ligger til ankers (under 100 meter)', en: 'Vessel at anchor (under 100 metres)',
+    xnb: 'Rask ringing med klokken i om lag 5 sekunder, minst hvert minutt.',
+    xen: 'Rapid ringing of the bell for about 5 seconds, at intervals of not more than one minute.',
+    ref: 'Regel 35 (g), s. 220' },
+  f_anch100: { fam: 'fog', pat: 'rR',
+    nb: 'Fartøy på 100 meter eller mer som ligger til ankers', en: 'Vessel of 100 metres or more at anchor',
+    xnb: 'Rask ringing med klokken forut i om lag 5 sekunder, og like etter rask lyd på gongongen akterut i om lag 5 sekunder, minst hvert minutt.',
+    xen: 'Rapid ringing of the bell in the forepart for about 5 seconds, followed immediately by the gong sounded rapidly in the after part for about 5 seconds, at intervals of not more than one minute.',
+    ref: 'Regel 35 (g), s. 220' },
+  f_ground: { fam: 'fog', pat: 'bbbrbbb',
+    nb: 'Fartøy som står på grunn (under 100 meter)', en: 'Vessel aground (under 100 metres)',
+    xnb: 'Ankersignalet, og dessuten tre atskilte og tydelige slag på klokken like før og like etter den hurtige ringingen. Fartøy på 100 meter eller mer gir også gongongsignalet.',
+    xen: 'The anchor signal, and in addition three separate and distinct strokes on the bell immediately before and after the rapid ringing. A vessel of 100 metres or more also sounds the gong.',
+    ref: 'Regel 35 (h), s. 220' }
+};
+const HEAR = Object.keys(A).filter(k => A[k].fam === 'man');
+const FOG = Object.keys(A).filter(k => A[k].fam === 'fog');
+// Bygg: bare rene fløytesignaler (s/l) som kan legges inn med to knapper. Tvilsignalet (fem raske) er med bevisst utelatt.
+const BUILD = Object.keys(A).filter(k => /^[sl]+$/.test(A[k].pat));
+
+/* ---------- Faktaspørsmål ----------
+   o[0] er alltid det riktige svaret; rekkefølgen blandes i spillet. */
+const FACTS = [
+  { g: 'int', q: ['Hvor lenge varer et kort støt?', 'How long is a short blast?'],
+    o: [['Om lag 1 sekund', 'About 1 second'], ['Om lag 2 sekunder', 'About 2 seconds'], ['Om lag 4 sekunder', 'About 4 seconds'], ['Om lag 6 sekunder', 'About 6 seconds']],
+    x: ['Et kort støt varer om lag ett sekund.', 'A short blast lasts about one second.'], ref: 'Regel 32 (b), s. 214' },
+  { g: 'int', q: ['Hvor lenge varer et langt støt?', 'How long is a prolonged blast?'],
+    o: [['4–6 sekunder', '4–6 seconds'], ['1–2 sekunder', '1–2 seconds'], ['2–4 sekunder', '2–4 seconds'], ['6–8 sekunder', '6–8 seconds']],
+    x: ['Et langt støt varer 4–6 sekunder.', 'A prolonged blast lasts 4–6 seconds.'], ref: 'Regel 32 (c), s. 214' },
+  { g: 'int', q: ['Hvilket lydutstyr skal et fartøy på 50 meter ha som minimum?', 'What is the minimum sound equipment for a vessel of 50 metres?'],
+    o: [['Fløyte og klokke', 'Whistle and bell'], ['Bare fløyte', 'Whistle only'], ['Fløyte, klokke og gongong', 'Whistle, bell and gong'], ['Bare klokke', 'Bell only']],
+    x: ['Fra 12 meter kreves fløyte, fra 20 meter også klokke, og fra 100 meter også gongong.', 'From 12 metres a whistle is required, from 20 metres also a bell, and from 100 metres also a gong.'], ref: 'Regel 33 (a), s. 215' },
+  { g: 'int', q: ['Hvilket lydutstyr skal et fartøy på 120 meter ha som minimum?', 'What is the minimum sound equipment for a vessel of 120 metres?'],
+    o: [['Fløyte, klokke og gongong', 'Whistle, bell and gong'], ['Fløyte og klokke', 'Whistle and bell'], ['Bare fløyte', 'Whistle only'], ['Fløyte og gongong', 'Whistle and gong']],
+    x: ['Fra 100 meter kreves fløyte, klokke og gongong. Gongongens klang eller tone må ikke kunne forveksles med klokkens.', 'From 100 metres a whistle, bell and gong are required. The gong must have a tone that cannot be confused with that of the bell.'], ref: 'Regel 33 (a), s. 215' },
+  { g: 'int', q: ['Hvilket lydutstyr skal et fartøy på 15 meter ha som minimum?', 'What is the minimum sound equipment for a vessel of 15 metres?'],
+    o: [['Fløyte', 'Whistle'], ['Fløyte og klokke', 'Whistle and bell'], ['Fløyte, klokke og gongong', 'Whistle, bell and gong'], ['Ingen krav til lydutstyr', 'No sound equipment required']],
+    x: ['Fra 12 meter kreves fløyte. Klokke kreves først fra 20 meter.', 'From 12 metres a whistle is required. A bell is required only from 20 metres.'], ref: 'Regel 33 (a), s. 215' },
+  { g: 'int', q: ['Et fartøy på 8 meter er ikke pliktig til å føre fløyte og klokke. Hva må det likevel ha?', 'A vessel of 8 metres need not carry a whistle and bell. What must it still have?'],
+    o: [['Noe annet som kan gi et kraftig lydsignal', 'Something else that can make an efficient sound signal'], ['Ingenting', 'Nothing'], ['En gongong', 'A gong'], ['Bare en lykt', 'Only a torch']],
+    x: ['Fartøy under 12 meter skal, hvis de ikke har apparatene, være utstyrt med noe annet som kan gi et kraftig lydsignal.', 'Vessels under 12 metres, if they do not carry the appliances, must have some other means of making an efficient sound signal.'], ref: 'Regel 33 (b), s. 215' },
+  { g: 'int', q: ['Når skal manøversignalene i regel 34 (a) (ett, to og tre korte støt) brukes?', 'When are the manoeuvring signals in rule 34 (a) (one, two and three short blasts) used?'],
+    o: [['Når fartøyene er i sikte av hverandre', 'When the vessels are in sight of one another'], ['Bare i tåke', 'Only in fog'], ['Bare om natten', 'Only at night'], ['Alltid når et annet fartøy vises på radaren', 'Whenever another vessel appears on the radar']],
+    x: ['Manøversignalene brukes bare når fartøyene er i sikte av hverandre. Under nedsatt sikt er det vanskelig å vite hvor et signal kommer fra.', 'The manoeuvring signals are used only when vessels are in sight of one another. In restricted visibility it is hard to tell where a signal comes from.'], ref: 'Regel 34 (a), s. 217' },
+  { g: 'int', q: ['Hvilket signal etter regel 34 skal også gis under nedsatt sikt?', 'Which signal under rule 34 is also given in restricted visibility?'],
+    o: [['Ett langt støt ved en sving eller bak en hindring', 'One prolonged blast at a bend or behind an obstruction'], ['Fem korte støt', 'Five short blasts'], ['To lange støt og ett kort', 'Two prolonged blasts and one short'], ['Tre korte støt', 'Three short blasts']],
+    x: ['Svingsignalet (ett langt støt) er unntaket: det gis også når sikten er nedsatt.', 'The bend signal (one prolonged blast) is the exception: it is also given when visibility is restricted.'], ref: 'Regel 34 (e), s. 217' },
+  { g: 'int', q: ['Du hører ett langt støt fra et fartøy som nærmer seg en sving, og du er innen hørevidde på den andre siden. Hva gjør du?', 'You hear one prolonged blast from a vessel approaching a bend, and you are within hearing on the other side. What do you do?'],
+    o: [['Svarer med ett langt støt', 'Answer with one prolonged blast'], ['Svarer med fem korte støt', 'Answer with five short blasts'], ['Svarer med to korte støt', 'Answer with two short blasts'], ['Svarer ikke', 'Do not answer']],
+    x: ['Et slikt signal skal besvares med ett langt støt av et fartøy som nærmer seg fra motsatt side eller ligger bak hindringen, innen hørevidde.', 'Such a signal shall be answered with one prolonged blast by a vessel approaching from the other side or lying behind the obstruction, within hearing.'], ref: 'Regel 34 (e), s. 217' },
+  { g: 'int', q: ['Hvilken lanterne brukes til lyssignaler etter regel 34 (b)?', 'Which light is used for the light signals in rule 34 (b)?'],
+    o: [['Rundtlysende hvit lanterne, synlig på minst 5 nautiske mil', 'All-round white light, visible at least 5 nautical miles'], ['Rundtlysende rød lanterne, synlig på minst 5 nautiske mil', 'All-round red light, visible at least 5 nautical miles'], ['Rundtlysende hvit lanterne, synlig på minst 2 nautiske mil', 'All-round white light, visible at least 2 nautical miles'], ['Hvit akterlanterne, synlig på minst 3 nautiske mil', 'White stern light, visible at least 3 nautical miles']],
+    x: ['Lanternen, hvis den er anbrakt, skal være rundtlysende med hvitt lys, synlig på minst 5 mils avstand.', 'The light, if fitted, shall be an all-round white light visible at a distance of at least 5 miles.'], ref: 'Regel 34 (b)(iii), s. 217' },
+  { g: 'int', q: ['Hvor lenge skal det minst være mellom to påfølgende lyssignaler (regel 34 b)?', 'What is the minimum interval between successive light signals (rule 34 b)?'],
+    o: [['Minst ti sekunder', 'At least ten seconds'], ['Om lag ett sekund', 'About one second'], ['Minst fem sekunder', 'At least five seconds'], ['Minst ett minutt', 'At least one minute']],
+    x: ['Hvert blink varer om lag ett sekund, mellomrommet mellom blinkene er om lag ett sekund, og mellomrommene mellom påfølgende signaler skal være minst ti sekunder.', 'Each flash lasts about one second, the interval between flashes is about one second, and the intervals between successive signals shall be at least ten seconds.'], ref: 'Regel 34 (b)(ii), s. 217' },
+  { g: 'int', q: ['Et fartøy har fløyter mer enn 100 meter fra hverandre. Hvor mange brukes til manøver- og varselsignaler?', 'A vessel has whistles more than 100 metres apart. How many are used for manoeuvring and warning signals?'],
+    o: [['Bare én', 'Only one'], ['Begge samtidig', 'Both at the same time'], ['Den forreste og den akterste annenhver gang', 'The forward and the after one alternately'], ['Ingen, bare lys', 'None, only lights']],
+    x: ['Hvis fløytene er mer enn 100 meter fra hverandre, skal bare én fløyte brukes.', 'If the whistles are more than 100 metres apart, only one whistle shall be used.'], ref: 'Regel 34 (f), s. 217' },
+  { g: 'int', q: ['Hvor ofte skal et maskindrevet fartøy som gjør fart gi tåkesignal?', 'How often shall a power-driven vessel making way sound its fog signal?'],
+    o: [['Minst hvert annet minutt', 'At intervals of not more than 2 minutes'], ['Minst hvert minutt', 'At intervals of not more than 1 minute'], ['Minst hvert tredje minutt', 'At intervals of not more than 3 minutes'], ['Minst hvert femte minutt', 'At intervals of not more than 5 minutes']],
+    x: ['Ett langt støt minst hvert annet minutt.', 'One prolonged blast at intervals of not more than 2 minutes.'], ref: 'Regel 35 (a), s. 220' },
+  { g: 'int', q: ['Hvor ofte skal et fartøy som ligger til ankers ringe med klokken i nedsatt sikt, og hvor lenge hver gang?', 'How often shall a vessel at anchor ring the bell in restricted visibility, and for how long each time?'],
+    o: [['Minst hvert minutt, i om lag 5 sekunder', 'At intervals of not more than one minute, for about 5 seconds'], ['Minst hvert annet minutt, i om lag 5 sekunder', 'At intervals of not more than 2 minutes, for about 5 seconds'], ['Minst hvert minutt, i om lag 15 sekunder', 'At intervals of not more than one minute, for about 15 seconds'], ['Minst hvert femte minutt, i om lag 5 sekunder', 'At intervals of not more than 5 minutes, for about 5 seconds']],
+    x: ['Fartøy for anker ringer hurtig med klokken i om lag 5 sekunder minst hvert minutt.', 'A vessel at anchor rings the bell rapidly for about 5 seconds at intervals of not more than one minute.'], ref: 'Regel 35 (g), s. 220' },
+  { g: 'int', q: ['Et fartøy på 100 meter eller mer ligger til ankers i tåke. Hvor skal klokken og gongongen brukes?', 'A vessel of 100 metres or more is at anchor in fog. Where are the bell and the gong sounded?'],
+    o: [['Klokken forut, gongongen akterut', 'Bell forward, gong aft'], ['Klokken akterut, gongongen forut', 'Bell aft, gong forward'], ['Begge forut', 'Both forward'], ['Begge akterut', 'Both aft']],
+    x: ['Klokken ringes i den forreste delen, og like etter gis det lyd med gongongen i den akterste delen i om lag 5 sekunder.', 'The bell is sounded in the forepart, and immediately after, the gong is sounded in the after part for about 5 seconds.'], ref: 'Regel 35 (g), s. 220' },
+  { g: 'int', q: ['Hvilket valgfritt fløytesignal kan et fartøy for anker gi for å varsle om sin posisjon og faren for sammenstøt?', 'Which optional whistle signal may a vessel at anchor give to warn of her position and the possibility of collision?'],
+    o: [['Ett kort, ett langt og ett kort støt', 'One short, one prolonged and one short blast'], ['Ett langt, ett kort og ett langt støt', 'One prolonged, one short and one prolonged blast'], ['Fem korte støt', 'Five short blasts'], ['Tre lange støt', 'Three prolonged blasts']],
+    x: ['Et fartøy som ligger til ankers kan dessuten gi ett kort, ett langt og ett kort støt.', 'A vessel at anchor may in addition sound one short, one prolonged and one short blast.'], ref: 'Regel 35 (g), s. 220' },
+  { g: 'int', q: ['Hva gir et fartøy som står på grunn, i tillegg til den hurtige klokkeringingen?', 'What does a vessel aground give in addition to the rapid ringing of the bell?'],
+    o: [['Tre atskilte og tydelige slag på klokken like før og like etter', 'Three separate and distinct strokes on the bell immediately before and after'], ['Ett slag på klokken før ringingen', 'One stroke on the bell before the ringing'], ['To slag på klokken etter ringingen', 'Two strokes on the bell after the ringing'], ['Fem slag på gongongen', 'Five strokes on the gong']],
+    x: ['Et fartøy som står på grunn ringer som et fartøy for anker, og slår dessuten tre atskilte og tydelige slag på klokken like før og like etter den hurtige ringingen.', 'A vessel aground rings as a vessel at anchor and also gives three separate and distinct strokes on the bell immediately before and after the rapid ringing.'], ref: 'Regel 35 (h), s. 220' },
+  { g: 'int', q: ['Hvilke lys bør du unngå når du vil påkalle et annet fartøys oppmerksomhet?', 'Which lights should you avoid when you want to attract the attention of another vessel?'],
+    o: [['Kraftige blinkende eller roterende lys (strobe)', 'High-intensity intermittent or revolving lights (strobe lights)'], ['En lyskaster rettet mot faren, uten å sjenere andre', 'A searchlight directed at the danger, without troubling other vessels'], ['Et lyssignal som ikke kan forveksles med noe signal i reglene', 'A light signal that cannot be mistaken for any signal in the rules'], ['Et lydsignal som ikke kan forveksles med noe signal i reglene', 'A sound signal that cannot be mistaken for any signal in the rules']],
+    x: ['Man kan gi et lys- eller lydsignal som ikke kan forveksles med reglenes signaler, eller rette en lyskaster mot faren. Kraftige blinkende eller roterende lys skal unngås.', 'One may make a light or sound signal that cannot be mistaken for any signal in the rules, or direct a searchlight at the danger. High-intensity intermittent or revolving lights shall be avoided.'], ref: 'Regel 36, s. 221' },
+  { g: 'int', q: ['Hvor står signalene et fartøy i nød bruker for å be om hjelp (regel 37)?', 'Where are the signals a vessel in distress uses to ask for help (rule 37) listed?'],
+    o: [['Vedlegg IV', 'Annex IV'], ['Vedlegg I', 'Annex I'], ['Vedlegg II', 'Annex II'], ['Vedlegg III', 'Annex III']],
+    x: ['Et fartøy i nød som ber om hjelp, skal bruke eller vise signalene i vedlegg IV.', 'A vessel in distress requiring assistance shall use or exhibit the signals in Annex IV.'], ref: 'Regel 37, s. 222' },
+
+  { g: 'nor', q: ['Hvilket signal skal et maskindrevet fartøy gi omtrent en halv nautisk mil før det kommer inn i et trangt farvann? (norsk regel 41 a)', 'Which signal shall a power-driven vessel give about half a mile before entering a narrow channel? (Norwegian rule 41 a)'],
+    o: [['Ett langt støt på minst 10 sekunder', 'One long blast of at least 10 seconds'], ['Ett langt støt på 4–6 sekunder', 'One prolonged blast of 4–6 seconds'], ['Fem korte støt', 'Five short blasts'], ['To lange støt', 'Two long blasts']],
+    x: ['Maskindrevne fartøy skal alltid varsle sin ankomst til et trangt farvann fra ca. 1/2 mil avstand med ett langt støt på minst 10 sekunder.', 'Power-driven vessels shall always give warning of arrival in a narrow channel from about half a mile with one long blast of at least 10 seconds.'], ref: 'Regel 41 (a), s. 228' },
+  { g: 'nor', q: ['To maskindrevne fartøy møtes i et farvann så trangt at de ikke kan passere uten fare for sammenstøt. Det ene har gitt signal etter regel 41 (a). Hvem venter? (norsk regel 41 b)', 'Two power-driven vessels meet in a fairway so narrow that they cannot pass without risk of collision. One has given the signal in rule 41 (a). Who waits? (Norwegian rule 41 b)'],
+    o: [['Fartøyet som kommer sist', 'The vessel that arrives last'], ['Fartøyet som ga signalet', 'The vessel that gave the signal'], ['Det største fartøyet', 'The larger vessel'], ['Fartøyet som har styrbord side mot land', 'The vessel with starboard side to the shore']],
+    x: ['Det fartøyet som kommer sist, skal vente til det andre har passert, forutsatt at dette har gitt signalet i punkt (a).', 'The vessel arriving last shall wait for the other one to pass, provided that vessel has sounded the signal in paragraph (a).'], ref: 'Regel 41 (b), s. 228' },
+  { g: 'nor', q: ['Hva gjør du hvis farvannet er så trangt at et møtende fartøy ikke kan passere uten fare? (norsk regel 41 c)', 'What do you do if the channel is too narrow for a meeting vessel to pass without risk? (Norwegian rule 41 c)'],
+    o: [['Gir minst fem korte støt; det møtende fartøyet venter', 'Give at least five short blasts; the meeting vessel waits'], ['Gir ett langt støt på minst 10 sekunder', 'Give one long blast of at least 10 seconds'], ['Gir tre korte støt og rygger', 'Give three short blasts and go astern'], ['Gir to lange støt; du venter selv', 'Give two long blasts; you wait yourself']],
+    x: ['Fartøyet skal tilkjennegi dette ved å gi minst 5 korte støt i fløyten. Det møtende fartøyet skal da vente til det andre har passert.', 'The vessel shall indicate this by giving at least 5 short blasts on the whistle. The meeting vessel shall then wait until the other one has passed.'], ref: 'Regel 41 (c), s. 228' },
+  { g: 'nor', q: ['Hva betyr signalflagget «A» som vises fra et fartøy? (norsk regel 42)', 'What does the signal flag “A” displayed from a vessel mean? (Norwegian rule 42)'],
+    o: [['Jeg har en dykker nede. Hold godt klar og gå med sakte fart', 'I have a diver down. Keep well clear at slow speed'], ['Jeg har losen om bord', 'I have the pilot on board'], ['Jeg trenger hjelp', 'I require assistance'], ['Jeg har mistet kontrollen over fartøyet', 'I have lost control of my vessel']],
+    x: ['Flagget «A» (eller en tilsvarende merket skjerm) viser at en dykker eller froskemann er nede.', 'The flag “A” (or a rigid replica marked in a similar manner) shows that a diver or frogman is down.'], ref: 'Regel 42, s. 229' },
+  { g: 'nor', q: ['Et fartøy viser flagget «A». Hva skal andre fartøy gjøre, og maskindrevne fartøy om mulig? (norsk regel 42)', 'A vessel shows the flag “A”. What shall other vessels do, and power-driven vessels if possible? (Norwegian rule 42)'],
+    o: [['Passere med forsiktighet; maskindrevne fartøy stopper om mulig maskinen', 'Pass with caution; power-driven vessels stop the engine if possible'], ['Passere med full fart for å komme raskt bort', 'Pass at full speed to get clear quickly'], ['Svare med ett langt støt', 'Answer with one prolonged blast'], ['Ankre opp', 'Anchor']],
+    x: ['Andre fartøy skal passere med forsiktighet, og maskindrevne fartøy skal om mulig stoppe maskinen.', 'Other vessels shall pass with caution, and power-driven vessels shall if possible stop the engine.'], ref: 'Regel 42, s. 229' }
+];
+
+/* ---------- Spørsmålsbank ---------- */
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function cycle(pool) { let q = []; return () => { if (!q.length) q = shuffle(pool.slice()); return q.pop(); }; }
+function answerOpts(key, fam) {
+  const others = shuffle(Object.keys(A).filter(k => A[k].fam === fam && k !== key)).slice(0, 3);
+  return shuffle([key, ...others]).map(k => ({ id: k, nb: A[k].nb, en: A[k].en }));
+}
+function factOpts(f, i) {
+  return shuffle(f.o.map((o, j) => ({ id: 'f' + i + '_' + j, nb: o[0], en: o[1], ok: j === 0 })));
+}
+function typesFor(mode) {
+  if (mode === 'signal') return Array(N).fill('hear');
+  if (mode === 'tåke') return Array(N).fill('fog');
+  if (mode === 'bygg') return Array(N).fill('build');
+  if (mode === 'fakta') return Array(N).fill('fact');
+  if (mode === 'norge') return Array(N).fill('nor');
+  return shuffle(['hear', 'hear', 'hear', 'fog', 'fog', 'fog', 'build', 'build', 'fact', 'fact']);
+}
+function makeRound(mode) {
+  const draw = {
+    hear: cycle(HEAR), fog: cycle(FOG), build: cycle(BUILD),
+    fact: cycle(FACTS.map((f, i) => i).filter(i => FACTS[i].g === 'int')),
+    nor: cycle(FACTS.map((f, i) => i).filter(i => FACTS[i].g === 'nor'))
+  };
+  return typesFor(mode).map(type => {
+    if (type === 'hear') { const a = draw.hear(); return { type, a, opts: answerOpts(a, 'man') }; }
+    if (type === 'fog') { const a = draw.fog(); return { type, a, opts: answerOpts(a, 'fog') }; }
+    if (type === 'build') { const a = draw.build(); return { type, a }; }
+    const i = type === 'fact' ? draw.fact() : draw.nor();
+    return { type: 'fact', f: i, opts: factOpts(FACTS[i], i) };
+  });
+}
+
+/* ---------- Tegning av signalmønster ---------- */
+function patSVG(pat, label, activeIdx) {
+  const W = { s: 16, l: 64, f: 7, b: 12, r: 70, R: 60 };
+  let x = 8, parts = '';
+  [...pat].forEach((ch, i) => {
+    const on = i === activeIdx ? ' on' : '';
+    if (ch === 's' || ch === 'l' || ch === 'f') {
+      parts += `<rect class="ev${on}" data-i="${i}" x="${x}" y="14" width="${W[ch]}" height="20" rx="3"/>`;
+    } else if (ch === 'b') {
+      parts += `<circle class="ev bell${on}" data-i="${i}" cx="${x + 6}" cy="24" r="6"/>`;
+    } else if (ch === 'r') {
+      let c = ''; for (let k = 0; k < 8; k++) c += `<circle cx="${x + 5 + k * 8.5}" cy="24" r="3.6"/>`;
+      parts += `<g class="ev bell${on}" data-i="${i}">${c}</g>`;
+    } else if (ch === 'R') {
+      let c = ''; for (let k = 0; k < 5; k++) c += `<rect x="${x + k * 12}" y="17" width="9" height="14" rx="2"/>`;
+      parts += `<g class="ev bell${on}" data-i="${i}">${c}</g>`;
+    }
+    x += W[ch] + (ch === 'f' ? 5 : ch === 'b' ? 8 : 12);
+  });
+  const w = Math.max(x + 4, 120);
+  return `<svg viewBox="0 0 ${w} 48" preserveAspectRatio="xMinYMid meet" role="img" aria-label="${label}">${parts}</svg>`;
+}
+function patText(pat, names) {
+  return [...pat].map(c => names[c]).join(', ');
+}
+
+/* ---------- Spill ---------- */
+if (typeof document !== 'undefined') (function () {
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ingen lagring */ } }
+  };
+  const params = new URLSearchParams(location.search);
+  let lang = params.get('lang') === 'en' ? 'en' : (params.get('lang') === 'nb' ? 'nb' : (store.get('cphd-lang') || 'nb'));
+  let mode = 'signal';
+  let round = null, timer = null;
+  const t = k => T[lang][k];
+
+  /* ----- Lyd (Web Audio) ----- */
+  let ctx = null, offTimers = [];
+  const hasAudio = !!(window.AudioContext || window.webkitAudioContext);
+  function ac() {
+    if (!hasAudio) return null;
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+  function whistle(c, at, d) {
+    const f = c.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1500;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, at);
+    g.gain.linearRampToValueAtTime(0.32, at + Math.min(0.05, d / 3));
+    g.gain.setValueAtTime(0.32, at + Math.max(0.06, d - 0.08));
+    g.gain.linearRampToValueAtTime(0, at + d);
+    [[196, 'sawtooth', 0.5], [200, 'square', 0.4], [392, 'sine', 0.25]].forEach(([fr, ty, vol]) => {
+      const o = c.createOscillator(), og = c.createGain();
+      o.type = ty; o.frequency.value = fr; og.gain.value = vol;
+      o.connect(og); og.connect(f); o.start(at); o.stop(at + d + 0.03);
+    });
+    f.connect(g); g.connect(c.destination);
+  }
+  function strike(c, at, base, dec, vol) {
+    [[1, 1], [2.76, 0.5], [5.4, 0.25]].forEach(([m, a]) => {
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'sine'; o.frequency.value = base * m;
+      g.gain.setValueAtTime(vol * a, at); g.gain.exponentialRampToValueAtTime(0.0001, at + dec);
+      o.connect(g); g.connect(c.destination); o.start(at); o.stop(at + dec + 0.03);
+    });
+  }
+  function stopHighlights() { offTimers.forEach(clearTimeout); offTimers = []; document.querySelectorAll('#pat .ev.on').forEach(e => e.classList.remove('on')); }
+  function play(pat) {
+    const c = ac(); if (!c) return 0;
+    stopHighlights();
+    const speed = +$('speed').value, { ev, total } = schedule(pat, speed), now = c.currentTime + 0.06;
+    ev.forEach(e => {
+      const at = now + e.t0;
+      if (e.k === 'w') whistle(c, at, Math.max(0.12, e.d));
+      else if (e.k === 'b') strike(c, at, 700, 0.6, 0.35);
+      else if (e.k === 'r') for (let s = 0; s * 0.2 < e.d; s++) strike(c, at + s * 0.2, 700, 0.22, 0.28);
+      else if (e.k === 'g') for (let s = 0; s * 0.5 < e.d; s++) strike(c, at + s * 0.5, 120, 1.0, 0.5);
+      const el = () => document.querySelector(`#pat [data-i="${e.i}"]`);
+      offTimers.push(setTimeout(() => { const n = el(); if (n) n.classList.add('on'); }, 60 + e.t0 * 1000));
+      offTimers.push(setTimeout(() => { const n = el(); if (n) n.classList.remove('on'); }, 60 + (e.t0 + Math.max(0.12, e.d)) * 1000));
+    });
+    return total;
+  }
+
+  /* ----- Tekster og modus ----- */
+  function applyLang() {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nb';
+    document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
+    document.title = `${t('title')} · Captain PhD`;
+    $('lang').textContent = t('langBtn');
+    const home = document.querySelector('.home'); home.href = lang === 'en' ? home.dataset.hrefEn : home.dataset.hrefNb;
+    showBest();
+    if (round && !$('play').hidden) renderQ(true);
+    if (round && !$('result').hidden) showResult();
+  }
+  $('lang').addEventListener('click', () => { lang = lang === 'nb' ? 'en' : 'nb'; store.set('cphd-lang', lang); applyLang(); });
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    showBest();
+  }));
+  function showBest() {
+    const b = store.get('cphd-lydsignaler-best-' + mode);
+    $('best').textContent = b ? t('best')(b, T[lang].modeName[mode]) : '';
+  }
+  const fmt = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+  /* ----- Runde ----- */
+  function start() {
+    ac();
+    round = { qs: makeRound(mode), n: 0, correct: 0, pts: 0, t0: Date.now(), wrong: [], answered: false, input: '' };
+    $('start').hidden = true; $('result').hidden = true; $('play').hidden = false;
+    clearInterval(timer);
+    timer = setInterval(() => { $('clock').textContent = fmt(Date.now() - round.t0); }, 500);
+    renderQ();
+  }
+  const hideDrawing = () => $('hide').checked && hasAudio;
+
+  function drawPat(pat) {
+    const hidden = hideDrawing() && !round.answered;
+    $('pat').innerHTML = hidden ? `<div class="hidden">${t('hidden')}</div>` : patSVG(pat, `${t('patLabel')}: ${patText(pat, T[lang].patNames)}`);
+  }
+
+  function renderQ(keepState) {
+    const q = round.qs[round.n];
+    $('count').textContent = t('count')(round.n + 1, N);
+    $('score').textContent = t('score')(round.pts);
+    const box = $('opts'); box.innerHTML = '';
+    $('sigWrap').hidden = q.type === 'fact';
+    $('legend').hidden = true;
+    $('ctl').hidden = q.type !== 'build';
+    $('listen').onclick = null;
+
+    if (q.type === 'fact') {
+      const f = FACTS[q.f];
+      $('question').textContent = f.q[lang === 'en' ? 1 : 0];
+    } else if (q.type === 'hear') {
+      $('question').textContent = t('qHear');
+    } else if (q.type === 'fog') {
+      $('question').textContent = t('qFog');
+    } else {
+      $('question').textContent = t('qBuild')(A[q.a][lang]);
+    }
+
+    if (q.type === 'hear' || q.type === 'fog') {
+      drawPat(A[q.a].pat);
+      $('listen').onclick = () => play(A[q.a].pat);
+      $('legend').textContent = t('legend'); $('legend').hidden = !hasAudio ? false : hideDrawing() && !round.answered;
+      if (!hasAudio) { $('legend').textContent = t('soundOff'); $('legend').hidden = false; }
+    }
+    if (q.type === 'build') {
+      $('sigWrap').hidden = false;
+      $('listen').onclick = () => { if (round.input) play(round.input); };
+      drawInput();
+      $('legend').textContent = hasAudio ? t('legend') : t('soundOff'); $('legend').hidden = false;
+    }
+    if (q.type !== 'build') {
+      q.opts.forEach((o, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.dataset.a = o.id;
+        b.innerHTML = `<kbd>${idx + 1}</kbd><span>${o[lang]}</span>`;
+        b.addEventListener('click', () => answer(o.id));
+        box.appendChild(b);
+      });
+    }
+    $('bShort').disabled = $('bLong').disabled = $('bDel').disabled = $('bHear').disabled = $('bSubmit').disabled = false;
+    if (keepState && round.answered) { markAnswer(round.lastPick); return; }
+    round.answered = false; round.qStart = Date.now(); round.input = '';
+    if (q.type === 'build') drawInput();
+    $('explain').hidden = true; $('next').hidden = true;
+    if (q.type === 'hear' || q.type === 'fog') { if (!keepState) setTimeout(() => { if (!round.answered) play(A[q.a].pat); }, 250); }
+    const first = box.querySelector('button'); if (first && !keepState && q.type === 'fact') first.focus({ preventScroll: true });
+  }
+
+  function drawInput() {
+    $('pat').innerHTML = round.input
+      ? patSVG(round.input, `${t('patLabel')}: ${patText(round.input, T[lang].patNames)}`)
+      : `<div class="hidden">${t('empty')}</div>`;
+  }
+  function addBlast(ch) {
+    if (round.answered || round.qs[round.n].type !== 'build' || round.input.length >= 8) return;
+    round.input += ch; drawInput();
+    const c = ac(); if (c) { stopHighlights(); whistle(c, c.currentTime + 0.03, Math.max(0.3, EV[ch].d * +$('speed').value)); }
+  }
+  $('bShort').addEventListener('click', () => addBlast('s'));
+  $('bLong').addEventListener('click', () => addBlast('l'));
+  $('bDel').addEventListener('click', () => { if (!round.answered) { round.input = round.input.slice(0, -1); drawInput(); } });
+  $('bHear').addEventListener('click', () => { if (round.input) play(round.input); });
+  $('bSubmit').addEventListener('click', () => { if (!round.answered && round.input) answer(round.input); });
+
+  function isRight(q, a) {
+    if (q.type === 'build') return a === A[q.a].pat;
+    if (q.type === 'fact') return !!q.opts.find(o => o.id === a && o.ok);
+    return a === q.a;
+  }
+  function answer(a) {
+    if (round.answered) return;
+    round.answered = true; round.lastPick = a;
+    const q = round.qs[round.n];
+    if (isRight(q, a)) {
+      round.correct++;
+      const secs = (Date.now() - round.qStart) / 1000;
+      const per = q.type === 'build' ? 3 : 5;
+      round.pts += 100 + Math.max(0, Math.round(50 - secs * per));
+    } else round.wrong.push(q);
+    markAnswer(a);
+  }
+
+  function markAnswer(a) {
+    const q = round.qs[round.n], ok = isRight(q, a);
+    document.querySelectorAll('#opts button').forEach(b => {
+      b.disabled = true;
+      const right = q.type === 'fact' ? q.opts.find(o => o.id === b.dataset.a).ok : b.dataset.a === q.a;
+      if (right) b.classList.add('right'); else if (b.dataset.a === a) b.classList.add('wrong');
+    });
+    ['bShort', 'bLong', 'bDel', 'bSubmit'].forEach(i => { $(i).disabled = true; });
+    let head, body, ref;
+    if (q.type === 'fact') {
+      const f = FACTS[q.f], right = q.opts.find(o => o.ok);
+      head = ok ? '' : `${t('answerWas')} <b>${right[lang]}</b>. `;
+      body = f.x[lang === 'en' ? 1 : 0]; ref = f.ref;
+    } else {
+      const ans = A[q.a];
+      if (q.type === 'build') {
+        const nm = T[lang].patNames;
+        head = (ok ? '' : `${t('yourSignal')} ${patText(a, nm)}. `) + `${t('correctSignal')} <b>${patText(ans.pat, nm)}</b>. `;
+      } else head = ok ? '' : `${t('answerWas')} <b>${ans[lang]}</b>. `;
+      body = lang === 'en' ? ans.xen : ans.xnb; ref = ans.ref;
+      if (q.type !== 'build') drawPat(ans.pat);
+      if (q.type === 'build') { $('pat').innerHTML = patSVG(ans.pat, `${t('patLabel')}: ${patText(ans.pat, T[lang].patNames)}`); }
+    }
+    $('explain').innerHTML = `<b class="${ok ? 'ok' : 'bad'}">${ok ? t('right') : t('wrong')}</b> ${head}${body} <span style="color:var(--muted)">(${ref})</span>`;
+    $('explain').hidden = false;
+    $('score').textContent = t('score')(round.pts);
+    $('next').textContent = round.n === N - 1 ? t('finish') : t('next');
+    $('next').hidden = false; $('next').focus({ preventScroll: true });
+  }
+
+  $('next').addEventListener('click', () => {
+    stopHighlights();
+    if (round.n === N - 1) { finish(); return; }
+    round.n++; renderQ();
+    $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  function finish() {
+    clearInterval(timer);
+    round.time = Date.now() - round.t0;
+    const key = 'cphd-lydsignaler-best-' + mode, best = +(store.get(key) || 0);
+    if (round.pts > best) store.set(key, String(round.pts));
+    showResult();
+  }
+  function reviewItem(q) {
+    if (q.type === 'fact') { const f = FACTS[q.f]; return `<li><b>${f.q[lang === 'en' ? 1 : 0]}</b> ${f.x[lang === 'en' ? 1 : 0]} <span style="color:var(--muted)">(${f.ref})</span></li>`; }
+    const a = A[q.a];
+    return `<li><b>${a[lang]}</b>: ${patText(a.pat, T[lang].patNames)}. ${lang === 'en' ? a.xen : a.xnb} <span style="color:var(--muted)">(${a.ref})</span></li>`;
+  }
+  function showResult() {
+    $('play').hidden = true; $('result').hidden = false;
+    $('resTitle').textContent = t('resTitle')(round.correct, N);
+    $('resText').textContent = t('resText')(fmt(round.time), round.pts);
+    if (!round.wrong.length) { $('resReview').innerHTML = `<p>${t('perfect')}</p>`; }
+    else {
+      const seen = new Set();
+      const items = round.wrong.filter(q => { const k = q.type === 'fact' ? 'f' + q.f : q.a; return !seen.has(k) && seen.add(k); }).map(reviewItem).join('');
+      $('resReview').innerHTML = `<p><b>${t('reviewTitle')}</b></p><ul class="review">${items}</ul>`;
+    }
+    showBest();
+    $('again').focus({ preventScroll: true });
+  }
+
+  $('go').addEventListener('click', start);
+  $('again').addEventListener('click', () => { stopHighlights(); $('result').hidden = true; $('start').hidden = false; round = null; showBest(); });
+  $('hide').addEventListener('change', () => { if (round && !$('play').hidden && !round.answered) { const q = round.qs[round.n]; if (q.type === 'hear' || q.type === 'fog') drawPat(A[q.a].pat); } });
+
+  document.addEventListener('keydown', e => {
+    if ($('play').hidden || !round || e.ctrlKey || e.metaKey || e.altKey) return;
+    const q = round.qs[round.n];
+    if (q.type === 'build') {
+      if (round.answered) return;
+      const k = e.key.toLowerCase();
+      if (k === 'k') addBlast('s');
+      else if (k === 'l') addBlast('l');
+      else if (e.key === 'Backspace') { round.input = round.input.slice(0, -1); drawInput(); }
+      else if (e.key === 'Enter' && round.input && document.activeElement.tagName !== 'BUTTON') { e.preventDefault(); answer(round.input); }
+      return;
+    }
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4 && !round.answered && q.opts[n - 1]) answer(q.opts[n - 1].id);
+  });
+
+  applyLang();
+})();
+
+if (typeof module !== 'undefined') module.exports = { A, FACTS, HEAR, FOG, BUILD, makeRound, schedule, patSVG, N, T };
+</script>
+</body>
+</html>

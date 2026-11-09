@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hvem viker? · Captain PhD</title>
+<meta name="description" content="Hvem skal holde av veien? Øv på sjøveisreglene regel 11–19: møte, kryssende kurser, forbikjøring, fartøyenes innbyrdes ansvar og nedsatt sikt. Gratis læringsspill.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+:root {
+  --bg: #f6f3ec; --surface: #fff; --fg: #0b2233; --muted: #4d6170; --line: #d9d3c4;
+  --signal: #d6402f; --sea: #1d5c7a; --ok: #1f7a4d; --bad: #b3261e; --amber: #b9730b; --water: #e6eef1;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0a1822; --surface: #10222f; --fg: #e8eef2; --muted: #9fb2bf; --line: #22394a;
+    --signal: #ef5a48; --sea: #6fb3d2; --ok: #4cc38a; --bad: #ff7a70; --amber: #f0b44c; --water: #0c1d29; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--font); }
+a { color: var(--sea); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 0; flex-wrap: wrap; }
+.home { color: var(--fg); text-decoration: none; font-weight: 800; }
+.lang { font: 13px var(--mono); text-transform: uppercase; letter-spacing: .06em; background: none; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+h1 { font-size: clamp(26px, 6vw, 36px); line-height: 1.15; margin: 6px 0 8px; }
+.lede { color: var(--muted); margin: 0 0 18px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 14px; }
+.modes button, .opts button, .primary, .undo {
+  font: inherit; cursor: pointer; border-radius: 8px; padding: 12px; text-align: left;
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.modes button[aria-pressed="true"] { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.modes b { display: block; }
+.modes span { font-size: 13px; color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); margin: 0 0 14px; }
+.primary { background: var(--signal); border-color: var(--signal); color: #fff; font-weight: 700; text-align: center; width: 100%; }
+button:focus-visible, .lang:focus-visible { outline: 3px solid var(--sea); outline-offset: 2px; }
+.bar { display: flex; justify-content: space-between; font: 14px var(--mono); color: var(--muted); margin-bottom: 10px; }
+.scene { display: block; width: 100%; height: auto; max-height: 300px; background: var(--water); border-radius: 8px; }
+.cap { font-size: 14px; color: var(--muted); margin: 6px 0 0; }
+.q { font-weight: 700; margin: 14px 0 10px; }
+.opts { display: grid; gap: 8px; margin-top: 10px; }
+.opts button { display: flex; gap: 10px; align-items: baseline; position: relative; }
+.opts kbd { font: 12px var(--mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; }
+.opts button.right { border-color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
+.opts button.wrong { border-color: var(--bad); box-shadow: inset 0 0 0 2px var(--bad); }
+.opts button.picked { border-color: var(--sea); box-shadow: inset 0 0 0 2px var(--sea); }
+.opts .ord { margin-left: auto; font: 700 14px var(--mono); color: var(--sea); min-width: 1.5em; text-align: right; }
+.opts button:disabled { cursor: default; opacity: .8; }
+.undo { margin-top: 10px; text-align: center; width: 100%; }
+.explain { margin-top: 12px; padding: 12px; border-left: 4px solid var(--sea); background: var(--bg); border-radius: 0 8px 8px 0; }
+.explain b.ok { color: var(--ok); } .explain b.bad { color: var(--bad); }
+.next { margin-top: 12px; }
+.result h2 { margin: 0 0 6px; }
+.review { padding-left: 18px; }
+.review li { margin-bottom: 8px; }
+footer { font-size: 13px; color: var(--muted); padding: 24px 0 36px; }
+footer p { margin: 0 0 6px; }
+@media (max-width: 460px) { .modes { grid-template-columns: repeat(2, 1fr); } }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="home" href="../" data-href-nb="../" data-href-en="../en/">Captain PhD</a>
+    <button class="lang" id="lang" type="button">English</button>
+  </header>
+
+  <main>
+    <section id="start">
+      <h1 data-t="title"></h1>
+      <p class="lede" data-t="lede"></p>
+      <div class="panel">
+        <b data-t="chooseMode"></b>
+        <div class="modes" role="group">
+          <button type="button" data-mode="situasjon" aria-pressed="true"><b data-t="mSit"></b><span data-t="mSitSub"></span></button>
+          <button type="button" data-mode="fartøy" aria-pressed="false"><b data-t="mTyp"></b><span data-t="mTypSub"></span></button>
+          <button type="button" data-mode="rangering" aria-pressed="false"><b data-t="mRank"></b><span data-t="mRankSub"></span></button>
+          <button type="button" data-mode="sikt" aria-pressed="false"><b data-t="mVis"></b><span data-t="mVisSub"></span></button>
+          <button type="button" data-mode="regler" aria-pressed="false"><b data-t="mRul"></b><span data-t="mRulSub"></span></button>
+          <button type="button" data-mode="blandet" aria-pressed="false"><b data-t="mMix"></b><span data-t="mMixSub"></span></button>
+        </div>
+        <p class="note" data-t="note"></p>
+        <button class="primary" id="go" type="button" data-t="start"></button>
+        <p id="best" class="lede" style="margin:10px 0 0"></p>
+      </div>
+    </section>
+
+    <section id="play" hidden>
+      <div class="panel">
+        <div class="bar"><span id="count"></span><span id="clock">0:00</span><span id="score"></span></div>
+        <div id="sceneBox"></div>
+        <p class="cap" id="cap" hidden></p>
+        <p class="q" id="question"></p>
+        <div class="opts" id="opts"></div>
+        <button class="undo" id="undo" type="button" hidden data-t="undo"></button>
+        <div class="explain" id="explain" hidden aria-live="polite"></div>
+        <button class="primary next" id="next" type="button" hidden></button>
+      </div>
+    </section>
+
+    <section id="result" hidden>
+      <div class="panel result">
+        <h2 id="resTitle"></h2>
+        <p id="resText"></p>
+        <div id="resReview"></div>
+        <button class="primary" id="again" type="button" data-t="again"></button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p data-t="disclaimer"></p>
+    <p data-t="source"></p>
+    <p data-t="licence"></p>
+  </footer>
+</div>
+
+<script>
+'use strict';
+/* ==========================================================================
+   Hvem viker? — Captain PhD
+   Kilde/Source: Marfag K52 Lærebok sjøveisreglene (regel 3 (k) s. 37; regel 11–14
+   s. 119–125; regel 15–18 s. 130–154; regel 19 s. 158), CC BY-SA 3.0; tilpasset/adapted.
+   Faktatabell: captainphd-prosjektet, k52-manovrer-faktatabell.md
+   Bare entydige situasjoner brukes. Grensetilfeller (ca. 22,5° akterlig for tvers,
+   og møte i grensen) er med vilje utelatt fra poenggivende spørsmål.
+   ========================================================================== */
+
+const T = {
+  nb: {
+    title: 'Hvem viker?',
+    lede: 'Hvem skal holde av veien, og hvem skal holde kurs og fart? Sjøveisreglene regel 11–19: møte, kryssende kurser, forbikjøring, fartøyenes innbyrdes ansvar og nedsatt sikt. 10 spørsmål.',
+    chooseMode: 'Velg modus',
+    mSit: 'Situasjon', mSitSub: 'Tegning ovenfra',
+    mTyp: 'Fartøytype', mTypSub: 'Hvem viker for hvem?',
+    mRank: 'Rangering', mRankSub: 'Regel 18',
+    mVis: 'Nedsatt sikt', mVisSub: 'Regel 19',
+    mRul: 'Regler', mRulSub: 'Regel 11–18',
+    mMix: 'Blandet', mMixSub: 'Alt',
+    note: 'Bare entydige situasjoner brukes. Grensetilfeller (rundt 22,5° akterlig for tvers og møte i grensen) er utelatt. Bare de internasjonale reglene gjelder her, ikke de norske særreglene.',
+    start: 'Start', again: 'Spill igjen', next: 'Neste', finish: 'Se resultat', undo: 'Angre siste valg',
+    right: 'Riktig!', wrong: 'Feil.', answerWas: 'Riktig svar:', orderWas: 'Riktig rekkefølge:',
+    count: (i, n) => `Spørsmål ${i}/${n}`, score: s => `${s} poeng`,
+    resTitle: (c, n) => `${c} av ${n} riktige`,
+    resText: (time, pts) => `Tid: ${time}. Poeng: ${pts}.`,
+    best: (pts, mode) => `Din beste poengsum (${mode}): ${pts}`,
+    reviewTitle: 'Dette bør du lese en gang til:',
+    perfect: 'Alt riktig. Godt sjømannskap!',
+    you: 'Du', other: 'Den andre', wind: 'Vind', bow: 'baug', radarLbl: 'Radar, baugen opp', target: 'Mål',
+    sceneAlt: 'Tegning av to fartøy sett ovenfra',
+    radarAlt: 'Radarbilde med ett mål',
+    kn: 'kn',
+    disclaimer: 'Spillet er laget for læring og erstatter ikke offisiell eksamen eller opplæring.',
+    source: 'Kilde: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; tilpasset. Tegningene er laget for dette spillet.',
+    licence: 'Spørsmål, tekster og tegninger i spillet deles under <a href="https://creativecommons.org/licenses/by-sa/3.0/deed.no" rel="license">CC BY-SA 3.0</a>. Fant du en feil? Gi beskjed via <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { situasjon: 'situasjon', 'fartøy': 'fartøytype', rangering: 'rangering', sikt: 'nedsatt sikt', regler: 'regler', blandet: 'blandet' },
+    langBtn: 'English'
+  },
+  en: {
+    title: 'Who gives way?',
+    lede: 'Who must keep out of the way, and who must hold course and speed? Rules 11–19 of the collision regulations: head-on, crossing, overtaking, responsibilities between vessels and restricted visibility. 10 questions.',
+    chooseMode: 'Choose a mode',
+    mSit: 'Situation', mSitSub: 'Drawing from above',
+    mTyp: 'Vessel type', mTypSub: 'Who gives way to whom?',
+    mRank: 'Ranking', mRankSub: 'Rule 18',
+    mVis: 'Restricted visibility', mVisSub: 'Rule 19',
+    mRul: 'Rules', mRulSub: 'Rules 11–18',
+    mMix: 'Mixed', mMixSub: 'Everything',
+    note: 'Only clear-cut situations are used. Borderline cases (around 22.5° abaft the beam, and borderline head-on) are left out. Only the international rules apply here, not the Norwegian special rules.',
+    start: 'Start', again: 'Play again', next: 'Next', finish: 'See result', undo: 'Undo last choice',
+    right: 'Correct!', wrong: 'Wrong.', answerWas: 'Correct answer:', orderWas: 'Correct order:',
+    count: (i, n) => `Question ${i}/${n}`, score: s => `${s} points`,
+    resTitle: (c, n) => `${c} of ${n} correct`,
+    resText: (time, pts) => `Time: ${time}. Points: ${pts}.`,
+    best: (pts, mode) => `Your best score (${mode}): ${pts}`,
+    reviewTitle: 'Worth reading once more:',
+    perfect: 'All correct. Good seamanship!',
+    you: 'You', other: 'The other', wind: 'Wind', bow: 'bow', radarLbl: 'Radar, head up', target: 'Target',
+    sceneAlt: 'Drawing of two vessels seen from above',
+    radarAlt: 'Radar picture with one target',
+    kn: 'kn',
+    disclaimer: 'This game is made for learning and does not replace official examinations or training.',
+    source: 'Source: Marfag K52 Lærebok sjøveisreglene, CC BY-SA 3.0; adapted. The drawings were made for this game.',
+    licence: 'Questions, texts and drawings in this game are shared under <a href="https://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY-SA 3.0</a>. Found a mistake? Tell us on <a href="https://github.com/sevketirtem/captainphd/issues">GitHub</a>.',
+    modeName: { situasjon: 'situation', 'fartøy': 'vessel type', rangering: 'ranking', sikt: 'restricted visibility', regler: 'rules', blandet: 'mixed' },
+    langBtn: 'Norsk'
+  }
+};
+const N = 10;
+
+/* ---------- Geometri ----------
+   Eget fartøy ligger i origo og peker opp (kurs 0). x = styrbord, y = forover. Kurs/peiling i grader med klokken. */
+const deg = r => r * 180 / Math.PI, rad = d => d * Math.PI / 180;
+const norm = a => ((a % 360) + 360) % 360;
+const near = a => Math.min(norm(a), 360 - norm(a));
+function brg(from, to, heading) { return norm(deg(Math.atan2(to.x - from.x, to.y - from.y)) - heading); }
+const inStern = a => a > 112.5 && a < 247.5; // akterlig for tvers med mer enn 22,5° (regel 13 b; regel 21 c: akterlanternens sektor 135° = 180° ± 67,5°)
+/* Klassifiserer to maskindrevne fartøy i sikte av hverandre (regel 13, 14, 15). */
+function classify(own, tgt) {
+  const b = brg(own, tgt, own.h), b2 = brg(tgt, own, tgt.h);
+  if (inStern(b)) return { rule: 'r13', role: 'stand', b, b2 };
+  if (inStern(b2)) return { rule: 'r13', role: 'give', b, b2 };
+  const dh = near(tgt.h - own.h - 180);
+  if (near(b) <= 5 && near(b2) <= 5 && dh <= 5) return { rule: 'r14', role: 'both', b, b2 };
+  return { rule: 'r15', role: b < 180 ? 'give' : 'stand', b, b2 };
+}
+/* Avstand til grensene (22,5° akterlig for tvers) — brukes for å holde tvilstilfeller utenfor spillet */
+const margin = c => Math.min(Math.abs(c.b - 112.5), Math.abs(c.b - 247.5), Math.abs(c.b2 - 112.5), Math.abs(c.b2 - 247.5));
+
+/* ---------- Situasjoner (tegning ovenfra) ---------- */
+const SCN = [];
+(function () {
+  const OWN = (kn) => ({ x: 0, y: 0, h: 0, kn });
+  // Kryssende kurser: begge peker mot samme punkt P foran eget fartøy (fare for sammenstøt)
+  const P = { x: 0, y: 5 };
+  [['stb', 1], ['bb', -1]].forEach(([side, s]) => {
+    [30, 45, 60, 75, 85].forEach(beta => {
+      [4.5, 6, 7.5].forEach(r => {
+        const T0 = { x: s * r * Math.sin(rad(beta)), y: r * Math.cos(rad(beta)) };
+        const q = Math.hypot(T0.x - P.x, T0.y - P.y);
+        if (q < 3 || q > 8.2) return;
+        const kn = Math.round(12 * q / 5);
+        const sc = { kind: 'cross', side, own: OWN(12), tgt: { ...T0, h: norm(deg(Math.atan2(P.x - T0.x, P.y - T0.y))), kn }, P };
+        const c = classify(sc.own, sc.tgt);
+        if (c.rule === 'r15' && margin(c) >= 15 && kn >= 6 && kn <= 20) { sc.exp = { rule: c.rule, role: c.role }; SCN.push(sc); }
+      });
+    });
+  });
+  // Møte
+  [-0.3, 0, 0.3].forEach(x => [-2, 0, 2].forEach(dh => {
+    const sc = { kind: 'head', own: OWN(12), tgt: { x, y: 7, h: norm(180 + dh), kn: 11 + (dh === 0 ? 1 : 0) + (x > 0 ? 1 : 0) } };
+    const c = classify(sc.own, sc.tgt); sc.exp = { rule: c.rule, role: c.role };
+    if (c.rule === 'r14') SCN.push(sc);
+  }));
+  // Forbikjøring: du tar igjen / du blir tatt igjen
+  [4, 5.5].forEach(y => [-0.5, 0.5].forEach(x => [0, 5, -5].forEach(h => {
+    const a = { kind: 'over', own: OWN(14), tgt: { x, y, h: norm(h), kn: 9 } };
+    const b = { kind: 'overt', own: OWN(9), tgt: { x, y: -y, h: norm(h), kn: 15 } };
+    [a, b].forEach(sc => {
+      const c = classify(sc.own, sc.tgt); sc.exp = { rule: c.rule, role: c.role };
+      if (c.rule === 'r13' && margin(c) >= 15) SCN.push(sc);
+    });
+  })));
+})();
+
+/* ---------- Tegning (SVG) ---------- */
+function shipSVG(p, own, kn, label, kt) {
+  const col = own ? 'var(--sea)' : 'var(--amber)';
+  return `<g transform="translate(${p.sx.toFixed(1)} ${p.sy.toFixed(1)}) rotate(${p.h.toFixed(1)})">` +
+    `<path d="M0 -14 L6.5 -5 L6.5 11 L-6.5 11 L-6.5 -5 Z" fill="${col}" stroke="var(--fg)" stroke-width="${own ? 2 : 1.2}" stroke-linejoin="round"/></g>` +
+    `<text x="${(p.sx + 12).toFixed(1)}" y="${(p.sy - 12).toFixed(1)}" font-size="12" font-weight="700" fill="var(--fg)">${label}</text>` +
+    `<text x="${(p.sx + 12).toFixed(1)}" y="${(p.sy + 2).toFixed(1)}" font-size="11" fill="var(--muted)">${kn} ${kt}</text>`;
+}
+function arrowSVG(a, b, dash) {
+  const ang = Math.atan2(b.sx - a.sx, -(b.sy - a.sy)), ux = Math.sin(ang), uy = -Math.cos(ang);
+  const hx = b.sx, hy = b.sy, l = 8, w = 4;
+  const p1 = [hx - ux * l + uy * w, hy - uy * l - ux * w], p2 = [hx - ux * l - uy * w, hy - uy * l + ux * w];
+  return `<line x1="${a.sx.toFixed(1)}" y1="${a.sy.toFixed(1)}" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" stroke="var(--fg)" stroke-width="1.6"${dash ? ' stroke-dasharray="5 4"' : ''} opacity=".7"/>` +
+    `<polygon points="${hx.toFixed(1)},${hy.toFixed(1)} ${p1[0].toFixed(1)},${p1[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}" fill="var(--fg)" opacity=".7"/>`;
+}
+/* scene: { own, tgt, P?, wind? } i eget koordinatsystem. */
+function sceneSVG(sc, tx, wind) {
+  const W = 340, H = 250;
+  const arrLen = kn => Math.max(1.6, kn * 0.2);
+  const dirv = h => ({ x: Math.sin(rad(h)), y: Math.cos(rad(h)) });
+  const O = sc.own, Tg = sc.tgt;
+  const endOf = s => sc.P && (sc.kind === 'cross') ? sc.P : { x: s.x + dirv(s.h).x * arrLen(s.kn), y: s.y + dirv(s.h).y * arrLen(s.kn) };
+  const pts = [O, Tg, endOf(O), endOf(Tg)];
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  const minx = Math.min(...xs) - 1.6, maxx = Math.max(...xs) + 1.6, miny = Math.min(...ys) - 1.6, maxy = Math.max(...ys) + 1.6;
+  const k = Math.min(24, (W - 90) / (maxx - minx), (H - 20) / (maxy - miny));
+  const cx = (minx + maxx) / 2, cy = (miny + maxy) / 2;
+  const S = p => ({ sx: W / 2 - 25 + (p.x - cx) * k, sy: H / 2 - (p.y - cy) * k });
+  const so = { ...S(O), h: O.h }, st = { ...S(Tg), h: Tg.h };
+  let g = '';
+  if (sc.kind === 'cross') {
+    const sp = S(sc.P);
+    g += arrowSVG(so, sp, true) + arrowSVG(st, sp, true);
+    g += `<g stroke="var(--signal)" stroke-width="2.4" stroke-linecap="round"><line x1="${sp.sx - 5}" y1="${sp.sy - 5}" x2="${sp.sx + 5}" y2="${sp.sy + 5}"/><line x1="${sp.sx - 5}" y1="${sp.sy + 5}" x2="${sp.sx + 5}" y2="${sp.sy - 5}"/></g>`;
+  } else {
+    const eo = S(endOf(O)), et = S(endOf(Tg));
+    g += arrowSVG(so, eo, true) + arrowSVG(st, et, true);
+  }
+  g += shipSVG(st, false, Tg.kn, tx.other, tx.kn) + shipSVG(so, true, O.kn, tx.you, tx.kn);
+  if (wind != null) {
+    const a = norm(wind + 180); // retningen vinden blåser mot
+    const c = { x: W - 34, y: 34 }, r = 20;
+    const ux = Math.sin(rad(a)), uy = -Math.cos(rad(a));
+    g += `<circle cx="${c.x}" cy="${c.y}" r="${r + 6}" fill="none" stroke="var(--line)"/>` +
+      arrowSVG({ sx: c.x - ux * r, sy: c.y - uy * r }, { sx: c.x + ux * r, sy: c.y + uy * r }, false) +
+      `<text x="${c.x}" y="${c.y + r + 22}" text-anchor="middle" font-size="11" fill="var(--muted)">${tx.wind}</text>`;
+  }
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tx.sceneAlt}">${g}</svg>`;
+}
+function radarSVG(beta, tx) {
+  const c = 110, R = [30, 60, 90];
+  const x = c + 60 * Math.sin(rad(beta)), y = c - 60 * Math.cos(rad(beta));
+  return `<svg class="scene" viewBox="0 0 220 220" style="max-height:250px" role="img" aria-label="${tx.radarAlt}">` +
+    R.map(r => `<circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--line)"/>`).join('') +
+    `<line x1="${c}" y1="${c}" x2="${c}" y2="${c - 98}" stroke="var(--muted)" stroke-dasharray="4 3"/>` +
+    `<text x="${c + 4}" y="14" font-size="11" fill="var(--muted)">${tx.bow}</text>` +
+    `<path d="M${c} ${c - 9} L${c + 5} ${c + 3} L${c - 5} ${c + 3} Z" fill="var(--sea)" stroke="var(--fg)"/>` +
+    `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5.5" fill="var(--amber)" stroke="var(--fg)" stroke-width="1.4"/>` +
+    `<text x="${(x + 9).toFixed(1)}" y="${(y + 4).toFixed(1)}" font-size="11" fill="var(--fg)">${tx.target}</text>` +
+    `<text x="8" y="212" font-size="11" fill="var(--muted)">${tx.radarLbl}</text></svg>`;
+}
+
+/* ---------- Fartøytyper (regel 18) ---------- */
+const TYPE = {
+  nuc:  { a: { nb: 'et fartøy som ikke er under kommando', en: 'a vessel not under command' }, n: { nb: 'Fartøy som ikke er under kommando', en: 'Vessel not under command' }, lvl: 1 },
+  ram:  { a: { nb: 'et fartøy med begrenset evne til å manøvrere', en: 'a vessel restricted in her ability to manoeuvre' }, n: { nb: 'Fartøy med begrenset evne til å manøvrere', en: 'Vessel restricted in her ability to manoeuvre' }, lvl: 1 },
+  fish: { a: { nb: 'et fartøy som holder på med å fiske (underveis)', en: 'a vessel engaged in fishing (underway)' }, n: { nb: 'Fartøy som holder på med å fiske (underveis)', en: 'Vessel engaged in fishing (underway)' }, lvl: 2 },
+  sail: { a: { nb: 'et seilfartøy (underveis)', en: 'a sailing vessel (underway)' }, n: { nb: 'Seilfartøy (underveis)', en: 'Sailing vessel (underway)' }, lvl: 3 },
+  pow:  { a: { nb: 'et maskindrevet fartøy (underveis)', en: 'a power-driven vessel (underway)' }, n: { nb: 'Maskindrevet fartøy (underveis)', en: 'Power-driven vessel (underway)' }, lvl: 4 }
+};
+/* Regel 18 (a)–(c): hvem skal holde av veien for hvem. NUC og RAM har ikke innbyrdes forhold i regel 18. */
+function gives(a, b) { return TYPE[a].lvl > TYPE[b].lvl && TYPE[b].lvl < 4 && !(TYPE[a].lvl === 1); }
+const R18 = {
+  pow:  { ref: 'Regel 18 (a), s. 153–154', nb: 'Et maskindrevet fartøy underveis skal holde av veien for fartøy som ikke er under kommando, fartøy med begrenset evne til å manøvrere, fartøy som fisker og seilfartøy.', en: 'A power-driven vessel underway shall keep out of the way of vessels not under command, vessels restricted in their ability to manoeuvre, vessels engaged in fishing and sailing vessels.' },
+  sail: { ref: 'Regel 18 (b), s. 153–154', nb: 'Et seilfartøy underveis skal holde av veien for fartøy som ikke er under kommando, fartøy med begrenset evne til å manøvrere og fartøy som fisker.', en: 'A sailing vessel underway shall keep out of the way of vessels not under command, vessels restricted in their ability to manoeuvre and vessels engaged in fishing.' },
+  fish: { ref: 'Regel 18 (c), s. 153–154', nb: 'Et fartøy som fisker og er underveis skal så vidt mulig holde av veien for fartøy som ikke er under kommando og fartøy med begrenset evne til å manøvrere.', en: 'A vessel engaged in fishing and underway shall, so far as possible, keep out of the way of vessels not under command and vessels restricted in their ability to manoeuvre.' }
+};
+
+/* ---------- Spørsmål ---------- */
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function cycle(pool) { let q = []; return () => { if (!q.length) q = shuffle(pool.slice()); return q.pop(); }; }
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const L2 = (nb, en) => ({ nb, en });
+
+/* Fellestekst */
+const BOTH_PD = L2('Du (blå) og det andre fartøyet (oransje) er maskindrevne og i sikte av hverandre. Faren for sammenstøt er til stede.', 'You (blue) and the other vessel (orange) are power-driven and in sight of one another. Risk of collision exists.');
+const RULE_OPTS = {
+  r13: L2('Regel 13 – Forbikjøring', 'Rule 13 – Overtaking'),
+  r14: L2('Regel 14 – Møte', 'Rule 14 – Head-on situation'),
+  r15: L2('Regel 15 – Kryssende kurser', 'Rule 15 – Crossing situation'),
+  r18: L2('Regel 18 – Ansvar mellom fartøy', 'Rule 18 – Responsibilities between vessels')
+};
+const ROLE_OPTS = {
+  give: L2('Jeg skal holde av veien (vike)', 'I shall keep out of the way (give way)'),
+  stand: L2('Jeg skal holde kurs og fart', 'I shall hold my course and speed'),
+  both: L2('Begge dreier til styrbord', 'Both alter course to starboard'),
+  hold: L2('Begge skal holde kurs og fart', 'Both shall hold course and speed')
+};
+const SIT_X = {
+  head: { rule: 'Regel 14 (a), s. 125',
+    x: L2('Møte (regel 14): to maskindrevne fartøy på motsatte eller nesten motsatte kurser med fare for sammenstøt. Begge skal dreie til styrbord, slik at de passerer hverandre babord mot babord. Hvis du er i tvil om det er møte, skal du anta at det er det (regel 14 (c)).',
+          'Head-on (rule 14): two power-driven vessels on reciprocal or nearly reciprocal courses with risk of collision. Each shall alter course to starboard so that they pass port to port. If in any doubt whether it is head-on, assume that it is (rule 14 (c)).') },
+  crossGive: { rule: 'Regel 15, s. 130; regel 16, s. 142',
+    x: L2('Kryssende kurser (regel 15): du har det andre fartøyet på din styrbord side, så du skal holde av veien. Så vidt mulig skal du unngå å gå foran det. Handle tidlig og tydelig (regel 16).',
+          'Crossing (rule 15): the other vessel is on your starboard side, so you shall keep out of the way. If circumstances permit, avoid crossing ahead of it. Act early and substantially (rule 16).') },
+  crossStand: { rule: 'Regel 15, s. 130; regel 17 (a), s. 143',
+    x: L2('Kryssende kurser (regel 15): det andre fartøyet har deg på sin styrbord side og skal holde av veien. Du skal holde kurs og fart (regel 17 (a)(i)). Hvis det ikke tar forholdsregler, kan du manøvrere selv (regel 17 (a)(ii)).',
+          'Crossing (rule 15): you are on the other vessel’s starboard side, so it shall keep out of the way. You shall hold your course and speed (rule 17 (a)(i)). If it does not take action, you may manoeuvre yourself (rule 17 (a)(ii)).') },
+  overGive: { rule: 'Regel 13 (a)(b), s. 122',
+    x: L2('Forbikjøring (regel 13): du kommer inn mer enn 22,5° akterlig for tvers på det andre fartøyet og tar det igjen. Det forbikjørende fartøyet skal holde av veien, uansett hva slags fartøy det er.',
+          'Overtaking (rule 13): you are coming up with the other vessel from more than 22.5° abaft its beam. The overtaking vessel shall keep out of the way, whatever type of vessel it is.') },
+  overStand: { rule: 'Regel 13 (a)(b), s. 122; regel 17 (a), s. 143',
+    x: L2('Forbikjøring (regel 13): det andre fartøyet kommer inn mer enn 22,5° akterlig for tvers på deg og tar deg igjen. Det skal holde av veien, og du skal holde kurs og fart (regel 17).',
+          'Overtaking (rule 13): the other vessel is coming up with you from more than 22.5° abaft your beam. It shall keep out of the way, and you shall hold your course and speed (rule 17).') }
+};
+function sitKey(sc) {
+  if (sc.kind === 'head') return 'head';
+  if (sc.kind === 'cross') return sc.exp.role === 'give' ? 'crossGive' : 'crossStand';
+  return sc.kind === 'over' ? 'overGive' : 'overStand';
+}
+function sitQuestion(i, sub) {
+  const sc = SCN[i], key = sitKey(sc), X = SIT_X[key];
+  const base = { kind: 'mc', scene: { sc }, pool: 'sit' + i + sub, x: X.x, ref: X.rule };
+  if (sub === 'rule') {
+    const ok = sc.exp.rule;
+    const ids = ['r13', 'r14', 'r15'].concat(Math.random() < .5 ? 'r18' : []);
+    while (ids.length < 4) ids.push('r18');
+    return { ...base, stem: L2(BOTH_PD.nb + ' Hvilken regel gjelder mellom dere?', BOTH_PD.en + ' Which rule applies between you?'),
+      opts: shuffle([...new Set(ids)].map(id => ({ id, ...RULE_OPTS[id] }))), ok };
+  }
+  const ok = sc.exp.role;
+  return { ...base, stem: L2(BOTH_PD.nb + ' Hva skal du gjøre?', BOTH_PD.en + ' What shall you do?'),
+    opts: shuffle(['give', 'stand', 'both', 'hold'].map(id => ({ id, ...ROLE_OPTS[id] }))), ok };
+}
+
+/* Fartøytype (regel 18, regel 12, regel 13 foran regel 18) */
+const WHO = {
+  me: L2('Du', 'You'), other: L2('Det andre fartøyet', 'The other vessel'),
+  both: L2('Begge skal holde av veien', 'Both shall keep out of the way'), none: L2('Ingen av dem trenger å holde av veien', 'Neither needs to keep out of the way')
+};
+const whoOpts = () => shuffle(['me', 'other', 'both', 'none'].map(id => ({ id, ...WHO[id] })));
+const PAIRS = [];
+Object.keys(TYPE).forEach(a => Object.keys(TYPE).forEach(b => {
+  if (a === b) return;
+  if (gives(a, b)) PAIRS.push({ me: a, other: b, who: 'me' });
+  else if (gives(b, a)) PAIRS.push({ me: a, other: b, who: 'other' });
+}));
+function pairQuestion(p, sc) {
+  const G = p.who === 'me' ? p.me : p.other, S = p.who === 'me' ? p.other : p.me;
+  const asFar = G === 'fish' ? L2(' (så vidt mulig)', ' (so far as possible)') : L2('', '');
+  const stem = L2(`Du er ${TYPE[p.me].a.nb}. Det andre fartøyet er ${TYPE[p.other].a.nb}. Dere har kryssende kurser, begge er underveis og i sikte av hverandre, og faren for sammenstøt er til stede. Hvem skal holde av veien?`,
+                  `You are ${TYPE[p.me].a.en}. The other vessel is ${TYPE[p.other].a.en}. You are on crossing courses, both underway and in sight of one another, and risk of collision exists. Who shall keep out of the way?`);
+  const x = L2(`Regel 18: ${R18[G].nb.replace(/^Et /, 'Et ')} ${asFar.nb ? 'Her gjelder «så vidt mulig». ' : ''}Regel 15 (at den som har det andre på styrbord side viker) gjelder bare mellom to maskindrevne fartøy; hvilken side det andre fartøyet kommer fra, spiller derfor ingen rolle her.`,
+               `Rule 18: ${R18[G].en} ${asFar.en ? 'Here “so far as possible” applies. ' : ''}Rule 15 (the vessel with the other on her starboard side gives way) applies only between two power-driven vessels, so the side the other vessel comes from does not matter here.`);
+  return { kind: 'mc', scene: { sc }, pool: 'pair' + p.me + p.other, stem, opts: whoOpts(), ok: p.who, x, ref: R18[G].ref + '; regel 15, s. 130' };
+}
+const OVER13 = [
+  { me: 'sail', other: 'pow', dir: 'over', who: 'me' },
+  { me: 'fish', other: 'sail', dir: 'over', who: 'me' },
+  { me: 'pow', other: 'nuc', dir: 'over', who: 'me' },
+  { me: 'pow', other: 'fish', dir: 'overt', who: 'other' },
+  { me: 'pow', other: 'sail', dir: 'overt', who: 'other' },
+  { me: 'sail', other: 'ram', dir: 'overt', who: 'other' }
+];
+function over13Question(p, sc) {
+  const dirNb = p.dir === 'over' ? 'Du tar igjen det andre fartøyet fra akterlig for tvers (mer enn 22,5°).' : 'Det andre fartøyet tar deg igjen fra akterlig for tvers (mer enn 22,5°).';
+  const dirEn = p.dir === 'over' ? 'You are coming up with the other vessel from abaft its beam (more than 22.5°).' : 'The other vessel is coming up with you from abaft your beam (more than 22.5°).';
+  const stem = L2(`Du er ${TYPE[p.me].a.nb}. Det andre fartøyet er ${TYPE[p.other].a.nb}. ${dirNb} Begge er underveis og i sikte av hverandre. Hvem skal holde av veien?`,
+                  `You are ${TYPE[p.me].a.en}. The other vessel is ${TYPE[p.other].a.en}. ${dirEn} Both are underway and in sight of one another. Who shall keep out of the way?`);
+  const x = L2('Regel 13 gjelder «ethvert fartøy» som tar igjen et annet, og regel 18 begynner med at den gjelder unntatt der regel 9, 10 og 13 krever noe annet. Det forbikjørende fartøyet skal derfor holde av veien, selv om regel 18 ellers ville gitt det andre vikeplikt.',
+               'Rule 13 applies to “any vessel” overtaking another, and rule 18 applies except where rules 9, 10 and 13 require otherwise. The overtaking vessel therefore keeps out of the way, even where rule 18 would otherwise make the other vessel give way.');
+  return { kind: 'mc', scene: { sc }, pool: 'o13' + p.me + p.other + p.dir, stem, opts: whoOpts(), ok: p.who, x, ref: 'Regel 13 (a), s. 122; regel 18 innledning, s. 153–154' };
+}
+/* Regel 12: to seilfartøy. Utfallet beregnes av geometrien (vindretning og posisjoner). */
+function windInfo(sc, w) {
+  const side = h => { const rel = norm(w - h); if (near(rel) < 30 || Math.abs(rel - 180) < 30) return null; return rel < 180 ? 'stb' : 'bb'; };
+  const so = side(sc.own.h), st = side(sc.tgt.h);
+  if (!so || !st) return null;
+  const u = { x: Math.sin(rad(w)), y: Math.cos(rad(w)) };
+  const d = p => p.x * u.x + p.y * u.y;
+  if (so !== st) return { so, st, who: so === 'bb' ? 'me' : 'other', same: false };
+  const diff = d(sc.own) - d(sc.tgt);
+  if (Math.abs(diff) < 1) return null;
+  return { so, st, who: diff > 0 ? 'me' : 'other', same: true, windward: diff > 0 ? 'me' : 'other' };
+}
+const R12 = [];
+SCN.forEach((sc, i) => { if (sc.kind === 'cross') [45, 90, 135, 225, 270, 315].forEach(w => { const wi = windInfo(sc, w); if (wi) R12.push({ i, w, ...wi }); }); });
+function r12Question(r) {
+  const sc = SCN[r.i], sideNb = s => s === 'stb' ? 'styrbord' : 'babord', sideEn = s => s === 'stb' ? 'starboard' : 'port';
+  let stNb = `Du og det andre fartøyet er seilfartøy under seil, i sikte av hverandre, og faren for sammenstøt er til stede. Vinden blåser som pilen viser. Du har vinden inn fra ${sideNb(r.so)} side`;
+  let stEn = `You and the other vessel are sailing vessels under sail, in sight of one another, and risk of collision exists. The wind blows as the arrow shows. You have the wind on your ${sideEn(r.so)} side`;
+  if (r.same) {
+    stNb += `, og det andre fartøyet har også vinden inn fra ${sideNb(r.st)} side. ${r.windward === 'me' ? 'Du er i luvart av det andre fartøyet' : 'Det andre fartøyet er i luvart av deg'}. Hvem skal holde av veien?`;
+    stEn += `, and the other vessel also has the wind on its ${sideEn(r.st)} side. ${r.windward === 'me' ? 'You are to windward of the other vessel' : 'The other vessel is to windward of you'}. Who shall keep out of the way?`;
+  } else {
+    stNb += `, og det andre fartøyet har vinden inn fra ${sideNb(r.st)} side. Hvem skal holde av veien?`;
+    stEn += `, and the other vessel has the wind on its ${sideEn(r.st)} side. Who shall keep out of the way?`;
+  }
+  const x = r.same
+    ? L2('Når begge har vinden inn fra samme side, skal fartøyet som er i luvart, holde av veien (regel 12 (a)(ii)).', 'When both have the wind on the same side, the vessel which is to windward shall keep out of the way (rule 12 (a)(ii)).')
+    : L2('Når fartøyene har vinden inn fra forskjellige sider, skal det som har vinden inn fra babord side, holde av veien (regel 12 (a)(i)).', 'When each has the wind on a different side, the vessel which has the wind on the port side shall keep out of the way (rule 12 (a)(i)).');
+  return { kind: 'mc', scene: { sc, wind: r.w }, pool: 'r12' + r.i + '_' + r.w, stem: L2(stNb, stEn), opts: whoOpts(), ok: r.who, x, ref: 'Regel 12 (a), s. 119' };
+}
+
+/* Rangering (regel 18) */
+function rankQuestion() {
+  const lv = { 1: pick(['nuc', 'ram']), 2: 'fish', 3: 'sail', 4: 'pow' };
+  const lvls = shuffle([1, 2, 3, 4]).slice(0, pick([3, 4])).sort((a, b) => a - b);
+  const order = lvls.map(l => lv[l]);
+  return { kind: 'rank', pool: 'rank' + order.join(),
+    stem: L2('Alle fartøyene er underveis og i sikte av hverandre. Trykk fartøyene i rekkefølge: først det som de andre skal holde av veien for, sist det som skal holde av veien for alle de andre.',
+             'All vessels are underway and in sight of one another. Tap the vessels in order: first the one the others shall keep out of the way of, last the one that shall keep out of the way of all the others.'),
+    items: shuffle(order.map(id => ({ id, nb: TYPE[id].n.nb, en: TYPE[id].n.en }))), order,
+    x: L2('Regel 18: maskindrevne fartøy viker for seilfartøy, fiskefartøy, fartøy som ikke er under kommando og fartøy med begrenset evne til å manøvrere. Seilfartøy viker for fiskefartøy, NUC og RAM. Fiskefartøy viker så vidt mulig for NUC og RAM. Regel 18 setter ikke NUC og RAM i innbyrdes rekkefølge. Regel 9, 10 og 13 går foran.',
+          'Rule 18: power-driven vessels give way to sailing vessels, fishing vessels, vessels not under command and vessels restricted in their ability to manoeuvre. Sailing vessels give way to fishing vessels, NUC and RAM. Fishing vessels give way, so far as possible, to NUC and RAM. Rule 18 does not rank NUC and RAM against each other. Rules 9, 10 and 13 take precedence.'),
+    ref: 'Regel 18 (a)–(c), s. 153–154' };
+}
+
+/* Nedsatt sikt (regel 19) */
+const RADAR = [-70, -45, -20, 20, 45, 70, -160, -135, -110, 110, 135, 160];
+function radarQuestion(beta) {
+  const fwd = Math.abs(beta) < 90;
+  const ok = fwd ? 'bb' : (beta > 0 ? 'stb' : 'bb');
+  const opts = [{ id: 'bb', nb: 'Kursendring til babord', en: 'An alteration of course to port' }, { id: 'stb', nb: 'Kursendring til styrbord', en: 'An alteration of course to starboard' },
+    { id: 'no', nb: 'Ingen; man skal aldri endre kurs i tåke', en: 'None; you must never alter course in fog' }, { id: 'eq', nb: 'Begge sider er like gode; regelen sier ingenting', en: 'Both are equally good; the rule says nothing' }];
+  const x = fwd
+    ? L2('Regel 19 (d)(i): når forholdsregelen er en kursforandring, skal en kursforandring til babord for et fartøy som er forenom tvers så vidt mulig unngås (unntatt for et fartøy som blir innhentet).', 'Rule 19 (d)(i): when the action is an alteration of course, an alteration to port for a vessel forward of the beam shall so far as possible be avoided (other than for a vessel being overtaken).')
+    : L2('Regel 19 (d)(ii): en kursforandring mot et fartøy som er tvers eller aktenfor tvers skal så vidt mulig unngås.', 'Rule 19 (d)(ii): an alteration of course towards a vessel abeam or abaft the beam shall so far as possible be avoided.');
+  return { kind: 'mc', scene: { radar: beta }, pool: 'radar' + beta, opts: shuffle(opts), ok, x, ref: 'Regel 19 (d), s. 158',
+    stem: L2('Du er i tåke og oppdager et annet fartøy bare på radaren. Det er fare for sammenstøt, og du vil ta forholdsregler i god tid med en kursendring. Hvilken kursendring skal du så vidt mulig unngå?',
+             'You are in fog and detect another vessel by radar alone. Risk of collision exists and you will take action in ample time by altering course. Which alteration of course shall you, so far as possible, avoid?') };
+}
+const mkF = (stem, o, x, ref, g) => ({ g, q: stem, o, x, ref });
+/* Faktaspørsmål. o[0] er riktig svar. g: 'vis' (regel 19) eller 'rul' (regel 11–18). */
+const FACTS = [
+  mkF(L2('Hvilke fartøy gjelder regel 11–18 for?', 'Which vessels do rules 11–18 apply to?'),
+    [L2('Fartøy som er i sikte av hverandre', 'Vessels in sight of one another'), L2('Alle fartøy, uansett sikt', 'All vessels, whatever the visibility'), L2('Bare maskindrevne fartøy', 'Power-driven vessels only'), L2('Fartøy som ser hverandre på radar', 'Vessels that see each other on radar')],
+    L2('Regel 11 gjelder fartøy som er i sikte av hverandre. Fartøy er i sikte av hverandre bare når det ene kan ses fra det andre (regel 3 (k)).', 'Rule 11 applies to vessels in sight of one another. Vessels are in sight of one another only when one can be observed visually from the other (rule 3 (k)).'), 'Regel 11, s. 119; regel 3 (k), s. 37', 'rul'),
+  mkF(L2('Er to fartøy «i sikte av hverandre» hvis de bare ser hverandre på radaren?', 'Are two vessels “in sight of one another” if they see each other only on radar?'),
+    [L2('Nei; det ene må kunne ses fra det andre', 'No; one must be able to be seen from the other'), L2('Ja, radar er nok', 'Yes, radar is enough'), L2('Bare hvis ECDIS er i bruk', 'Only if ECDIS is in use'), L2('Bare om natten', 'Only at night')],
+    L2('Fartøy skal anses for å være i sikte av hverandre utelukkende når det ene kan ses fra det andre. Er det bare radarkontakt, gjelder regel 19 (nedsatt sikt), ikke regel 11–18.', 'Vessels shall be deemed to be in sight of one another only when one can be observed visually from the other. With radar contact only, rule 19 (restricted visibility) applies, not rules 11–18.'), 'Regel 3 (k), s. 37; s. 119', 'rul'),
+  mkF(L2('Hvilket fartøy er luvart etter regel 12?', 'Which side is the windward side under rule 12?'),
+    [L2('Siden motsatt den som storseilet føres på', 'The side opposite to that on which the mainsail is carried'), L2('Siden som storseilet føres på', 'The side on which the mainsail is carried'), L2('Alltid styrbord side', 'Always the starboard side'), L2('Siden mot land', 'The side towards the shore')],
+    L2('Luvart side er siden motsatt den som storseilet føres på (for fartøy med råseil: siden motsatt den som største lang- eller gaffelseil føres på).', 'The windward side is the side opposite to that on which the mainsail is carried (for a square-rigged vessel: opposite to the side on which the largest fore-and-aft sail is carried).'), 'Regel 12 (b), s. 119', 'rul'),
+  mkF(L2('Du har vinden inn fra babord side og ser et seilfartøy i luvart, men kan ikke avgjøre hvilken side det har vinden inn fra. Hva gjør du?', 'You have the wind on the port side and see a sailing vessel to windward, but cannot tell on which side it has the wind. What do you do?'),
+    [L2('Holder av veien', 'Keep out of the way'), L2('Holder kurs og fart', 'Hold course and speed'), L2('Gir fem korte støt og holder kurs', 'Sound five short blasts and hold course'), L2('Vender og seiler motsatt vei', 'Tack and sail the opposite way')],
+    L2('Et seilfartøy som har vinden inn fra babord side og ser et fartøy i luvart og ikke kan avgjøre hvilken side det har vinden fra, skal holde av veien.', 'A vessel which has the wind on the port side and sees a vessel to windward and cannot determine on which side that vessel has the wind, shall keep out of the way.'), 'Regel 12 (a)(iii), s. 119', 'rul'),
+  mkF(L2('Hvilket fartøy regnes som forbikjørende?', 'Which vessel counts as overtaking?'),
+    [L2('Et fartøy som kommer inn mer enn 22,5° akterlig for tvers på det andre', 'A vessel coming up with the other from more than 22.5° abaft its beam'), L2('Et fartøy som er raskere enn det andre', 'A vessel that is faster than the other'), L2('Et fartøy som kommer inn mer enn 45° akterlig for tvers', 'A vessel coming up from more than 45° abaft the beam'), L2('Et fartøy som kommer fra babord side', 'A vessel coming from the port side')],
+    L2('Forbikjørende er et fartøy som nærmer seg et annet fra en retning mer enn 22,5° akterlig for tvers. Det betyr at det om natten bare ser det andre fartøyets akterlanterne.', 'An overtaking vessel is one coming up with another from a direction more than 22.5° abaft her beam. At night it would see only the stern light of the other vessel.'), 'Regel 13 (b), s. 122', 'rul'),
+  mkF(L2('Hva ser du om natten av et fartøy du tar igjen?', 'What do you see at night of a vessel you are overtaking?'),
+    [L2('Bare akterlanternen', 'Only the stern light'), L2('Begge sidelanternene', 'Both sidelights'), L2('Bare den grønne sidelanternen', 'Only the green sidelight'), L2('Bare den røde sidelanternen', 'Only the red sidelight')],
+    L2('Det forbikjørende fartøyet kan om natten bare se akterlanternen til det fartøyet det tar igjen, og ingen av sidelanternene.', 'The overtaking vessel at night could see only the stern light of the vessel being overtaken, but neither of her sidelights.'), 'Regel 13 (b), s. 122', 'rul'),
+  mkF(L2('Du er i tvil om du tar igjen et annet fartøy. Hva gjør du?', 'You are in doubt whether you are overtaking another vessel. What do you do?'),
+    [L2('Antar at du tar det igjen og handler deretter', 'Assume that you are overtaking and act accordingly'), L2('Antar at det andre fartøyet skal vike', 'Assume that the other vessel gives way'), L2('Holder kurs og fart til du vet det', 'Hold course and speed until you know'), L2('Antar at det er et kryssende fartøy', 'Assume that it is a crossing vessel')],
+    L2('Hvis du er i tvil om du tar igjen et annet fartøy, skal du anta at du gjør det, og handle deretter.', 'If in doubt whether you are overtaking another vessel, you shall assume that you are, and act accordingly.'), 'Regel 13 (c), s. 122', 'rul'),
+  mkF(L2('Du tar igjen et fartøy, og senere kommer det på tvers av deg. Er du da fortsatt forbikjørende?', 'You overtake a vessel, and later it is abeam of you. Are you still the overtaking vessel?'),
+    [L2('Ja; du skal holde av veien til du er helt forbi og klar av det', 'Yes; you shall keep out of the way until you are finally past and clear'), L2('Nei; da gjelder regel 15 om kryssende kurser', 'No; rule 15 on crossing then applies'), L2('Nei; da skal begge holde kurs og fart', 'No; both then hold course and speed'), L2('Ja, men bare i 10 minutter', 'Yes, but only for 10 minutes')],
+    L2('En senere endring i peilingen mellom fartøyene gjør ikke det forbikjørende fartøyet til et kryssende fartøy. Det skal holde av veien helt til det er forbi og klar.', 'Any subsequent alteration of the bearing does not make the overtaking vessel a crossing vessel. She shall keep clear until finally past and clear.'), 'Regel 13 (d), s. 122', 'rul'),
+  mkF(L2('To maskindrevne fartøy møtes på motsatte kurser med fare for sammenstøt. Hva gjør de?', 'Two power-driven vessels meet on reciprocal courses with risk of collision. What do they do?'),
+    [L2('Begge dreier til styrbord', 'Each alters course to starboard'), L2('Begge dreier til babord', 'Each alters course to port'), L2('Det største fartøyet holder kurs og fart', 'The larger vessel holds course and speed'), L2('Fartøyet med styrbord side mot land viker', 'The vessel with her starboard side to the shore gives way')],
+    L2('Hvert fartøy skal dreie til styrbord, slik at de passerer hverandre babord mot babord.', 'Each shall alter her course to starboard so that each shall pass on the port side of the other.'), 'Regel 14 (a), s. 125', 'rul'),
+  mkF(L2('Hva ser du om natten når du møter et maskindrevet fartøy?', 'What do you see at night when meeting a power-driven vessel head-on?'),
+    [L2('Topplanternene på linje eller nesten på linje, og/eller begge sidelanternene', 'Masthead lights in line or nearly in line, and/or both sidelights'), L2('Bare akterlanternen', 'Only the stern light'), L2('Bare den røde sidelanternen', 'Only the red sidelight'), L2('Bare den grønne sidelanternen', 'Only the green sidelight')],
+    L2('Du ser det andre fartøyet rett forut eller nesten rett forut: om natten topplanternene på linje eller nesten på linje og/eller begge sidelanternene.', 'You see the other vessel ahead or nearly ahead: at night the masthead lights in line or nearly in line and/or both sidelights.'), 'Regel 14 (b), s. 125', 'rul'),
+  mkF(L2('Du er i tvil om det er møte. Hva gjør du?', 'You are in doubt whether it is a head-on situation. What do you do?'),
+    [L2('Antar at det er møte og handler deretter', 'Assume that it is head-on and act accordingly'), L2('Antar at det er kryssende kurser', 'Assume that it is a crossing situation'), L2('Venter og ser an', 'Wait and see'), L2('Dreier til babord for å være sikker', 'Alter to port to be safe')],
+    L2('Hvis du er i tvil om det er møte, skal du anta at det er det.', 'When in any doubt whether such a situation exists, you shall assume that it does exist and act accordingly.'), 'Regel 14 (c), s. 125', 'rul'),
+  mkF(L2('Hvem skal holde av veien når to maskindrevne fartøy krysser hverandres kurs med fare for sammenstøt?', 'Who shall keep out of the way when two power-driven vessels cross with risk of collision?'),
+    [L2('Fartøyet som har det andre på sin styrbord side', 'The vessel which has the other on her own starboard side'), L2('Fartøyet som har det andre på sin babord side', 'The vessel which has the other on her own port side'), L2('Det største fartøyet', 'The larger vessel'), L2('Det raskeste fartøyet', 'The faster vessel')],
+    L2('Det fartøyet som har det andre på sin styrbord side, skal holde av veien.', 'The vessel which has the other on her own starboard side shall keep out of the way.'), 'Regel 15, s. 130', 'rul'),
+  mkF(L2('Hva skal et fartøy som skal holde av veien i en kryssende situasjon så vidt mulig unngå (regel 15)?', 'What shall the give-way vessel in a crossing situation, so far as possible, avoid (rule 15)?'),
+    [L2('Å gå foran det andre fartøyet', 'Crossing ahead of the other vessel'), L2('Å redusere farten', 'Reducing speed'), L2('Å dreie til babord', 'Altering course to port'), L2('Å gå akter om det andre fartøyet', 'Passing astern of the other vessel')],
+    L2('Hvis omstendighetene tillater det, skal fartøyet som holder av veien, unngå å gå foran det andre fartøyet. Regelen forbyr ikke å redusere fart eller endre kurs til babord.', 'If the circumstances of the case admit, the give-way vessel shall avoid crossing ahead of the other vessel. The rule does not forbid reducing speed or altering course to port (the textbook comment on page 140).'), 'Regel 15, s. 130; kommentar s. 140', 'rul'),
+  mkF(L2('Hvordan skal fartøyet som holder av veien, handle (regel 16)?', 'How shall the give-way vessel act (rule 16)?'),
+    [L2('Så tidlig og tydelig som mulig, og holde seg godt klar', 'As early and as substantially as possible, to keep well clear'), L2('Med små kursendringer i siste liten', 'With small alterations of course at the last moment'), L2('Først når det andre fartøyet har gitt signal', 'Only after the other vessel has made a signal'), L2('Ved å vente til avstanden er under 1 nautisk mil', 'By waiting until the distance is under 1 nautical mile')],
+    L2('Fartøyet som skal holde av veien, skal så vidt mulig ta tidlige og tydelige forholdsregler for å holde seg godt klar.', 'Every vessel which is directed to keep out of the way of another vessel shall, so far as possible, take early and substantial action to keep well clear.'), 'Regel 16, s. 142', 'rul'),
+  mkF(L2('Hva skal fartøyet som ikke skal vike, gjøre (regel 17 (a)(i))?', 'What shall the stand-on vessel do (rule 17 (a)(i))?'),
+    [L2('Holde kurs og fart', 'Keep her course and speed'), L2('Dreie til styrbord', 'Alter course to starboard'), L2('Stoppe', 'Stop'), L2('Gi manøversignal og dreie', 'Sound a manoeuvring signal and alter course')],
+    L2('Når ett av to fartøy skal holde av veien, skal det andre holde kurs og fart.', 'Where one of two vessels is to keep out of the way, the other shall keep her course and speed.'), 'Regel 17 (a)(i), s. 143', 'rul'),
+  mkF(L2('Når kan fartøyet som skal holde kurs og fart, manøvrere selv (regel 17 (a)(ii))?', 'When may the stand-on vessel manoeuvre herself (rule 17 (a)(ii))?'),
+    [L2('Så snart det blir klart at det andre fartøyet ikke tar tilstrekkelige forholdsregler', 'As soon as it becomes apparent that the other vessel is not taking appropriate action'), L2('Aldri; det må alltid holde kurs og fart', 'Never; she must always keep course and speed'), L2('Bare etter at sammenstøtet har skjedd', 'Only after the collision has happened'), L2('Bare om natten', 'Only at night')],
+    L2('Det kan ta forholdsregler ved egen manøver så snart det blir klart at det vikepliktige fartøyet ikke handler som reglene krever.', 'She may take action by her manoeuvre alone as soon as it becomes apparent that the vessel required to keep out of the way is not taking appropriate action.'), 'Regel 17 (a)(ii), s. 143', 'rul'),
+  mkF(L2('Når skal fartøyet som skal holde kurs og fart, gjøre det som best hjelper til å unngå sammenstøt (regel 17 (b))?', 'When shall the stand-on vessel take the action that best aids to avoid collision (rule 17 (b))?'),
+    [L2('Når sammenstøt ikke kan unngås ved det vikende fartøyets manøver alene', 'When collision cannot be avoided by the action of the give-way vessel alone'), L2('Så snart fartøyene kommer i sikte av hverandre', 'As soon as the vessels come in sight of one another'), L2('Aldri', 'Never'), L2('Bare når det andre fartøyet gir fem korte støt', 'Only when the other vessel sounds five short blasts')],
+    L2('Når fartøyet kommer så nær at sammenstøt ikke kan unngås ved det vikepliktige fartøyets manøver alene, skal det også ta de forholdsregler som best hjelper til å unngå sammenstøt.', 'When, from any cause, the stand-on vessel finds herself so close that collision cannot be avoided by the action of the give-way vessel alone, she shall take such action as will best aid to avoid collision.'), 'Regel 17 (b), s. 143', 'rul'),
+  mkF(L2('To maskindrevne fartøy krysser. Du skal holde kurs og fart, men manøvrerer fordi det andre ikke viker (regel 17 (a)(ii)). Hva bør du så vidt mulig unngå?', 'Two power-driven vessels cross. You are the stand-on vessel and manoeuvre because the other does not give way (rule 17 (a)(ii)). What should you, so far as possible, avoid?'),
+    [L2('Kursendring til babord for et fartøy på din babord side', 'An alteration of course to port for a vessel on your own port side'), L2('Kursendring til styrbord', 'An alteration of course to starboard'), L2('Å redusere farten', 'Reducing speed'), L2('Å gi fem korte støt', 'Sounding five short blasts')],
+    L2('Du skal, hvis omstendighetene tillater det, ikke endre kurs til babord for et fartøy som er på din babord side.', 'You shall, if the circumstances of the case admit, not alter course to port for a vessel on your own port side.'), 'Regel 17 (c), s. 143', 'rul'),
+  mkF(L2('Fritar fartøyet som skal holde kurs og fart, det vikepliktige fartøyet fra å holde av veien hvis det manøvrerer?', 'Does the stand-on vessel’s manoeuvre relieve the give-way vessel of her obligation to keep out of the way?'),
+    [L2('Nei; det vikepliktige fartøyet skal fortsatt holde av veien', 'No; the give-way vessel is still obliged to keep out of the way'), L2('Ja; da skal begge fartøyene vike', 'Yes; both vessels then give way'), L2('Ja; da blir det andre fartøyet stand-on', 'Yes; the other vessel then becomes the stand-on vessel'), L2('Bare i tåke', 'Only in fog')],
+    L2('Regel 17 fritar ikke det vikepliktige fartøyet for dets plikt til å holde av veien.', 'This rule does not relieve the give-way vessel of her obligation to keep out of the way.'), 'Regel 17 (d), s. 143', 'rul'),
+  mkF(L2('Hvordan skal et sjøfly på vannet i alminnelighet forholde seg til andre fartøy?', 'How shall a seaplane on the water in general act towards other vessels?'),
+    [L2('Holde godt klar av alle fartøy og unngå å hindre deres seilas', 'Keep well clear of all vessels and avoid impeding their navigation'), L2('Alle andre fartøy skal vike for det', 'All other vessels shall give way to it'), L2('Holde kurs og fart', 'Keep its course and speed'), L2('Bare vike for maskindrevne fartøy', 'Give way to power-driven vessels only')],
+    L2('Et sjøfly på vannet skal i alminnelighet holde godt klar av alle fartøy og unngå å hindre eller vanskeliggjøre deres seilas. Der det er fare for sammenstøt, følger det reglene i denne del.', 'A seaplane on the water shall, in general, keep well clear of all vessels and avoid impeding their navigation. Where there is risk of collision, she shall comply with the Rules of this Part.'), 'Regel 18 (e), s. 153–154', 'rul'),
+  mkF(L2('Hvilken regel gjelder for fartøy som ikke ser hverandre i eller nær et område med nedsatt sikt?', 'Which rule applies to vessels not in sight of one another in or near an area of restricted visibility?'),
+    [L2('Regel 19', 'Rule 19'), L2('Regel 15', 'Rule 15'), L2('Regel 13', 'Rule 13'), L2('Regel 14', 'Rule 14')],
+    L2('Regel 19 gjelder fartøy som ikke er i sikte av hverandre når de navigerer i eller nær et område med nedsatt sikt.', 'Rule 19 applies to vessels not in sight of one another when navigating in or near an area of restricted visibility.'), 'Regel 19 (a), s. 158', 'vis'),
+  mkF(L2('Hvilken fart skal du holde i nedsatt sikt, og hva skal maskindrevne fartøy ha klart?', 'What speed shall you keep in restricted visibility, and what shall a power-driven vessel have ready?'),
+    [L2('Sikker fart tilpasset forholdene; maskineriet klart til øyeblikkelig manøver', 'A safe speed adapted to the conditions; engines ready for immediate manoeuvre'), L2('Full fart for å komme raskt ut av tåken', 'Full speed to get out of the fog quickly'), L2('Alltid minste styrefart', 'Always minimum steerage speed'), L2('Samme fart som i klart vær', 'The same speed as in clear weather')],
+    L2('Ethvert fartøy skal gå med sikker fart avpasset etter de rådende omstendigheter og nedsatte siktforhold. Et maskindrevet fartøy skal ha maskineriet klart til øyeblikkelig manøver.', 'Any vessel shall proceed at a safe speed adapted to the prevailing circumstances and conditions of restricted visibility. A power-driven vessel shall have her engines ready for immediate manoeuvre.'), 'Regel 19 (b), s. 158', 'vis'),
+  mkF(L2('Du oppdager et annet fartøy bare på radar. Hva skal du først gjøre?', 'You detect another vessel by radar alone. What shall you do first?'),
+    [L2('Avgjøre om en nærsituasjon utvikler seg og/eller det er fare for sammenstøt, og i så fall ta forholdsregler i god tid', 'Determine whether a close-quarters situation is developing and/or risk of collision exists, and if so take avoiding action in ample time'), L2('Holde kurs og fart som stand-on-fartøy', 'Hold course and speed as the stand-on vessel'), L2('Gi to korte støt og dreie til babord', 'Sound two short blasts and alter to port'), L2('Vente til du ser fartøyet', 'Wait until you see the vessel')],
+    L2('Et fartøy som oppdager et annet fartøy bare ved hjelp av radar, skal avgjøre om en nærsituasjon kan utvikle seg og/eller om det er fare for sammenstøt, og i så fall i god tid ta forholdsregler.', 'A vessel which detects by radar alone the presence of another vessel shall determine if a close-quarters situation is developing and/or risk of collision exists, and if so take avoiding action in ample time.'), 'Regel 19 (d), s. 158', 'vis'),
+  mkF(L2('Du hører tilsynelatende forenom tvers tåkesignalet fra et annet fartøy, og det er ikke fastslått at det ikke er fare for sammenstøt. Hva gjør du?', 'You hear, apparently forward of your beam, the fog signal of another vessel, and it has not been determined that no risk of collision exists. What do you do?'),
+    [L2('Reduserer farten til minste styrefart, om nødvendig stopper helt, og navigerer med ytterste forsiktighet', 'Reduce speed to the minimum at which you can be kept on course, take all way off if necessary, and navigate with extreme caution'), L2('Holder farten og gir to korte støt', 'Keep your speed and sound two short blasts'), L2('Øker farten for å komme raskt forbi', 'Increase speed to get past quickly'), L2('Dreier til babord uten å endre fart', 'Alter to port without changing speed')],
+    L2('Du skal redusere farten til minste styrefart, om nødvendig ta all fart av, og i alle tilfelle navigere med ytterste forsiktighet til faren for sammenstøt er over.', 'You shall reduce speed to the minimum at which you can be kept on course, if necessary take all way off, and in any event navigate with extreme caution until danger of collision is over.'), 'Regel 19 (e), s. 158', 'vis'),
+  mkF(L2('Skal du gi manøversignalene etter regel 34 (ett, to og tre korte støt) når du endrer kurs i tåke for å unngå fartøy du ikke ser?', 'Shall you give the rule 34 manoeuvring signals (one, two and three short blasts) when altering course in fog to avoid a vessel you cannot see?'),
+    [L2('Nei; i nedsatt sikt brukes tåkesignalene i regel 35', 'No; in restricted visibility the fog signals of rule 35 are used'), L2('Ja, alltid', 'Yes, always'), L2('Ja, men bare om natten', 'Yes, but only at night'), L2('Ja, men bare for fartøy over 100 meter', 'Yes, but only for vessels over 100 metres')],
+    L2('Manøversignalene skal bare brukes når fartøyene er i sikte av hverandre, fordi det er vanskelig å vite hvor et signal kommer fra når sikten er nedsatt. Unntaket er signalet ved en sving eller bak en hindring.', 'The manoeuvring signals are used only when vessels are in sight of one another, because it is hard to tell where a signal comes from when visibility is restricted. The exception is the bend signal.'), 'Regel 34, s. 217; lærebokens kommentar s. 160', 'vis'),
+  mkF(L2('To fartøy i tåke ser hverandre ikke. Hvem er det vikepliktige fartøyet etter regel 19?', 'Two vessels in fog do not see each other. Which one is the give-way vessel under rule 19?'),
+    [L2('Ingen er utpekt; begge må ta forholdsregler', 'None is designated; both must take action'), L2('Fartøyet med det andre på styrbord side', 'The vessel with the other on her starboard side'), L2('Det maskindrevne fartøyet', 'The power-driven vessel'), L2('Det som kom først inn i tåken', 'The one that entered the fog first')],
+    L2('Regel 19 peker ikke ut noe vikepliktig fartøy. Lærebokens kommentar: begge fartøyene må ta forholdsregler, og regel 15–18 gjelder ikke (de gjelder bare fartøy i sikte av hverandre).', 'Rule 19 does not designate a give-way vessel. Textbook comment: both vessels must take action, and rules 15–18 do not apply (they apply only to vessels in sight of one another).'), 'Regel 11 og 19, s. 119, 158; lærebokens kommentar s. 159, 161', 'vis')
+];
+const FACT_R = FACTS.map((f, i) => i).filter(i => FACTS[i].g === 'rul');
+const FACT_V = FACTS.map((f, i) => i).filter(i => FACTS[i].g === 'vis');
+function factQuestion(i) {
+  const f = FACTS[i];
+  return { kind: 'mc', pool: 'f' + i, stem: f.q, opts: shuffle(f.o.map((o, j) => ({ id: 'o' + j, nb: o.nb, en: o.en }))), ok: 'o0', x: f.x, ref: f.ref };
+}
+
+/* ---------- Runde ---------- */
+function typesFor(mode) {
+  if (mode === 'situasjon') return Array(N).fill('sit');
+  if (mode === 'fartøy') return Array(N).fill('typ');
+  if (mode === 'rangering') return Array(N).fill('rank');
+  if (mode === 'sikt') return shuffle(['radar', 'radar', 'radar', 'radar', 'vis', 'vis', 'vis', 'vis', 'vis', 'vis']);
+  if (mode === 'regler') return Array(N).fill('rul');
+  return shuffle(['sit', 'sit', 'sit', 'typ', 'typ', 'rank', 'radar', 'rul', 'rul', 'vis']);
+}
+function makeRound(mode) {
+  const sitI = cycle(SCN.map((s, i) => i));
+  const drawRule = cycle(['rule', 'role']);
+  const crossI = cycle(SCN.map((s, i) => i).filter(i => SCN[i].kind === 'cross'));
+  const overI = cycle(SCN.map((s, i) => i).filter(i => SCN[i].kind === 'over' || SCN[i].kind === 'overt'));
+  const kindI = { pair: cycle(PAIRS), o13: cycle(OVER13), r12: cycle(R12) };
+  const typKinds = cycle(['pair', 'pair', 'o13', 'r12']);
+  const radarB = cycle(RADAR), fr = cycle(FACT_R), fv = cycle(FACT_V);
+  const out = [], used = new Set();
+  typesFor(mode).forEach(t => {
+    for (let tries = 0; tries < 30; tries++) {
+      let q;
+      if (t === 'sit') q = sitQuestion(sitI(), drawRule());
+      else if (t === 'typ') {
+        const k = typKinds();
+        if (k === 'pair') q = pairQuestion(kindI.pair(), SCN[crossI()]);
+        else if (k === 'o13') {
+          const p = kindI.o13(), cand = shuffle(overI ? SCN.map((s, i) => i).filter(i => SCN[i].kind === p.dir) : []);
+          q = over13Question(p, SCN[cand[0]]);
+        } else q = r12Question(kindI.r12());
+      } else if (t === 'rank') q = rankQuestion();
+      else if (t === 'radar') q = radarQuestion(radarB());
+      else if (t === 'rul') q = factQuestion(fr());
+      else q = factQuestion(fv());
+      // Samme tema ikke to ganger i en runde, og pool-nøkkelen unik
+      const key = q.pool.replace(/(rule|role)$/, '');
+      if (!used.has(key) || tries === 29) { used.add(key); out.push(q); break; }
+    }
+  });
+  return out;
+}
+
+/* ---------- Spill ---------- */
+if (typeof document !== 'undefined') (function () {
+  const $ = id => document.getElementById(id);
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* ingen lagring */ } }
+  };
+  const params = new URLSearchParams(location.search);
+  let lang = params.get('lang') === 'en' ? 'en' : (params.get('lang') === 'nb' ? 'nb' : (store.get('cphd-lang') || 'nb'));
+  let mode = 'situasjon';
+  let round = null, timer = null;
+  const t = k => T[lang][k];
+
+  function applyLang() {
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nb';
+    document.querySelectorAll('[data-t]').forEach(el => { el.innerHTML = t(el.dataset.t); });
+    document.title = `${t('title')} · Captain PhD`;
+    $('lang').textContent = t('langBtn');
+    const home = document.querySelector('.home'); home.href = lang === 'en' ? home.dataset.hrefEn : home.dataset.hrefNb;
+    showBest();
+    if (round && !$('play').hidden) renderQ(true);
+    if (round && !$('result').hidden) showResult();
+  }
+  $('lang').addEventListener('click', () => { lang = lang === 'nb' ? 'en' : 'nb'; store.set('cphd-lang', lang); applyLang(); });
+  document.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('[data-mode]').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    showBest();
+  }));
+  function showBest() {
+    const b = store.get('cphd-hvemviker-best-' + mode);
+    $('best').textContent = b ? t('best')(b, T[lang].modeName[mode]) : '';
+  }
+  const fmt = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+
+  function start() {
+    round = { qs: makeRound(mode), n: 0, correct: 0, pts: 0, t0: Date.now(), wrong: [], answered: false, picks: [] };
+    $('start').hidden = true; $('result').hidden = true; $('play').hidden = false;
+    clearInterval(timer);
+    timer = setInterval(() => { $('clock').textContent = fmt(Date.now() - round.t0); }, 500);
+    renderQ();
+  }
+
+  function sceneFor(q) {
+    if (!q.scene) return '';
+    const tx = { you: t('you'), other: t('other'), wind: t('wind'), kn: t('kn'), sceneAlt: t('sceneAlt'), bow: t('bow'), radarLbl: t('radarLbl'), target: t('target'), radarAlt: t('radarAlt') };
+    if (q.scene.radar != null) return radarSVG(q.scene.radar, tx);
+    return sceneSVG(q.scene.sc, tx, q.scene.wind);
+  }
+
+  function renderQ(keepState) {
+    const q = round.qs[round.n];
+    $('count').textContent = t('count')(round.n + 1, N);
+    $('score').textContent = t('score')(round.pts);
+    $('sceneBox').innerHTML = sceneFor(q);
+    $('cap').hidden = true;
+    $('question').textContent = q.stem[lang];
+    const box = $('opts'); box.innerHTML = '';
+    $('undo').hidden = q.kind !== 'rank';
+    if (q.kind === 'rank') {
+      q.items.forEach((o, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.dataset.a = o.id;
+        b.innerHTML = `<kbd>${idx + 1}</kbd><span>${o[lang]}</span><span class="ord"></span>`;
+        b.addEventListener('click', () => tapRank(o.id));
+        box.appendChild(b);
+      });
+      paintRank();
+    } else {
+      q.opts.forEach((o, idx) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.dataset.a = o.id;
+        b.innerHTML = `<kbd>${idx + 1}</kbd><span>${o[lang]}</span>`;
+        b.addEventListener('click', () => answer(o.id));
+        box.appendChild(b);
+      });
+    }
+    if (keepState && round.answered) { markAnswer(round.lastPick); return; }
+    if (!keepState) { round.answered = false; round.qStart = Date.now(); round.picks = []; paintRank(); }
+    $('explain').hidden = true; $('next').hidden = true;
+    const first = box.querySelector('button'); if (first && !keepState) first.focus({ preventScroll: true });
+  }
+
+  function paintRank() {
+    const q = round.qs[round.n]; if (!q || q.kind !== 'rank') return;
+    document.querySelectorAll('#opts button').forEach(b => {
+      const i = round.picks.indexOf(b.dataset.a);
+      b.classList.toggle('picked', i >= 0);
+      b.querySelector('.ord').textContent = i >= 0 ? String(i + 1) : '';
+      if (!round.answered) b.disabled = i >= 0;
+    });
+    $('undo').disabled = round.answered || !round.picks.length;
+  }
+  function tapRank(id) {
+    if (round.answered || round.picks.includes(id)) return;
+    round.picks.push(id); paintRank();
+    const q = round.qs[round.n];
+    if (round.picks.length === q.order.length) answer(round.picks.join('>'));
+  }
+  $('undo').addEventListener('click', () => { if (!round.answered) { round.picks.pop(); paintRank(); } });
+
+  function isRight(q, a) { return q.kind === 'rank' ? a === q.order.join('>') : a === q.ok; }
+  function answer(a) {
+    if (round.answered) return;
+    round.answered = true; round.lastPick = a;
+    const q = round.qs[round.n];
+    if (isRight(q, a)) {
+      round.correct++;
+      const secs = (Date.now() - round.qStart) / 1000;
+      round.pts += 100 + Math.max(0, Math.round(50 - secs * (q.kind === 'rank' ? 3 : 5)));
+    } else round.wrong.push(q);
+    markAnswer(a);
+  }
+
+  function markAnswer(a) {
+    const q = round.qs[round.n], ok = isRight(q, a);
+    let head = '';
+    if (q.kind === 'rank') {
+      const names = q.order.map(id => TYPE[id].n[lang]).join(' → ');
+      round.picks = a.split('>');
+      document.querySelectorAll('#opts button').forEach(b => { b.disabled = true; b.classList.remove('picked'); b.classList.add(q.order.indexOf(b.dataset.a) === round.picks.indexOf(b.dataset.a) ? 'right' : 'wrong'); b.querySelector('.ord').textContent = String(round.picks.indexOf(b.dataset.a) + 1); });
+      head = ok ? '' : `${t('orderWas')} <b>${names}</b>. `;
+      $('undo').disabled = true;
+    } else {
+      document.querySelectorAll('#opts button').forEach(b => {
+        b.disabled = true;
+        if (b.dataset.a === q.ok) b.classList.add('right'); else if (b.dataset.a === a) b.classList.add('wrong');
+      });
+      const right = q.opts.find(o => o.id === q.ok);
+      head = ok ? '' : `${t('answerWas')} <b>${right[lang]}</b>. `;
+    }
+    $('explain').innerHTML = `<b class="${ok ? 'ok' : 'bad'}">${ok ? t('right') : t('wrong')}</b> ${head}${q.x[lang]} <span style="color:var(--muted)">(${q.ref})</span>`;
+    $('explain').hidden = false;
+    $('score').textContent = t('score')(round.pts);
+    $('next').textContent = round.n === N - 1 ? t('finish') : t('next');
+    $('next').hidden = false; $('next').focus({ preventScroll: true });
+  }
+
+  $('next').addEventListener('click', () => {
+    if (round.n === N - 1) { finish(); return; }
+    round.n++; renderQ();
+    $('play').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  });
+
+  function finish() {
+    clearInterval(timer);
+    round.time = Date.now() - round.t0;
+    const key = 'cphd-hvemviker-best-' + mode, best = +(store.get(key) || 0);
+    if (round.pts > best) store.set(key, String(round.pts));
+    showResult();
+  }
+  function showResult() {
+    $('play').hidden = true; $('result').hidden = false;
+    $('resTitle').textContent = t('resTitle')(round.correct, N);
+    $('resText').textContent = t('resText')(fmt(round.time), round.pts);
+    if (!round.wrong.length) { $('resReview').innerHTML = `<p>${t('perfect')}</p>`; }
+    else {
+      const seen = new Set();
+      const items = round.wrong.filter(q => { const k = q.ref + q.x.nb; return !seen.has(k) && seen.add(k); })
+        .map(q => `<li><b>${q.stem[lang].length > 150 ? q.stem[lang].slice(0, 147) + '…' : q.stem[lang]}</b> ${q.x[lang]} <span style="color:var(--muted)">(${q.ref})</span></li>`).join('');
+      $('resReview').innerHTML = `<p><b>${t('reviewTitle')}</b></p><ul class="review">${items}</ul>`;
+    }
+    showBest();
+    $('again').focus({ preventScroll: true });
+  }
+
+  $('go').addEventListener('click', start);
+  $('again').addEventListener('click', () => { $('result').hidden = true; $('start').hidden = false; round = null; showBest(); });
+
+  document.addEventListener('keydown', e => {
+    if ($('play').hidden || !round || e.ctrlKey || e.metaKey || e.altKey) return;
+    const q = round.qs[round.n];
+    if (q.kind === 'rank') {
+      if (e.key === 'Backspace' && !round.answered) { round.picks.pop(); paintRank(); return; }
+      const n = parseInt(e.key, 10);
+      if (n >= 1 && n <= q.items.length) tapRank(q.items[n - 1].id);
+      return;
+    }
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 4 && !round.answered && q.opts[n - 1]) answer(q.opts[n - 1].id);
+  });
+
+  applyLang();
+})();
+
+if (typeof module !== 'undefined') module.exports = { SCN, PAIRS, OVER13, R12, FACTS, RADAR, TYPE, R18, makeRound, classify, brg, margin, gives, sceneSVG, radarSVG, windInfo, N, T };
+</script>
+</body>
+</html>
