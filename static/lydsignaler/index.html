@@ -95,6 +95,17 @@ footer p { margin: 0 0 6px; }
 .share a, .share button { font: inherit; font-size: 14px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); text-decoration: none; cursor: pointer; }
 .share .main { background: var(--sea); border-color: var(--sea); color: #fff; }
 .share a:hover, .share button:hover { border-color: var(--sea); }
+/* MORE-BEGIN */
+.more { margin: 18px 0 4px; }
+.more h3 { font-size: 15px; margin: 0 0 8px; }
+.more .cards { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+.more a.card { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); text-decoration: none; }
+.more a.card:hover { border-color: var(--sea); }
+.more a.card.next { border-color: var(--sea); }
+.more .card b { display: block; font-size: 14px; }
+.more .card span { font-size: 12px; color: var(--muted); }
+.more .home { display: inline-block; margin-top: 10px; font-size: 14px; color: var(--sea); }
+/* MORE-END */
 </style>
 <script data-goatcounter="https://captainphd.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
@@ -156,6 +167,7 @@ footer p { margin: 0 0 6px; }
         <p id="resText"></p>
         <div id="resReview"></div>
         <div id="share"></div>
+        <div id="more"></div>
         <button class="primary" id="again" type="button" data-t="again"></button>
       </div>
     </section>
@@ -745,6 +757,39 @@ if (typeof document !== 'undefined') (function () {
   }
 
   const SHARE_URL = 'https://captainphd.com/lydsignaler/';
+
+  /* MORE-BEGIN */
+  const MORE_SELF = 'lydsignaler';
+  const MORE_GAMES = [
+    { s: 'lanterner', nb: 'Lanterner og dagsignaler', en: 'Lights and shapes', rnb: 'Regel 20–31', ren: 'Rules 20–31' },
+    { s: 'hvem-viker', nb: 'Hvem viker?', en: 'Who gives way?', rnb: 'Regel 11–19', ren: 'Rules 11–19' },
+    { s: 'manovrer', nb: 'Manøver', en: 'Manoeuvres', rnb: 'Regel 8, 15–17, 34', ren: 'Rules 8, 15–17, 34' },
+    { s: 'lydsignaler', nb: 'Lydsignaler', en: 'Sound signals', rnb: 'Regel 32–37', ren: 'Rules 32–37' },
+    { s: 'nodsignaler', nb: 'Nødsignaler', en: 'Distress signals', rnb: 'Regel 37, vedlegg IV', ren: 'Rule 37, Annex IV' },
+    { s: 'utkikk-fart', nb: 'Utkikk, fart og farvann', en: 'Lookout, speed and channels', rnb: 'Regel 5–7, 9–10', ren: 'Rules 5–7, 9–10' }
+  ];
+  function renderMore() {
+    const box = $('more'); if (!box) return;
+    const nb = lang !== 'en';
+    const i = MORE_GAMES.findIndex(g => g.s === MORE_SELF);
+    const order = [];
+    for (let k = 1; k < MORE_GAMES.length; k++) order.push(MORE_GAMES[(i + k) % MORE_GAMES.length]);
+    box.innerHTML = ''; box.className = 'more';
+    const h = document.createElement('h3'); h.textContent = nb ? 'Spill flere' : 'Play more'; box.appendChild(h);
+    const cards = document.createElement('div'); cards.className = 'cards'; box.appendChild(cards);
+    order.slice(0, 3).forEach((g, k) => {
+      const a = document.createElement('a'); a.className = 'card' + (k === 0 ? ' next' : '');
+      a.href = '/' + g.s + '/' + (nb ? '' : '?lang=en');
+      const b = document.createElement('b'); b.textContent = nb ? g.nb : g.en; a.appendChild(b);
+      const sp = document.createElement('span'); sp.textContent = nb ? g.rnb : g.ren; a.appendChild(sp);
+      cards.appendChild(a);
+    });
+    const home = document.createElement('a'); home.className = 'home';
+    home.href = nb ? '/' : '/en/'; home.textContent = nb ? 'Til forsiden' : 'Home';
+    box.appendChild(home);
+  }
+  /* MORE-END */
+
   function renderShare() {
     const box = $('share'); if (!box) return;
     const nb = lang !== 'en';
@@ -788,6 +833,7 @@ if (typeof document !== 'undefined') (function () {
     }
     showBest();
     renderShare();
+    renderMore();
     $('again').focus({ preventScroll: true });
   }
 
