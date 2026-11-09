@@ -65,6 +65,7 @@ for g in GAMES:
     s = open(p, encoding='utf-8').read()
     assert 'renderShare' in s, f'{slug}: kjør patch-share.py først'
     s = BLOCK.sub('\n', s)  # fjern gammel blokk (CSS og JS)
+    s = re.sub(r'\n{3,}', '\n\n', s)  # hold skriptet idempotent (ingen voksende tomlinjer)
     s = s.replace('</style>', CSS + '</style>', 1)
     s = s.replace('  function renderShare() {', js(slug).lstrip('\n') + '\n  function renderShare() {', 1)
     if 'id="more"' not in s:
@@ -72,5 +73,6 @@ for g in GAMES:
     if 'renderMore();' not in s:
         s = s.replace('    renderShare();\n', '    renderShare();\n    renderMore();\n', 1)
     assert s.count('renderMore();') == 1 and s.count('MORE-BEGIN') == 2 and 'id="more"' in s, slug
+    s = re.sub(r'\n{3,}', '\n\n', s)
     open(p, 'w', encoding='utf-8').write(s)
     print('ok', slug)
