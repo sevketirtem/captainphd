@@ -8,7 +8,7 @@ disableKinds = ["taxonomy", "term"]
 
 [params]
   # Ziyaretçi sayacı (GoatCounter, çerezsiz). Hesap açılınca kodu yaz: ör. "captainphd". Boşsa sayaç kapalı.
-  goatcounter = ""
+  goatcounter = "captainphd"
   author = "Sevket Suleyman Irtem"
   orcid = "https://orcid.org/0000-0001-8101-951X"
   github = "https://github.com/sevketirtem/captainphd"
