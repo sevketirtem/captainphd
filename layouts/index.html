@@ -1,4 +1,8 @@
 {{ define "main" }}
+<figure class="kapak">
+  <img src="{{ "img/captainphd-kapak.jpg" | relURL }}" width="1200" height="630" alt="{{ cond (eq site.Language.Lang "nb") "Illustrasjon: et lasteskip i en norsk fjord ved blåtime, med fyr og lyssatt sjømerke" "Illustration: a cargo ship in a Norwegian fjord at blue hour, with a lighthouse and a lit sea mark" }}" fetchpriority="high">
+  <figcaption>{{ cond (eq site.Language.Lang "nb") "Illustrasjon laget med KI (Google Nano Banana Pro). Ikke en kilde for lanterner eller sjømerker." "Illustration made with AI (Google Nano Banana Pro). Not a reference for lights or sea marks." }}</figcaption>
+</figure>
 <section class="hero">
   <p class="eyebrow">{{ site.Params.slogan }}</p>
   {{ .Content }}
