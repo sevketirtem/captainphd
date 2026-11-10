@@ -9,5 +9,8 @@ Site: https://captainphd.com (Hugo + GitHub Pages).
 
 ## Kilder og lisenser / Sources and licences
 
+- Kode (HTML/JS, Hugo-maler, `tools/`) / code (HTML/JS, Hugo templates, `tools/`): MIT, se / see [LICENSE](LICENSE). © 2026 Sevket Suleyman Irtem.
+- Bilder, lyd og video i `static/img`, `static/audio`, `static/video` (laget av Sevket Suleyman Irtem, delvis med KI-verktøy som Google Nano Banana Pro, Veo og Lyria): CC BY 4.0, med kreditering «Captain PhD» / images, audio and video in these folders (made by Sevket Suleyman Irtem, partly with AI tools such as Google Nano Banana Pro, Veo and Lyria): CC BY 4.0, credit «Captain PhD». KI-generert innhold merkes på sidene / AI-generated content is labelled on the pages.
+- Innhold avledet fra Marfag (spørsmål, tekster, tilpassede tegninger) er ikke dekket av MIT, men av CC BY-SA 3.0 / content derived from Marfag (questions, texts, adapted drawings) is not covered by MIT but by CC BY-SA 3.0.
 - Spill basert på Marfag-lærebøker / games based on Marfag textbooks: innhold under CC BY-SA 3.0, kilde oppgis i hvert spill / content under CC BY-SA 3.0, source given in each game.
 - Laksekapteinen: CC BY 4.0, https://doi.org/10.5281/zenodo.23494284 (kilde / source: https://github.com/sevketirtem/laksekapteinen).
